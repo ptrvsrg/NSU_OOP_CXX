@@ -1,0 +1,1 @@
+[Условие задачи](https://docs.google.com/document/d/1DveVy1JNhMHA5AN8yLHLQsQFkIqvee7DxtXVbiXu3q8/edit)
