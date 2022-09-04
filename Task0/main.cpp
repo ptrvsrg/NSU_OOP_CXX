@@ -2,21 +2,26 @@
 
 #include "module1.h"
 #include "module2.h"
+#include "module3.h"
+
+using std::cout;
 
 int main(int argc, char** argv)
 {
-	std::cout << "Hello world!" << "\n";
+	cout << "Hello world!" << "\n";
 	
-	std::cout << Module1::getMyName() << "\n";
-	std::cout << Module2::getMyName() << "\n";
+	cout << Module1::getMyName() << "\n";
+	cout << Module2::getMyName() << "\n";
+	cout << Module3::getMyName() << "\n";
 
 	using namespace Module1;
-	std::cout << getMyName() << "\n"; // (A)
-	std::cout << Module2::getMyName() << "\n";
+	cout << getMyName() << "\n"; // (A)
+	cout << Module2::getMyName() << "\n";
+	cout << Module3::getMyName() << "\n";
 
 	//using namespace Module2; // (B)
-	//std::cout << getMyName() << "\n"; // COMPILATION ERROR (C)
+	//cout << getMyName() << "\n"; // COMPILATION ERROR (C)
 	
 	using Module2::getMyName;
-	std::cout << getMyName() << "\n"; // (D)
+	cout << getMyName() << "\n"; // (D)
 }
