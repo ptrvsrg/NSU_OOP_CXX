@@ -5,9 +5,10 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_executable(task0 main.cpp)
 
-target_include_directories(task0 PRIVATE module1 module2)
+target_include_directories(task0 PRIVATE module1 module2 module3)
 
 add_subdirectory(module1)
 add_subdirectory(module2)
+add_subdirectory(module3)
 
-target_link_libraries(task0 PRIVATE module1_lib module2_lib)
+target_link_libraries(task0 PRIVATE module1_lib module2_lib module3_lib)
