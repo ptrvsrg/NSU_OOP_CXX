@@ -1,0 +1,6 @@
+D:/NSU/3 semester/OOP/NSU_OOP_CXX/Task0/build/CMakeFiles/task0.dir
+D:/NSU/3 semester/OOP/NSU_OOP_CXX/Task0/build/CMakeFiles/ALL_BUILD.dir
+D:/NSU/3 semester/OOP/NSU_OOP_CXX/Task0/build/CMakeFiles/ZERO_CHECK.dir
+D:/NSU/3 semester/OOP/NSU_OOP_CXX/Task0/build/module1/CMakeFiles/module1_lib.dir
+D:/NSU/3 semester/OOP/NSU_OOP_CXX/Task0/build/module2/CMakeFiles/module2_lib.dir
+D:/NSU/3 semester/OOP/NSU_OOP_CXX/Task0/build/module3/CMakeFiles/module3_lib.dir

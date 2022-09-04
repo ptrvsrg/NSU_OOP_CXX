@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\NSU\3 semester\OOP\NSU_OOP_CXX\Task0\module3\module3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\NSU\3 semester\OOP\NSU_OOP_CXX\Task0\module3\module3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\NSU\3 semester\OOP\NSU_OOP_CXX\Task0\module3\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{174E5307-323F-3259-A57A-CC8E7E724B97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{3E4C917A-3CA9-346B-83EE-72A28F9AA668}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
