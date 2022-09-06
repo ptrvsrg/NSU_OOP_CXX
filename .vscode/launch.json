@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch after CMake",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": ".\\build\\Release\\*.exe",
+            "cwd": "${fileDirname}",
+            "preLaunchTask": "CMake Release build for launch",
+            "presentation": {
+                "group": "CMake launch"
+            }
+        }
+    ]
+}
