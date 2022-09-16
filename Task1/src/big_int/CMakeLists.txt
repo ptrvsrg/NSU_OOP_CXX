@@ -1,0 +1,4 @@
+add_library(big_int STATIC big_int.cpp)
+add_subdirectory(string_arithmetic)
+target_link_libraries(big_int PUBLIC string_arithmetic)
+target_include_directories(big_int PUBLIC string_arithmetic)
