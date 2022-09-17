@@ -1,1 +1,0 @@
-add_library(string_arithmetic STATIC string_arithmetic.cpp)
