@@ -1,4 +1,4 @@
-*/bin
-*/vscode
-*/.idea
-*/google_tests
+**/bin
+**/vscode
+**/.idea
+**/google_tests
