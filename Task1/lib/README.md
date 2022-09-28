@@ -1,0 +1,1 @@
+Download Google Test from <b>[the official repository](https://github.com/google/googletest)</b> and extract the contents of googletest-master into <b>Task1/lib/google_tests</b>.
