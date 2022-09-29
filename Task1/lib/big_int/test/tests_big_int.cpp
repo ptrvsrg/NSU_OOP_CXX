@@ -1,4 +1,5 @@
 #include <iostream>
+#include <climits>
 #include "gtest/gtest.h"
 #include "big_int.h"
 
@@ -10,43 +11,44 @@ TEST(test_constructors, constructor_wthout_args)
 
 TEST(test_constructors, int_constructor)
 {
-    BigInt num2(-23745);
-    EXPECT_EQ(int(num2), -23745);
+    BigInt num1(10);
+    EXPECT_EQ(int(num1), 10);
+
+    BigInt num2(INT_MAX);
+    EXPECT_EQ(int(num2), INT_MAX);
+
+    BigInt num3(-34);
+    EXPECT_EQ(int(num3), -34);
+
+    BigInt num4(INT_MIN);
+    EXPECT_EQ(int(num4), INT_MIN);
 }
 
 TEST(test_constructors, string_constructor)
 {
-    std::string str1 = "-64228";
-    BigInt num1(str1);
-    EXPECT_EQ(int(num1), -64228);
-    EXPECT_STREQ(std::string(num1).c_str(), str1.c_str());
+    EXPECT_EQ(int(BigInt("-64228")), -64228);
+
+    EXPECT_STREQ(std::string(BigInt("-642253753738")).data(), "-642253753738");
 
     // empty string
-    BigInt num2("");
-    EXPECT_EQ(int(num2), 0);
-    EXPECT_STREQ(std::string(num2).c_str(), "0");
+    EXPECT_EQ(int(BigInt("")), 0);
 
     // many begin zeros
-    BigInt num3("000000000654");
-    EXPECT_EQ(int(num3), 654);
+    EXPECT_EQ(int(BigInt("000000000654")), 654);
 
     // many zeros
-    BigInt num4("000000000");
-    EXPECT_EQ(int(num4), 0);
+    EXPECT_EQ(int(BigInt("000000000")), 0);
 
     // minus and many begin zeros
-    BigInt num5("-00045");
-    EXPECT_EQ(int(num5), -45);
+    EXPECT_EQ(int(BigInt("-00045")), -45);
 
     // minus and many begin zeros
-    BigInt num6("-000");
-    EXPECT_EQ(int(num6), 0);
-    EXPECT_STREQ(std::string(num6).c_str(), "0");
+    EXPECT_EQ(int(BigInt("-000")), 0);
 
     // minus
     try
     {
-        BigInt num7("-");
+        BigInt num1("-");
     }
     catch (std::invalid_argument const& ex)
     {
@@ -56,7 +58,7 @@ TEST(test_constructors, string_constructor)
     // not number
     try
     {
-        BigInt num8("98dccS6E55");
+        BigInt num2("98dccS6E55");
     }
     catch (std::invalid_argument const& ex)
     {
@@ -73,16 +75,6 @@ TEST(test_constructors, copy_constructor)
     EXPECT_NE(&src, &dest);
 }
 
-TEST(test_constructors, move_constructor)
-{
-    BigInt tmp(-65412);
-    BigInt dest(std::move(tmp));
-
-    EXPECT_EQ(int(dest), -65412);
-    EXPECT_EQ(int(tmp), 0);
-}
-
-
 
 TEST(test_assignment_operators, assignment)
 {
@@ -94,99 +86,237 @@ TEST(test_assignment_operators, assignment)
 
     // self-assigment
     src = src;
-
     EXPECT_EQ(int(src), -654087);
-}
-
-TEST(test_assignment_operators, move_assignment)
-{
-    BigInt src(-654087);
-    BigInt dest = std::move(src);
-
-    EXPECT_EQ(int(src), 0);
-    EXPECT_EQ(int(dest), -654087);
 }
 
 TEST(test_assignment_operators, addition_assignment)
 {
-    BigInt addend1(5123);
+    BigInt sum;
 
-    addend1 += BigInt(6540);
-    EXPECT_EQ(int(addend1), 5123 + 6540);
+    // adding zero
+    sum = BigInt(0);
+    sum += BigInt(534);
+    EXPECT_EQ(int(sum), 534);
 
-    addend1 += BigInt(-120614);
-    EXPECT_EQ(int(addend1), 5123 + 6540 - 120614);
+    sum = BigInt(-534);
+    sum += BigInt(0);
+    EXPECT_EQ(int(sum), -534);
 
-    addend1 += BigInt(-3540);
-    EXPECT_EQ(int(addend1), 5123 + 6540 - 120614 - 3540);
+    sum = BigInt(0);
+    sum += BigInt(-534);
+    EXPECT_EQ(int(sum), -534);
 
-    addend1 += BigInt(8120614);
-    EXPECT_EQ(int(addend1), 5123 + 6540 - 120614 - 3540 + 8120614);
+    sum = BigInt(534);
+    sum += BigInt(0);
+    EXPECT_EQ(int(sum), 534);
 
-    addend1 += BigInt(0);
-    EXPECT_EQ(int(addend1), 5123 + 6540 - 120614 - 3540 + 8120614);
+    // identical signs
+    sum = BigInt(62);
+    sum += BigInt(534);
+    EXPECT_EQ(int(sum), 62+534);
+
+    sum = BigInt(534);
+    sum += BigInt(62);
+    EXPECT_EQ(int(sum), 62+534);
+
+    sum = BigInt(-62);
+    sum += BigInt(-534);
+    EXPECT_EQ(int(sum), -62-534);
+
+    sum = BigInt(-534);
+    sum += BigInt(-62);
+    EXPECT_EQ(int(sum), -62-534);
+
+    // different signs
+    sum = BigInt(62);
+    sum += BigInt(-534);
+    EXPECT_EQ(int(sum), 62-534);
+
+    sum = BigInt(-534);
+    sum += BigInt(62);
+    EXPECT_EQ(int(sum), 62-534);
+
+    sum = BigInt(-62);
+    sum += BigInt(534);
+    EXPECT_EQ(int(sum), -62+534);
+
+    sum = BigInt(534);
+    sum += BigInt(-62);
+    EXPECT_EQ(int(sum), -62+534);
 }
 
 TEST(test_assignment_operators, multiplication_assignment)
 {
-    BigInt num(649);
-    num *= BigInt(31);
-    EXPECT_EQ(int(num), 649*31);
+    BigInt product;
 
-    num *= BigInt(-248);
-    EXPECT_EQ(int(num), 649*31*(-248));
+    // multiplication by zero
+    product = BigInt(0);
+    product *= BigInt(534);
+    EXPECT_EQ(int(product), 0);
 
-    num *= BigInt("48060");
-    EXPECT_STREQ(std::string(num).c_str(), "-239795946720");
+    product = BigInt(534);
+    product *= BigInt(0);
+    EXPECT_EQ(int(product), 0);
 
-    num *= BigInt(0);
-    EXPECT_EQ(int(num), 0);
+    product = BigInt(0);
+    product *= BigInt(-534);
+    EXPECT_EQ(int(product), 0);
+
+    product = BigInt(534);
+    product *= BigInt(0);
+    EXPECT_EQ(int(product), 0);
+
+    // identical signs
+    product = BigInt(62);
+    product *= BigInt(534);
+    EXPECT_EQ(int(product), 62*534);
+
+    product = BigInt(534);
+    product *= BigInt(62);
+    EXPECT_EQ(int(product), 62*534);
+
+    product = BigInt(-62);
+    product *= BigInt(-534);
+    EXPECT_EQ(int(product), 62*534);
+
+    product = BigInt(-534);
+    product *= BigInt(-62);
+    EXPECT_EQ(int(product), 62*534);
+
+    // different signs
+    product = BigInt(62);
+    product *= BigInt(-534);
+    EXPECT_EQ(int(product), 62*(-534));
+
+    product = BigInt(-534);
+    product *= BigInt(62);
+    EXPECT_EQ(int(product), (-534)*62);
+
+    product = BigInt(-62);
+    product *= BigInt(534);
+    EXPECT_EQ(int(product), (-62)*534);
+
+    product = BigInt(534);
+    product *= BigInt(-62);
+    EXPECT_EQ(int(product), 534*(-62));
 }
 
 TEST(test_assignment_operators, subtraction_assignment)
 {
-    BigInt num(314);
-    num -= BigInt(497);
-    EXPECT_EQ(int(num), 314-497);
+    BigInt difference;
 
-    num -= BigInt(142);
-    EXPECT_EQ(int(num), 314-497-142);
+    // zero subtracting
+    difference = BigInt(534);
+    difference -= BigInt(0);
+    EXPECT_EQ(int(difference), 534);
 
-    num -= BigInt(-534);
-    EXPECT_EQ(int(num), 314-497-142-(-534));
+    difference = BigInt(-534);
+    difference -= BigInt(0);
+    EXPECT_EQ(int(difference), -534);
 
-    num -= BigInt(-273);
-    EXPECT_EQ(int(num), 314-497-142-(-534)-(-273));
+    // subtracting from zero
+    difference = BigInt(0);
+    difference -= BigInt(534);
+    EXPECT_EQ(int(difference), -534);
 
-    num -= BigInt(0);
-    EXPECT_EQ(int(num), 314-497-142-(-534)-(-273));
+    difference = BigInt(0);
+    difference -= BigInt(-534);
+    EXPECT_EQ(int(difference), 534);
+
+    // identical signs
+    difference = BigInt(534);
+    difference -= BigInt(62);
+    EXPECT_EQ(int(difference), 534-62);
+
+    difference = BigInt(62);
+    difference -= BigInt(534);
+    EXPECT_EQ(int(difference), 62-534);
+
+    difference = BigInt(-62);
+    difference -= BigInt(-534);
+    EXPECT_EQ(int(difference), -62+534);
+
+    difference = BigInt(-534);
+    difference -= BigInt(-62);
+    EXPECT_EQ(int(difference), -534+62);
+
+    // different signs
+    difference = BigInt(62);
+    difference -= BigInt(-534);
+    EXPECT_EQ(int(difference), 62+534);
+
+    difference = BigInt(-534);
+    difference -= BigInt(62);
+    EXPECT_EQ(int(difference), -534-62);
+
+    difference = BigInt(-62);
+    difference -= BigInt(534);
+    EXPECT_EQ(int(difference), -62-534);
+
+    difference = BigInt(534);
+    difference -= BigInt(-62);
+    EXPECT_EQ(int(difference), 534+62);
 }
 
 TEST(test_assignment_operators, division_assignment)
 {
-    BigInt num1(0);
-    num1 /= BigInt(1354);
-    EXPECT_EQ(int(num1), 0);
+    BigInt quotient;
 
-    BigInt num2(11215182);
-    num2 /= BigInt(1354);
-    EXPECT_EQ(int(num2), 8283);
+    // zero division
+    quotient = BigInt(0);
+    quotient /= BigInt(1354);
+    EXPECT_EQ(int(quotient), 0);
 
-    num2 /= BigInt(54);
-    EXPECT_EQ(int(num2), 153);
+    // identical signs
+    quotient = BigInt(1534);
+    quotient /= BigInt(62);
+    EXPECT_EQ(int(quotient), 1534/62);
 
+    quotient = BigInt(62);
+    quotient /= BigInt(1534);
+    EXPECT_EQ(int(quotient), 62/1534);
+
+    quotient = BigInt(-62);
+    quotient /= BigInt(-534);
+    EXPECT_EQ(int(quotient), (-62)/(-534));
+
+    quotient = BigInt(-534);
+    quotient /= BigInt(-62);
+    EXPECT_EQ(int(quotient), (-534)/(-62));
+
+    // different signs
+    quotient = BigInt(62);
+    quotient /= BigInt(-534);
+    EXPECT_EQ(int(quotient), 62/(-534));
+
+    quotient = BigInt(-534);
+    quotient /= BigInt(62);
+    EXPECT_EQ(int(quotient), (-534)/62);
+
+    quotient = BigInt(-62);
+    quotient /= BigInt(534);
+    EXPECT_EQ(int(quotient), (-62)/534);
+
+    quotient = BigInt(534);
+    quotient /= BigInt(-62);
+    EXPECT_EQ(int(quotient), 534/(-62));
+
+    // division by zero
     try
     {
-        num1 /= BigInt(0);
+        quotient = BigInt(534);
+        quotient /= BigInt(0);
     }
     catch(std::invalid_argument const & ex)
     {
         EXPECT_STREQ(ex.what(), "Division by zero");
     }
 
+    // zero division by zero
     try
     {
-        num2 /= BigInt(0);
+        quotient = BigInt(0);
+        quotient /= BigInt(0);
     }
     catch(std::invalid_argument const & ex)
     {
@@ -194,142 +324,472 @@ TEST(test_assignment_operators, division_assignment)
     }
 }
 
-TEST(test_assignment_operators, remainder_assignment)
+TEST(test_assignment_operators, mudulo_assignment)
 {
-    BigInt num1(0);
-    num1 %= BigInt(1354);
-    EXPECT_EQ(int(num1), 0);
+    BigInt remainder;
 
-    BigInt num2(11215182);
-    num2 %= BigInt(35348);
-    EXPECT_EQ(int(num2), 9866);
+    // zero division
+    remainder = BigInt(0);
+    remainder %= BigInt(1354);
+    EXPECT_EQ(int(remainder), 0);
 
-    num2 %= BigInt(2);
-    EXPECT_EQ(int(num2), 0);
+    // identical signs
+    remainder = BigInt(1534);
+    remainder %= BigInt(62);
+    EXPECT_EQ(int(remainder), 1534%62);
 
+    remainder = BigInt(62);
+    remainder %= BigInt(1534);
+    EXPECT_EQ(int(remainder), 62%1534);
+
+    remainder = BigInt(-62);
+    remainder %= BigInt(-534);
+    EXPECT_EQ(int(remainder), (-62)%(-534));
+
+    remainder = BigInt(-534);
+    remainder %= BigInt(-62);
+    EXPECT_EQ(int(remainder), (-534)%(-62));
+
+    // different signs
+    remainder = BigInt(62);
+    remainder %= BigInt(-534);
+    EXPECT_EQ(int(remainder), 62%(-534));
+
+    remainder = BigInt(-534);
+    remainder %= BigInt(62);
+    EXPECT_EQ(int(remainder), (-534)%62);
+
+    remainder = BigInt(-62);
+    remainder %= BigInt(534);
+    EXPECT_EQ(int(remainder), (-62)%534);
+
+    remainder = BigInt(534);
+    remainder %= BigInt(-62);
+    EXPECT_EQ(int(remainder), 534%(-62));
+
+    // division by zero
     try
     {
-        num1 %= BigInt(0);
+        remainder = BigInt(534);
+        remainder %= BigInt(0);
     }
     catch(std::invalid_argument const & ex)
     {
         EXPECT_STREQ(ex.what(), "Division by zero");
     }
 
+    // zero division by zero
     try
     {
-        BigInt num3(5482);
-        num3 %= BigInt(0);
+        remainder = BigInt(0);
+        remainder %= BigInt(0);
     }
     catch(std::invalid_argument const & ex)
     {
         EXPECT_STREQ(ex.what(), "Division by zero");
     }
+}
+
+
+TEST(test_assignment_operators, bitwise_or_assignment)
+{
+    BigInt result;
+
+    // identical size
+    result = BigInt(85);            // 0 01010101
+    result |= BigInt(170);          // 0 10101010
+    EXPECT_EQ(int(result), 255);    // 0 11111111
+
+    // different size
+    result = BigInt(21845);         // 0 01010101 01010101
+    result |= BigInt(170);          // 0          10101010
+    EXPECT_EQ(int(result), 22015);  // 0 01010101 11111111
+    EXPECT_EQ(result.size(), 2);
+
+    // negative numbers
+    result = BigInt(-21845);        // 1 01010101 01010101
+    result |= BigInt(-170);         // 1          10101010
+    EXPECT_EQ(int(result), -22015); // 1 01010101 11111111
+
+    // different sign
+    result = BigInt(21845);         // 0 01010101 01010101
+    result |= BigInt(-170);         // 1          10101010
+    EXPECT_EQ(int(result), -22015); // 1 01010101 11111111
+}
+
+TEST(test_assignment_operators, bitwise_and_assignment)
+{
+    BigInt result;
+
+    // identical size
+    result = BigInt(87);            // 0 01010111
+    result &= BigInt(170);          // 0 10101010
+    EXPECT_EQ(int(result), 2);      // 0 00000010
+
+    // different size
+    result = BigInt(21847);         // 0 01010101 01010111
+    result &= BigInt(170);          // 0          10101010
+    EXPECT_EQ(int(result), 2);      // 0          00000010
+    EXPECT_EQ(result.size(), 1);
+
+    // negative numbers
+    result = BigInt(-21847);        // 1 01010101 01010111
+    result &= BigInt(-170);         // 1          10101010
+    EXPECT_EQ(int(result), -2);     // 1          00000010
+
+    // different sign
+    result = BigInt(21847);         // 0 01010101 01010111
+    result &= BigInt(-170);         // 1          10101010
+    EXPECT_EQ(int(result), 2);      // 0          00000010
+}
+
+TEST(test_assignment_operators, bitwise_xor_assignment)
+{
+    BigInt result;
+
+    // identical sizes
+    result = BigInt(87);            // 0 01010111
+    result ^= BigInt(170);          // 0 10101010
+    EXPECT_EQ(int(result), 253);    // 0 11111101
+
+    // different arg sizes
+    result = BigInt(21847);         // 0 01010101 01010111
+    result ^= BigInt(170);          // 0          10101010
+    EXPECT_EQ(int(result), 22013);  // 0 01010101 11111101
+    EXPECT_EQ(result.size(), 2);
+
+    // different arg size and return size
+    result = BigInt(21847);         // 0 01010101 01010111
+    result ^= BigInt(21930);        // 0 01010101 10101010
+    EXPECT_EQ(int(result), 253);    // 0          11111101
+    EXPECT_EQ(result.size(), 1);
+
+    // negative numbers
+    result = BigInt(-21847);        // 1 01010101 01010111
+    result ^= BigInt(-170);         // 1          10101010
+    EXPECT_EQ(int(result), 22013);  // 0 01010101 11111101
+
+    // different sign
+    result = BigInt(21847);         // 0 01010101 01010111
+    result ^= BigInt(-170);         // 1          10101010
+    EXPECT_EQ(int(result), -22013); // 1 01010101 11111101
 }
 
 
 
 TEST(test_arithmetic_operators, unary_plus)
 {
-    BigInt src("6165119841981");
-
-    EXPECT_STREQ(std::string(src).c_str(), std::string(+src).c_str());
+    BigInt src(65408);
+    EXPECT_EQ(int(src), 65408);
 }
 
 TEST(test_arithmetic_operators, unary_minus)
 {
-    BigInt src("6165119841981");
+    BigInt src(65408);
+    EXPECT_EQ(int(-src), -65408);
 
-    EXPECT_STREQ(std::string(-src).c_str(), "-6165119841981");
+    src = BigInt(-65408);
+    EXPECT_EQ(int(-src), 65408);
+}
+
+TEST(test_arithmetic_operators, addition)
+{
+    BigInt addend1(6420);
+    BigInt* ptrAddend1 = &addend1;
+
+    BigInt addend2(167);
+    BigInt* ptrAddend2 = &addend2;
+
+    BigInt sum = addend1 + addend2;
+    BigInt* ptrSum = &sum;
+
+    EXPECT_EQ(int(addend1), 6420);
+    EXPECT_EQ(int(addend2), 167);
+
+    EXPECT_EQ(int(sum), 6420+167);
+    EXPECT_NE(ptrAddend1, ptrSum);
+    EXPECT_NE(ptrAddend2, ptrSum);
+}
+
+TEST(test_arithmetic_operators, subtraction)
+{
+    BigInt minuend(6420);
+    BigInt* ptrMinuend = &minuend;
+
+    BigInt subtrahend(167);
+    BigInt* ptrSubtrahend = &subtrahend;
+
+    BigInt difference = minuend - subtrahend;
+    BigInt* ptrDifference = &difference;
+
+    EXPECT_EQ(int(minuend), 6420);
+    EXPECT_EQ(int(subtrahend), 167);
+
+    EXPECT_EQ(int(difference), 6420-167);
+    EXPECT_NE(ptrMinuend, ptrDifference);
+    EXPECT_NE(ptrSubtrahend, ptrDifference);
+}
+
+TEST(test_arithmetic_operators, multiplication)
+{
+    BigInt multiplier1(6420);
+    BigInt* ptrMultiplier1 = &multiplier1;
+
+    BigInt multiplier2(167);
+    BigInt* ptrMultiplier2 = &multiplier2;
+
+    BigInt product = multiplier1 * multiplier2;
+    BigInt* ptrProduct = &product;
+
+    EXPECT_EQ(int(multiplier1), 6420);
+    EXPECT_EQ(int(multiplier2), 167);
+
+    EXPECT_EQ(int(product), 6420*167);
+    EXPECT_NE(ptrMultiplier1, ptrProduct);
+    EXPECT_NE(ptrMultiplier2, ptrProduct);
+}
+
+TEST(test_arithmetic_operators, division)
+{
+    BigInt dividend(6420);
+    BigInt* ptrDividend = &dividend;
+
+    BigInt divisor(167);
+    BigInt* ptrDivisor = &divisor;
+
+    BigInt quotient = dividend / divisor;
+    BigInt* ptrQuotient = &quotient;
+
+    EXPECT_EQ(int(dividend), 6420);
+    EXPECT_EQ(int(divisor), 167);
+
+    EXPECT_EQ(int(quotient), 6420/167);
+    EXPECT_NE(ptrDividend, ptrQuotient);
+    EXPECT_NE(ptrDivisor, ptrQuotient);
+}
+
+TEST(test_arithmetic_operators, modulo)
+{
+    BigInt dividend(6420);
+    BigInt* ptrDividend = &dividend;
+
+    BigInt divisor(167);
+    BigInt* ptrDivisor = &divisor;
+
+    BigInt remainder = dividend % divisor;
+    BigInt* ptrRemainder = &remainder;
+
+    EXPECT_EQ(int(dividend), 6420);
+    EXPECT_EQ(int(divisor), 167);
+
+    EXPECT_EQ(int(remainder), 6420%167);
+    EXPECT_NE(ptrDividend, ptrRemainder);
+    EXPECT_NE(ptrDivisor, ptrRemainder);
+}
+
+TEST(test_arithmetic_operators, prefix_increment)
+{
+    BigInt src(654);
+    EXPECT_EQ(int(++src), 655);
+    EXPECT_EQ(int(src), 655);
+}
+
+TEST(test_arithmetic_operators, postfix_increment)
+{
+    BigInt src(654);
+    EXPECT_EQ(int(src++), 654);
+    EXPECT_EQ(int(src), 655);
+}
+
+TEST(test_arithmetic_operators, prefix_decrement)
+{
+    BigInt src(654);
+    EXPECT_EQ(int(--src), 653);
+    EXPECT_EQ(int(src), 653);
+}
+
+TEST(test_arithmetic_operators, postfix_decrement)
+{
+    BigInt src(654);
+    EXPECT_EQ(int(src--), 654);
+    EXPECT_EQ(int(src), 653);
 }
 
 
 
 TEST(test_bitwise_operators, bitwise_not)
 {
-    // size is saved
-    BigInt src1(654);
-    BigInt dest1 = ~src1;
+    BigInt src;
 
-    EXPECT_EQ(int(src1), 654);       // 00000010 10001110
-    EXPECT_EQ(int(dest1), 64881);    // 11111101 01110001
+    // size is saved
+    src = BigInt(654);              // 0 00000010 10001110
+    EXPECT_EQ(int(~src), -64881);   // 1 11111101 01110001
 
     // size is not saved
-    BigInt src2(65393);
-    BigInt dest2 = ~src2;
+    src = BigInt(65393);            // 0 11111111 01110001
+    EXPECT_EQ(int(~src), -142);     // 1 00000000 10001110
+    EXPECT_EQ((~src).size(), 1);
+}
 
-    EXPECT_EQ(int(src2), 65393);    // 11111111 01110001
-    EXPECT_EQ(int(dest2), 142);     // 00000000 10001110
-    EXPECT_EQ(src2.size(), 2);
-    EXPECT_EQ(dest2.size(), 1);
+TEST(test_bitwise_operators, bitwise_or)
+{
+    BigInt arg1(21845);
+    BigInt* ptrArg1 = &arg1;
+
+    BigInt arg2(170);
+    BigInt* ptrArg2 = &arg2;
+
+    BigInt res = arg1 | arg2;
+    BigInt* ptrSum = &res;
+
+    EXPECT_EQ(int(arg1), 21845);    // 0 01010101 01010101
+    EXPECT_EQ(int(arg2), 170);      // 0          10101010
+
+    EXPECT_EQ(int(res), 22015);     // 0 01010101 11111111
+    EXPECT_NE(ptrArg1, ptrSum);
+    EXPECT_NE(ptrArg2, ptrSum);
+}
+
+TEST(test_bitwise_operators, bitwise_and)
+{
+    BigInt arg1(21847);
+    BigInt* ptrArg1 = &arg1;
+
+    BigInt arg2(170);
+    BigInt* ptrArg2 = &arg2;
+
+    BigInt res = arg1 & arg2;
+    BigInt* ptrSum = &res;
+
+    EXPECT_EQ(int(arg1), 21847);    // 0 01010101 01010111
+    EXPECT_EQ(int(arg2), 170);      // 0          10101010
+
+    EXPECT_EQ(int(res), 2);         // 0          00000010
+    EXPECT_NE(ptrArg1, ptrSum);
+    EXPECT_NE(ptrArg2, ptrSum);
+}
+
+TEST(test_bitwise_operators, bitwise_xor)
+{
+    BigInt arg1(21847);
+    BigInt* ptrArg1 = &arg1;
+
+    BigInt arg2(170);
+    BigInt* ptrArg2 = &arg2;
+
+    BigInt res = arg1 ^ arg2;
+    BigInt* ptrSum = &res;
+
+    EXPECT_EQ(int(arg1), 21847);    // 0 01010101 01010111
+    EXPECT_EQ(int(arg2), 170);      // 0          10101010
+
+    EXPECT_EQ(int(res), 22013);     // 0 01010101 11111101
+    EXPECT_NE(ptrArg1, ptrSum);
+    EXPECT_NE(ptrArg2, ptrSum);
 }
 
 
 
 TEST(test_comparison_operators, equal)
 {
-    EXPECT_TRUE(BigInt("6511") == BigInt("6511"));
-    EXPECT_TRUE(BigInt("-6511") == BigInt("-6511"));
-    EXPECT_FALSE(BigInt("6511") == BigInt("-6511"));
-    EXPECT_FALSE(BigInt("-6511") == BigInt("6511"));
-    EXPECT_FALSE(BigInt("6511") == BigInt("-2716"));
+    EXPECT_TRUE(BigInt(6511) == BigInt(6511));
+    EXPECT_TRUE(BigInt(-6511) == BigInt(-6511));
+    EXPECT_FALSE(BigInt(6511) == BigInt(-6511));
+    EXPECT_FALSE(BigInt(-6511) == BigInt(6511));
+    EXPECT_FALSE(BigInt(6511) == BigInt(-2716));
 }
 
 TEST(test_comparison_operators, not_equal)
 {
-    EXPECT_FALSE(BigInt("6511") != BigInt("6511"));
-    EXPECT_FALSE(BigInt("-6511") != BigInt("-6511"));
-    EXPECT_TRUE(BigInt("6511") != BigInt("-6511"));
-    EXPECT_TRUE(BigInt("-6511") != BigInt("6511"));
-    EXPECT_TRUE(BigInt("6511") != BigInt("-2716"));
+    EXPECT_FALSE(BigInt(6511) != BigInt(6511));
+    EXPECT_FALSE(BigInt(-6511) != BigInt(-6511));
+    EXPECT_TRUE(BigInt(6511) != BigInt(-6511));
+    EXPECT_TRUE(BigInt(-6511) != BigInt(6511));
+    EXPECT_TRUE(BigInt(6511) != BigInt(-2716));
 }
 
 TEST(test_comparison_operators, greater)
 {
-    EXPECT_FALSE(BigInt("6511") > BigInt("6511"));
-    EXPECT_FALSE(BigInt("-6511") > BigInt("-6511"));
-    EXPECT_TRUE(BigInt("6511") > BigInt("-6511"));
-    EXPECT_FALSE(BigInt("-6511") > BigInt("6511"));
-    EXPECT_TRUE(BigInt("6511") > BigInt("2716"));
-    EXPECT_FALSE(BigInt("-6511") > BigInt("-2716"));
-    EXPECT_TRUE(BigInt("6511") > BigInt("-2716"));
-    EXPECT_FALSE(BigInt("-6511") > BigInt("2716"));
+    EXPECT_FALSE(BigInt(6511) > BigInt(6511));
+    EXPECT_FALSE(BigInt(-6511) > BigInt(-6511));
+    EXPECT_TRUE(BigInt(6511) > BigInt(-6511));
+    EXPECT_FALSE(BigInt(-6511) > BigInt(6511));
+    EXPECT_TRUE(BigInt(6511) > BigInt(2716));
+    EXPECT_FALSE(BigInt(-6511) > BigInt(-2716));
+    EXPECT_TRUE(BigInt(6511) > BigInt(-2716));
+    EXPECT_FALSE(BigInt(-6511) > BigInt(2716));
 }
 
 TEST(test_comparison_operators, less)
 {
-    EXPECT_FALSE(BigInt("6511") < BigInt("6511"));
-    EXPECT_FALSE(BigInt("-6511") < BigInt("-6511"));
-    EXPECT_FALSE(BigInt("6511") < BigInt("-6511"));
-    EXPECT_TRUE(BigInt("-6511") < BigInt("6511"));
-    EXPECT_FALSE(BigInt("6511") < BigInt("2716"));
-    EXPECT_TRUE(BigInt("-6511") < BigInt("-2716"));
-    EXPECT_FALSE(BigInt("6511") < BigInt("-2716"));
-    EXPECT_TRUE(BigInt("-6511") < BigInt("2716"));
+    EXPECT_FALSE(BigInt(6511) < BigInt(6511));
+    EXPECT_FALSE(BigInt(-6511) < BigInt(-6511));
+    EXPECT_FALSE(BigInt(6511) < BigInt(-6511));
+    EXPECT_TRUE(BigInt(-6511) < BigInt(6511));
+    EXPECT_FALSE(BigInt(6511) < BigInt(2716));
+    EXPECT_TRUE(BigInt(-6511) < BigInt(-2716));
+    EXPECT_FALSE(BigInt(6511) < BigInt(-2716));
+    EXPECT_TRUE(BigInt(-6511) < BigInt(2716));
 }
 
 TEST(test_comparison_operators, greater_or_equal)
 {
-    EXPECT_TRUE(BigInt("6511") >= BigInt("6511"));
-    EXPECT_TRUE(BigInt("-6511") >= BigInt("-6511"));
-    EXPECT_TRUE(BigInt("6511") >= BigInt("-6511"));
-    EXPECT_FALSE(BigInt("-6511") >= BigInt("6511"));
-    EXPECT_TRUE(BigInt("6511") >= BigInt("2716"));
-    EXPECT_FALSE(BigInt("-6511") >= BigInt("-2716"));
-    EXPECT_TRUE(BigInt("6511") >= BigInt("-2716"));
-    EXPECT_FALSE(BigInt("-6511") >= BigInt("2716"));
+    EXPECT_TRUE(BigInt(6511) >= BigInt(6511));
+    EXPECT_TRUE(BigInt(-6511) >= BigInt(-6511));
+    EXPECT_TRUE(BigInt(6511) >= BigInt(-6511));
+    EXPECT_FALSE(BigInt(-6511) >= BigInt(6511));
+    EXPECT_TRUE(BigInt(6511) >= BigInt(2716));
+    EXPECT_FALSE(BigInt(-6511) >= BigInt(-2716));
+    EXPECT_TRUE(BigInt(6511) >= BigInt(-2716));
+    EXPECT_FALSE(BigInt(-6511) >= BigInt(2716));
 }
 
 TEST(test_comparison_operators, less_or_equal)
 {
-    EXPECT_TRUE(BigInt("6511") <= BigInt("6511"));
-    EXPECT_TRUE(BigInt("-6511") <= BigInt("-6511"));
-    EXPECT_FALSE(BigInt("6511") <= BigInt("-6511"));
-    EXPECT_TRUE(BigInt("-6511") <= BigInt("6511"));
-    EXPECT_FALSE(BigInt("6511") <= BigInt("2716"));
-    EXPECT_TRUE(BigInt("-6511") <= BigInt("-2716"));
-    EXPECT_FALSE(BigInt("6511") <= BigInt("-2716"));
-    EXPECT_TRUE(BigInt("-6511") <= BigInt("2716"));
+    EXPECT_TRUE(BigInt(6511) <= BigInt(6511));
+    EXPECT_TRUE(BigInt(-6511) <= BigInt(-6511));
+    EXPECT_FALSE(BigInt(6511) <= BigInt(-6511));
+    EXPECT_TRUE(BigInt(-6511) <= BigInt(6511));
+    EXPECT_FALSE(BigInt(6511) <= BigInt(2716));
+    EXPECT_TRUE(BigInt(-6511) <= BigInt(-2716));
+    EXPECT_FALSE(BigInt(6511) <= BigInt(-2716));
+    EXPECT_TRUE(BigInt(-6511) <= BigInt(2716));
+}
+
+
+
+TEST(test_type_conversion_operator, int_conversion)
+{
+    BigInt num;
+
+    num = BigInt(654);
+    EXPECT_EQ(int(num), 654);
+
+    num = BigInt(-654);
+    EXPECT_EQ(int(num), -654);
+
+    try
+    {
+        num = BigInt("165165161654");
+    }
+    catch(std::invalid_argument const & ex)
+    {
+        EXPECT_STREQ(ex.what(), "Int overflow");
+    }
+}
+
+TEST(test_type_conversion_operator, string_conversion)
+{
+    BigInt num;
+
+    num = BigInt("654");
+    EXPECT_STREQ(std::string(num).data(), "654");
+
+    num = BigInt("-654");
+    EXPECT_STREQ(std::string(num).data(), "-654");
+
+    num = BigInt("-0");
+    EXPECT_STREQ(std::string(num).data(), "0");
 }
 
 

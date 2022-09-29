@@ -12,10 +12,8 @@ public:
     String();
     explicit String(const std::string&);
     String(const String&);
-    String(String&&) noexcept;
 
     String& operator=(const String&);
-    String& operator=(String&&) noexcept;
 
     String& operator+=(const String&);
     String& operator*=(const String&);

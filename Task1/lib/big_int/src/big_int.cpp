@@ -2,23 +2,24 @@
 
 BigInt::BigInt()
 {
-    isNegative_ = false;
+    is_positive_ = true;
     bytes_.clear();
     bytes_.shrink_to_fit();
+    bytes_.push_back(0);
 }
 
-BigInt::BigInt(int number)
+BigInt::BigInt(int num)
 {
-    isNegative_ = (number < 0);
+    is_positive_ = (num >= 0);
     
     union UInt
     {
         unsigned int bit32;
         Byte bit8[4];
-    } num{};
+    } bits{};
 
-    num.bit32 = abs(number);
-    bytes_ = std::vector<Byte>(std::cbegin(num.bit8), std::cend(num.bit8));
+    bits.bit32 = abs(num);
+    bytes_ = std::vector<Byte>(std::cbegin(bits.bit8), std::cend(bits.bit8));
 
     this->delete_null_bytes();
 }
@@ -31,15 +32,16 @@ BigInt::BigInt(const std::string& str)
         return;
     }
 
-    isNegative_ = (str[0] == '-');
+    is_positive_ = (str[0] != '-');
 
-    if (str.empty() || (isNegative_ && str.size() == 1))
+    if (!is_positive_ && str.size() == 1)
     {
         throw std::invalid_argument("Wrong string number");
     }
 
-    String quotient((str[0] == '-') ? str.substr(1, str.size()) : str);
+    String quotient(is_positive_ ? str : str.substr(1, str.size()));
     String base(std::to_string(base_));
+
     while (base < quotient)
     {
         bytes_.push_back((Byte)stoi((quotient % base).to_string()));
@@ -51,14 +53,8 @@ BigInt::BigInt(const std::string& str)
 
 BigInt::BigInt(const BigInt& src)
 {
-    isNegative_ = src.isNegative_;
+    is_positive_ = src.is_positive_;
     bytes_.assign(src.bytes_.begin(), src.bytes_.end());
-}
-
-BigInt::BigInt(BigInt&& src) noexcept
-{
-    isNegative_ = src.isNegative_;
-    bytes_ = std::move(src.bytes_);
 }
 
 BigInt::~BigInt()
@@ -67,72 +63,55 @@ BigInt::~BigInt()
     bytes_.shrink_to_fit();
 }
 
+
+
 BigInt& BigInt::operator=(const BigInt& src)
 {
-    if (this == &src)
+    if (this != &src)
     {
-        return *this;
+        is_positive_ = src.is_positive_;
+        bytes_.assign(src.bytes_.begin(), src.bytes_.end());
     }
-
-    isNegative_ = src.isNegative_;
-    bytes_.assign(src.bytes_.begin(), src.bytes_.end());
 
     return *this;
 }
 
-BigInt &BigInt::operator=(BigInt && tmp) noexcept
+BigInt &BigInt::operator+=(const BigInt & addend)
 {
-    isNegative_ = tmp.isNegative_;
-    bytes_ = std::move(tmp.bytes_);
-    return *this;
-}
-
-BigInt BigInt::operator~() const
-{
-    BigInt tmp(*this);
-
-    for (unsigned char & byte : tmp.bytes_)
+    if (is_positive_ ^ addend.is_positive_)
     {
-        byte = ~byte;
-    }
-
-    tmp.delete_null_bytes();
-
-    return tmp;
-}
-
-BigInt &BigInt::operator+=(const BigInt & addend2)
-{
-    if (isNegative_ ^ addend2.isNegative_)
-    {
-        isNegative_ = !isNegative_;
-        *this -= addend2;
-        isNegative_ = !isNegative_;
+        is_positive_ = !is_positive_;
+        *this -= addend;
+        is_positive_ = !is_positive_;
         return *this;
     }
 
-    BigInt addend1(*this);
-    bytes_.clear();
+    auto addendIter = addend.bytes_.cbegin();
+    auto addendEnd = addend.bytes_.cend();
+
+    auto sumIter = bytes_.begin();
+    auto sumEnd = bytes_.end();
 
     unsigned int carry = 0;
-    auto addend1_= addend1.bytes_.begin();
-    auto addend2_ = addend2.bytes_.begin();
-
-    while (addend1_ != addend1.bytes_.end() || addend2_ != addend2.bytes_.end())
+    while (sumIter < sumEnd || addendIter < addendEnd)
     {
-        if(addend1_ != addend1.bytes_.end())
+        if(addendIter < addendEnd)
         {
-            carry += *addend1_;
-            ++addend1_;
+            carry += *addendIter;
+            ++addendIter;
         }
 
-        if(addend2_ != addend2.bytes_.end())
+        if (sumIter < sumEnd)
         {
-            carry += *addend2_;
-            ++addend2_;
+            carry += *sumIter;
+            *sumIter = carry % base_;
+            ++sumIter;
+        }
+        else
+        {
+            bytes_.push_back(carry % base_);
         }
 
-        bytes_.push_back(carry % base_);
         carry /= base_;
     }
 
@@ -141,6 +120,61 @@ BigInt &BigInt::operator+=(const BigInt & addend2)
         bytes_.push_back(carry);
     }
 
+    return *this;
+}
+
+BigInt &BigInt::operator-=(const BigInt & subtrahend)
+{
+    if (is_positive_ ^ subtrahend.is_positive_)
+    {
+        is_positive_ = !is_positive_;
+        *this += subtrahend;
+        is_positive_ = !is_positive_;
+        return *this;
+    }
+
+    bool absCmp = abs_compare(*this, subtrahend);
+
+    auto minuendIter = absCmp ? bytes_.cbegin() : subtrahend.bytes_.cbegin();
+    auto minuendEnd = absCmp ? bytes_.cend() : subtrahend.bytes_.cend();
+
+    auto subtrahendIter = absCmp ? subtrahend.bytes_.cbegin() : bytes_.cbegin();
+    auto subtrahendEnd = absCmp ? subtrahend.bytes_.cend() : bytes_.cend();
+
+    auto differenceIter = bytes_.begin();
+    auto differenceEnd = bytes_.end();
+
+    is_positive_ = (absCmp == is_positive_);
+
+    int carry = 0;
+    while (minuendIter < minuendEnd || subtrahendIter < subtrahendEnd)
+    {
+        if(minuendIter < minuendEnd)
+        {
+            carry += *minuendIter;
+            ++minuendIter;
+        }
+
+        if(subtrahendIter < subtrahendEnd)
+        {
+            carry -= *subtrahendIter;
+            ++subtrahendIter;
+        }
+
+        if (differenceIter < differenceEnd)
+        {
+            *differenceIter = (carry >= 0) ? carry : base_ + carry;
+            ++differenceIter;
+        }
+        else
+        {
+            bytes_.push_back(carry % base_);
+        }
+
+        carry = (carry >= 0) ? 0 : -1;
+    }
+
+    delete_null_bytes();
     return *this;
 }
 
@@ -171,50 +205,7 @@ BigInt &BigInt::operator*=(const BigInt & multiplier2)
         *this += buffer;
     }
 
-    isNegative_ = (multiplier1.isNegative_ ^ multiplier2.isNegative_);
-    delete_null_bytes();
-    return *this;
-}
-
-BigInt &BigInt::operator-=(const BigInt & subtrahend)
-{
-    if (isNegative_ ^ subtrahend.isNegative_)
-    {
-        isNegative_ = !isNegative_;
-        *this += subtrahend;
-        isNegative_ = !isNegative_;
-        return *this;
-    }
-
-    BigInt minuend(*this);
-    bytes_.clear();
-
-    bool absCmp = (isNegative_ ^ (subtrahend < minuend));
-    auto minuend_ = absCmp ? minuend.bytes_.begin() : subtrahend.bytes_.begin();
-    auto subtrahend_ = absCmp ? subtrahend.bytes_.begin() : minuend.bytes_.begin();
-    auto minuendEnd = absCmp ? minuend.bytes_.end() : subtrahend.bytes_.end();
-    auto subtrahendEnd = absCmp ? subtrahend.bytes_.end() : minuend.bytes_.end();
-    isNegative_ = (absCmp == minuend.isNegative_);
-
-    int carry = 0;
-
-    while (minuend_ != minuendEnd || subtrahend_ != subtrahendEnd)
-    {
-        if(minuend_ != minuendEnd)
-        {
-            carry += *minuend_;
-            ++minuend_;
-        }
-
-        if(subtrahend_ != subtrahendEnd)
-        {
-            carry -= *subtrahend_;
-            ++subtrahend_;
-        }
-
-        bytes_.push_back((carry >= 0) ? carry : base_ + carry);
-        carry = (carry >= 0) ? 0 : -1;
-    }
+    is_positive_ = !(multiplier1.is_positive_ ^ multiplier2.is_positive_);
 
     delete_null_bytes();
     return *this;
@@ -232,26 +223,25 @@ BigInt& BigInt::operator/=(const BigInt& divisor)
     remainder.bytes_.clear();
     bytes_.clear();
 
-    for (auto dividend_ = dividend.bytes_.rbegin(); dividend_ != dividend.bytes_.rend(); ++dividend_)
+    auto dividendIter = dividend.bytes_.rbegin();
+
+    while (dividendIter != dividend.bytes_.rend())
     {
-        remainder.bytes_.insert(remainder.bytes_.begin(), *dividend_);
+        remainder.bytes_.insert(remainder.bytes_.begin(), *dividendIter);
+        ++dividendIter;
+        remainder.delete_null_bytes();
 
-        if (remainder < divisor)
+        unsigned int carry = 0;
+        while (abs_compare(remainder, divisor))
         {
-            bytes_.insert(bytes_.begin(), 0);
-            continue;
-        }
-
-        int carry = 0;
-        do
-        {
-            remainder -= divisor;
+            remainder -= abs(divisor);
             ++carry;
-        } while (remainder >= divisor);
+        }
 
         bytes_.insert(bytes_.begin(), carry);
     }
 
+    is_positive_ = !(dividend.is_positive_ ^ divisor.is_positive_);
     delete_null_bytes();
     return *this;
 }
@@ -265,24 +255,113 @@ BigInt& BigInt::operator%=(const BigInt& divisor)
 
     BigInt dividend(*this);
     bytes_.clear();
-    auto dividend_ = dividend.bytes_.rbegin();
+    is_positive_ = true;
 
-    while (dividend_ != dividend.bytes_.rend())
+    auto dividendIter = dividend.bytes_.rbegin();
+
+    while (dividendIter != dividend.bytes_.rend())
     {
-        while(dividend_ != dividend.bytes_.rend() && *this < divisor)
+        bytes_.insert(bytes_.begin(), *dividendIter);
+        ++dividendIter;
+        delete_null_bytes();
+
+        while (abs_compare(*this, divisor))
         {
-            bytes_.insert(bytes_.begin(), *dividend_);
-            ++dividend_;
+            *this -= abs(divisor);
+        }
+    }
+
+    is_positive_ = dividend.is_positive_;
+    delete_null_bytes();
+    return *this;
+}
+
+BigInt &BigInt::operator|=(const BigInt & bits)
+{
+    is_positive_ = is_positive_ && bits.is_positive_;
+
+    int bitsIndex = 0;
+    int bitsSize = (int)bits.bytes_.size();
+
+    int resultIndex = 0;
+    int resultSize = (int)bytes_.size();
+
+    while (resultIndex < resultSize || bitsIndex < bitsSize)
+    {
+        Byte carry = 0;
+        if(bitsIndex < bitsSize)
+        {
+            carry |= bits.bytes_[bitsIndex];
+            ++bitsIndex;
         }
 
-        while (*this >= divisor)
+        if (resultIndex < resultSize)
         {
-            *this -= divisor;
+            bytes_[resultIndex] |= carry;
+            ++resultIndex;
+        }
+        else
+        {
+            bytes_.push_back(carry);
         }
     }
 
     return *this;
 }
+
+BigInt &BigInt::operator&=(const BigInt & bits)
+{
+    is_positive_ = is_positive_ || bits.is_positive_;
+
+    int resultSize = std::min(size(), bits.size());
+    for (int i = 0; i < resultSize; ++i)
+    {
+        bytes_[i] &= bits.bytes_[i];
+    }
+
+    if (size() != resultSize)
+    {
+        bytes_.erase(bytes_.begin() + resultSize, bytes_.end());
+    }
+
+    return *this;
+}
+
+BigInt &BigInt::operator^=(const BigInt & bits)
+{
+    is_positive_ = !(is_positive_ ^ bits.is_positive_);
+
+    int bitsIndex = 0;
+    int bitsSize = (int)bits.bytes_.size();
+
+    int resultIndex = 0;
+    int resultSize = (int)bytes_.size();
+
+    while (resultIndex < resultSize || bitsIndex < bitsSize)
+    {
+        Byte carry = 0;
+        if(bitsIndex < bitsSize)
+        {
+            carry = bits.bytes_[bitsIndex];
+            ++bitsIndex;
+        }
+
+        if (resultIndex < resultSize)
+        {
+            bytes_[resultIndex] ^= carry;
+            ++resultIndex;
+        }
+        else
+        {
+            bytes_.push_back(carry);
+        }
+    }
+
+    delete_null_bytes();
+    return *this;
+}
+
+
 
 BigInt BigInt::operator+() const
 {
@@ -292,13 +371,43 @@ BigInt BigInt::operator+() const
 BigInt BigInt::operator-() const
 {
     BigInt tmp(*this);
-    tmp.isNegative_ = !isNegative_;
+    tmp.is_positive_ = !is_positive_;
     return tmp;
 }
 
+
+
+BigInt &BigInt::operator++()
+{
+    *this += BigInt(1);
+    return *this;
+}
+
+const BigInt BigInt::operator++(int)
+{
+    BigInt tmp(*this);
+    ++(*this);
+    return tmp;
+}
+
+BigInt &BigInt::operator--()
+{
+    *this -= BigInt(1);
+    return *this;
+}
+
+const BigInt BigInt::operator--(int)
+{
+    BigInt tmp(*this);
+    --(*this);
+    return tmp;
+}
+
+
+
 bool BigInt::operator==(const BigInt& cmp) const
 {
-    if (isNegative_ ^ cmp.isNegative_)
+    if (is_positive_ ^ cmp.is_positive_)
     {
         return false;
     }
@@ -326,21 +435,21 @@ bool BigInt::operator!=(const BigInt& cmp) const
 
 bool BigInt::operator<(const BigInt& cmp) const
 {
-    if (isNegative_ ^ cmp.isNegative_)
+    if (is_positive_ ^ cmp.is_positive_)
     {
-        return isNegative_;
+        return cmp.is_positive_;
     }
 
     if (bytes_.size() != cmp.size())
     {
-        return isNegative_ ^ (bytes_.size() < cmp.size());
+        return is_positive_ ^ (cmp.size() < bytes_.size());
     }
 
     for (int i = (int)bytes_.size() - 1; i >= 0 ; i--)
     {
         if (bytes_[i] != cmp.bytes_[i])
         {
-            return isNegative_ ^ (bytes_[i] < cmp.bytes_[i]);
+            return is_positive_ ^ (cmp.bytes_[i] < bytes_[i]);
         }
     }
 
@@ -362,6 +471,25 @@ bool BigInt::operator>=(const BigInt& cmp) const
     return !((*this) < cmp);
 }
 
+
+
+BigInt BigInt::operator~() const
+{
+    BigInt tmp(*this);
+
+    for (Byte & byte : tmp.bytes_)
+    {
+        byte = ~byte;
+    }
+
+    tmp.is_positive_ = !tmp.is_positive_;
+    tmp.delete_null_bytes();
+
+    return tmp;
+}
+
+
+
 BigInt::operator int() const
 {
     if (bytes_.size() > 4)
@@ -373,33 +501,35 @@ BigInt::operator int() const
     {
         int bit32;
         Byte bit8[4];
-    } num{};
+    } intNum{};
 
-    std::copy(bytes_.begin(), bytes_.end(), num.bit8);
+    std::copy(bytes_.begin(), bytes_.end(), intNum.bit8);
 
-    return (isNegative_) ? -num.bit32 : num.bit32;
+    return (is_positive_) ? intNum.bit32 : -intNum.bit32;
 }
 
 BigInt::operator std::string() const
 {
-    String base(std::to_string(base_));
-    String number("0");
-
-    for (auto byteIt = bytes_.rbegin(); byteIt != bytes_.rend(); ++byteIt)
+    String number;
+    for (auto byteIter = bytes_.crbegin(); byteIter != bytes_.crend(); ++byteIter)
     {
-        String byte(std::to_string(*byteIt));
+        String base(std::to_string(base_));
+        String byte(std::to_string(*byteIter));
+
         number *= base;
         number += byte;
     }
 
     std::string numberStr = number.to_string();
-    if (isNegative_ && numberStr != "0")
+    if (!is_positive_ && numberStr != "0")
     {
         numberStr.insert(numberStr.begin(), '-');
     }
 
     return numberStr;
 }
+
+
 
 size_t BigInt::size() const
 {
@@ -416,13 +546,80 @@ void BigInt::delete_null_bytes()
     bytes_.shrink_to_fit();
 }
 
-bool BigInt::null_byte()
+BigInt abs(const BigInt & num)
 {
-    return bytes_.size() == 1 && bytes_[0] == 0;
+    BigInt absNum(num);
+    absNum.is_positive_ = true;
+    return absNum;
 }
 
-std::ostream& operator<<(std::ostream& out, const BigInt& num)
+bool abs_compare(const BigInt & cmp1, const BigInt & cmp2)
 {
-    out << std::string(num);
-    return out;
+    return abs(cmp1) >= abs(cmp2);
 }
+
+
+
+BigInt operator+(const BigInt & addend1, const BigInt & addend2)
+{
+    BigInt sum(addend1);
+    sum += addend2;
+    return sum;
+}
+
+BigInt operator-(const BigInt & minuend, const BigInt & subtrahend)
+{
+    BigInt difference(minuend);
+    difference -= subtrahend;
+    return difference;
+}
+
+BigInt operator*(const BigInt & multiplier1, const BigInt & multiplier2)
+{
+    BigInt product(multiplier1);
+    product *= multiplier2;
+    return product;
+}
+
+BigInt operator/(const BigInt & dividend, const BigInt & divisor)
+{
+    BigInt quotient(dividend);
+    quotient /= divisor;
+    return quotient;
+}
+
+BigInt operator%(const BigInt & dividend, const BigInt & divisor)
+{
+    BigInt remainder(dividend);
+    remainder %= divisor;
+    return remainder;
+}
+
+BigInt operator|(const BigInt & bits1, const BigInt & bits2)
+{
+    BigInt result(bits1);
+    result |= BigInt(bits2);
+    return result;
+}
+
+BigInt operator&(const BigInt & bits1, const BigInt & bits2)
+{
+    BigInt result(bits1);
+    result &= BigInt(bits2);
+    return result;
+}
+
+BigInt operator^(const BigInt & bits1, const BigInt & bits2)
+{
+    BigInt result(bits1);
+    result ^= BigInt(bits2);
+    return result;
+}
+
+
+
+//std::ostream& operator<<(std::ostream& out, const BigInt& num)
+//{
+//    out << std::string(num);
+//    return out;
+//}
