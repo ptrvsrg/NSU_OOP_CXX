@@ -3,8 +3,6 @@
 BigInt::BigInt()
 {
     is_positive_ = true;
-    bytes_.clear();
-    bytes_.shrink_to_fit();
     bytes_.push_back(0);
 }
 
@@ -24,7 +22,7 @@ BigInt::BigInt(int num)
     this->delete_null_bytes();
 }
 
-BigInt::BigInt(const std::string& str)
+BigInt::BigInt(const std::string & str)
 {
     if (str.empty())
     {
@@ -36,7 +34,7 @@ BigInt::BigInt(const std::string& str)
 
     if (!is_positive_ && str.size() == 1)
     {
-        throw std::invalid_argument("Wrong string number");
+        throw std::invalid_argument("Wrong number");
     }
 
     String quotient(is_positive_ ? str : str.substr(1, str.size()));
@@ -51,7 +49,7 @@ BigInt::BigInt(const std::string& str)
     bytes_.push_back((Byte)stoi(quotient.to_string()));
 }
 
-BigInt::BigInt(const BigInt& src)
+BigInt::BigInt(const BigInt & src)
 {
     is_positive_ = src.is_positive_;
     bytes_.assign(src.bytes_.begin(), src.bytes_.end());
@@ -65,7 +63,7 @@ BigInt::~BigInt()
 
 
 
-BigInt& BigInt::operator=(const BigInt& src)
+BigInt & BigInt::operator=(const BigInt & src)
 {
     if (this != &src)
     {
@@ -76,7 +74,7 @@ BigInt& BigInt::operator=(const BigInt& src)
     return *this;
 }
 
-BigInt &BigInt::operator+=(const BigInt & addend)
+BigInt & BigInt::operator+=(const BigInt & addend)
 {
     if (is_positive_ ^ addend.is_positive_)
     {
@@ -123,7 +121,7 @@ BigInt &BigInt::operator+=(const BigInt & addend)
     return *this;
 }
 
-BigInt &BigInt::operator-=(const BigInt & subtrahend)
+BigInt & BigInt::operator-=(const BigInt & subtrahend)
 {
     if (is_positive_ ^ subtrahend.is_positive_)
     {
@@ -178,21 +176,21 @@ BigInt &BigInt::operator-=(const BigInt & subtrahend)
     return *this;
 }
 
-BigInt &BigInt::operator*=(const BigInt & multiplier2)
+BigInt & BigInt::operator*=(const BigInt & multiplier2)
 {
     BigInt multiplier1(*this);
     *this = BigInt();
 
-    for (int i = 0; i < multiplier1.size(); ++i)
+    for (auto multiplierIter1 = multiplier1.bytes_.cbegin(); multiplierIter1 < multiplier1.bytes_.cend(); ++multiplierIter1)
     {
         BigInt buffer;
         buffer.bytes_.clear();
-        buffer.bytes_.insert(buffer.bytes_.begin(), i, 0);
+        buffer.bytes_.insert(buffer.bytes_.cbegin(), multiplierIter1 - multiplier1.bytes_.cbegin(), 0);
 
         unsigned int carry = 0;
-        for (int j = 0; j < multiplier2.size(); ++j)
+        for (auto multiplierIter2 = multiplier2.bytes_.cbegin(); multiplierIter2 < multiplier2.bytes_.cend(); ++multiplierIter2)
         {
-            carry += multiplier1.bytes_[i] * multiplier2.bytes_[j];
+            carry += (*multiplierIter1) * (*multiplierIter2);
             buffer.bytes_.push_back(carry % base_);
             carry /= base_;
         }
@@ -206,12 +204,12 @@ BigInt &BigInt::operator*=(const BigInt & multiplier2)
     }
 
     is_positive_ = !(multiplier1.is_positive_ ^ multiplier2.is_positive_);
-
     delete_null_bytes();
+
     return *this;
 }
 
-BigInt& BigInt::operator/=(const BigInt& divisor)
+BigInt & BigInt::operator/=(const BigInt & divisor)
 {
     if (divisor == BigInt(0))
     {
@@ -219,15 +217,15 @@ BigInt& BigInt::operator/=(const BigInt& divisor)
     }
 
     BigInt dividend(*this);
-    BigInt remainder;
-    remainder.bytes_.clear();
     bytes_.clear();
 
-    auto dividendIter = dividend.bytes_.rbegin();
+    BigInt remainder;
+    remainder.bytes_.clear();
 
-    while (dividendIter != dividend.bytes_.rend())
+    auto dividendIter = dividend.bytes_.crbegin();
+    while (dividendIter < dividend.bytes_.crend())
     {
-        remainder.bytes_.insert(remainder.bytes_.begin(), *dividendIter);
+        remainder.bytes_.insert(remainder.bytes_.cbegin(), *dividendIter);
         ++dividendIter;
         remainder.delete_null_bytes();
 
@@ -238,15 +236,16 @@ BigInt& BigInt::operator/=(const BigInt& divisor)
             ++carry;
         }
 
-        bytes_.insert(bytes_.begin(), carry);
+        bytes_.insert(bytes_.cbegin(), carry);
     }
 
     is_positive_ = !(dividend.is_positive_ ^ divisor.is_positive_);
     delete_null_bytes();
+
     return *this;
 }
 
-BigInt& BigInt::operator%=(const BigInt& divisor)
+BigInt & BigInt::operator%=(const BigInt & divisor)
 {
     if (divisor == BigInt(0))
     {
@@ -257,11 +256,10 @@ BigInt& BigInt::operator%=(const BigInt& divisor)
     bytes_.clear();
     is_positive_ = true;
 
-    auto dividendIter = dividend.bytes_.rbegin();
-
-    while (dividendIter != dividend.bytes_.rend())
+    auto dividendIter = dividend.bytes_.crbegin();
+    while (dividendIter < dividend.bytes_.crend())
     {
-        bytes_.insert(bytes_.begin(), *dividendIter);
+        bytes_.insert(bytes_.cbegin(), *dividendIter);
         ++dividendIter;
         delete_null_bytes();
 
@@ -273,32 +271,30 @@ BigInt& BigInt::operator%=(const BigInt& divisor)
 
     is_positive_ = dividend.is_positive_;
     delete_null_bytes();
+
     return *this;
 }
 
-BigInt &BigInt::operator|=(const BigInt & bits)
+BigInt & BigInt::operator|=(const BigInt & bits)
 {
     is_positive_ = is_positive_ && bits.is_positive_;
 
-    int bitsIndex = 0;
-    int bitsSize = (int)bits.bytes_.size();
+    auto bitsIter = bits.bytes_.cbegin();
+    auto resultIter = bytes_.begin();
 
-    int resultIndex = 0;
-    int resultSize = (int)bytes_.size();
-
-    while (resultIndex < resultSize || bitsIndex < bitsSize)
+    while (resultIter < bytes_.end() || bitsIter < bits.bytes_.cend())
     {
         Byte carry = 0;
-        if(bitsIndex < bitsSize)
+        if(bitsIter < bits.bytes_.cend())
         {
-            carry |= bits.bytes_[bitsIndex];
-            ++bitsIndex;
+            carry = *bitsIter;
+            ++bitsIter;
         }
 
-        if (resultIndex < resultSize)
+        if (resultIter < bytes_.end())
         {
-            bytes_[resultIndex] |= carry;
-            ++resultIndex;
+            *resultIter |= carry;
+            ++resultIter;
         }
         else
         {
@@ -309,47 +305,48 @@ BigInt &BigInt::operator|=(const BigInt & bits)
     return *this;
 }
 
-BigInt &BigInt::operator&=(const BigInt & bits)
+BigInt & BigInt::operator&=(const BigInt & bits)
 {
     is_positive_ = is_positive_ || bits.is_positive_;
 
-    int resultSize = std::min(size(), bits.size());
-    for (int i = 0; i < resultSize; ++i)
+    auto bitsIter = bits.bytes_.cbegin();
+    auto resultIter = bytes_.begin();
+
+    while (resultIter < bytes_.end() && bitsIter < bits.bytes_.cend())
     {
-        bytes_[i] &= bits.bytes_[i];
+        *resultIter &= *bitsIter;
+        ++bitsIter;
+        ++resultIter;
     }
 
-    if (size() != resultSize)
+    if (resultIter < bytes_.end())
     {
-        bytes_.erase(bytes_.begin() + resultSize, bytes_.end());
+        bytes_.erase(resultIter, bytes_.end());
     }
 
     return *this;
 }
 
-BigInt &BigInt::operator^=(const BigInt & bits)
+BigInt & BigInt::operator^=(const BigInt & bits)
 {
     is_positive_ = !(is_positive_ ^ bits.is_positive_);
 
-    int bitsIndex = 0;
-    int bitsSize = (int)bits.bytes_.size();
+    auto bitsIter = bits.bytes_.cbegin();
+    auto resultIter = bytes_.begin();
 
-    int resultIndex = 0;
-    int resultSize = (int)bytes_.size();
-
-    while (resultIndex < resultSize || bitsIndex < bitsSize)
+    while (resultIter < bytes_.end() || bitsIter < bits.bytes_.cend())
     {
         Byte carry = 0;
-        if(bitsIndex < bitsSize)
+        if(bitsIter < bits.bytes_.cend())
         {
-            carry = bits.bytes_[bitsIndex];
-            ++bitsIndex;
+            carry = *bitsIter;
+            ++bitsIter;
         }
 
-        if (resultIndex < resultSize)
+        if (resultIter < bytes_.end())
         {
-            bytes_[resultIndex] ^= carry;
-            ++resultIndex;
+            *resultIter ^= carry;
+            ++resultIter;
         }
         else
         {
@@ -377,7 +374,7 @@ BigInt BigInt::operator-() const
 
 
 
-BigInt &BigInt::operator++()
+BigInt & BigInt::operator++()
 {
     *this += BigInt(1);
     return *this;
@@ -390,7 +387,7 @@ const BigInt BigInt::operator++(int)
     return tmp;
 }
 
-BigInt &BigInt::operator--()
+BigInt & BigInt::operator--()
 {
     *this -= BigInt(1);
     return *this;
@@ -405,7 +402,7 @@ const BigInt BigInt::operator--(int)
 
 
 
-bool BigInt::operator==(const BigInt& cmp) const
+bool BigInt::operator==(const BigInt & cmp) const
 {
     if (is_positive_ ^ cmp.is_positive_)
     {
@@ -428,12 +425,12 @@ bool BigInt::operator==(const BigInt& cmp) const
     return true;
 }
 
-bool BigInt::operator!=(const BigInt& cmp) const
+bool BigInt::operator!=(const BigInt & cmp) const
 {
     return !((*this) == cmp);
 }
 
-bool BigInt::operator<(const BigInt& cmp) const
+bool BigInt::operator<(const BigInt & cmp) const
 {
     if (is_positive_ ^ cmp.is_positive_)
     {
@@ -456,17 +453,17 @@ bool BigInt::operator<(const BigInt& cmp) const
     return false;
 }
 
-bool BigInt::operator>(const BigInt& cmp) const
+bool BigInt::operator>(const BigInt & cmp) const
 {
     return !(*this < cmp) && !(*this == cmp);
 }
 
-bool BigInt::operator<=(const BigInt& cmp) const
+bool BigInt::operator<=(const BigInt & cmp) const
 {
     return !((*this) > cmp);
 }
 
-bool BigInt::operator>=(const BigInt& cmp) const
+bool BigInt::operator>=(const BigInt & cmp) const
 {
     return !((*this) < cmp);
 }
@@ -523,7 +520,7 @@ BigInt::operator std::string() const
     std::string numberStr = number.to_string();
     if (!is_positive_ && numberStr != "0")
     {
-        numberStr.insert(numberStr.begin(), '-');
+        numberStr.insert(numberStr.cbegin(), '-');
     }
 
     return numberStr;
@@ -538,12 +535,10 @@ size_t BigInt::size() const
 
 void BigInt::delete_null_bytes()
 {
-    while (bytes_.size() > 1 && *(bytes_.rbegin()) == 0)
+    while (*(bytes_.rbegin()) == 0 && bytes_.size() > 1)
     {
         bytes_.pop_back();
     }
-
-    bytes_.shrink_to_fit();
 }
 
 BigInt abs(const BigInt & num)
@@ -618,8 +613,16 @@ BigInt operator^(const BigInt & bits1, const BigInt & bits2)
 
 
 
-//std::ostream& operator<<(std::ostream& out, const BigInt& num)
-//{
-//    out << std::string(num);
-//    return out;
-//}
+std::ostream & operator<<(std::ostream & out, const BigInt & num)
+{
+    out << std::string(num);
+    return out;
+}
+
+std::istream & operator>>(std::istream & in, BigInt & num)
+{
+    std::string str;
+    in >> str;
+    num = BigInt(str);
+    return in;
+}
