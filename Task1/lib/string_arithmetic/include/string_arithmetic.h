@@ -4,8 +4,6 @@
 #include <iostream>
 #include <string>
 
-class const_iterator;
-
 class String
 {
 public:
