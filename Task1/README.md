@@ -70,8 +70,7 @@ std::ostream& operator<<(std::ostream& o, const BigInt& i);
 ### Повышенная сложность (по желанию)
 
 + Реализовать семантику перемещения 
-<pre><code>
-BigInt(BigInt&&); 
+<pre><code>BigInt(BigInt&&); 
 BigInt& operator=(BigInt&&);
 </code></pre>
 + Реализовать оператор ввода из потока с корректной обработкой ошибок 
