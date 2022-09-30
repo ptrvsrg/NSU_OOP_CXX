@@ -1,5 +1,6 @@
 #include <iostream>
 #include <climits>
+#include <sstream>
 #include "gtest/gtest.h"
 #include "big_int.h"
 
@@ -52,7 +53,7 @@ TEST(test_constructors, string_constructor)
     }
     catch (std::invalid_argument const& ex)
     {
-        EXPECT_STREQ(ex.what(), "Wrong string number");
+        EXPECT_STREQ(ex.what(), "Wrong number");
     }
 
     // not number
@@ -62,7 +63,7 @@ TEST(test_constructors, string_constructor)
     }
     catch (std::invalid_argument const& ex)
     {
-        EXPECT_STREQ(ex.what(), "Wrong string number");
+        EXPECT_STREQ(ex.what(), "Wrong number");
     }
 }
 
@@ -645,7 +646,7 @@ TEST(test_bitwise_operators, bitwise_or)
     EXPECT_EQ(int(arg1), 21845);    // 0 01010101 01010101
     EXPECT_EQ(int(arg2), 170);      // 0          10101010
 
-    EXPECT_EQ(int(res), 22015);     // 0 01010101 11111111
+    EXPECT_EQ(int(res), 21845|170); // 0 01010101 11111111
     EXPECT_NE(ptrArg1, ptrSum);
     EXPECT_NE(ptrArg2, ptrSum);
 }
@@ -664,7 +665,7 @@ TEST(test_bitwise_operators, bitwise_and)
     EXPECT_EQ(int(arg1), 21847);    // 0 01010101 01010111
     EXPECT_EQ(int(arg2), 170);      // 0          10101010
 
-    EXPECT_EQ(int(res), 2);         // 0          00000010
+    EXPECT_EQ(int(res), 21847&170); // 0          00000010
     EXPECT_NE(ptrArg1, ptrSum);
     EXPECT_NE(ptrArg2, ptrSum);
 }
@@ -683,7 +684,7 @@ TEST(test_bitwise_operators, bitwise_xor)
     EXPECT_EQ(int(arg1), 21847);    // 0 01010101 01010111
     EXPECT_EQ(int(arg2), 170);      // 0          10101010
 
-    EXPECT_EQ(int(res), 22013);     // 0 01010101 11111101
+    EXPECT_EQ(int(res), 21847^170); // 0 01010101 11111101
     EXPECT_NE(ptrArg1, ptrSum);
     EXPECT_NE(ptrArg2, ptrSum);
 }
@@ -758,7 +759,7 @@ TEST(test_comparison_operators, less_or_equal)
 
 
 
-TEST(test_type_conversion_operator, int_conversion)
+TEST(test_type_conversion_operators, int_conversion)
 {
     BigInt num;
 
@@ -778,7 +779,7 @@ TEST(test_type_conversion_operator, int_conversion)
     }
 }
 
-TEST(test_type_conversion_operator, string_conversion)
+TEST(test_type_conversion_operators, string_conversion)
 {
     BigInt num;
 
@@ -790,6 +791,25 @@ TEST(test_type_conversion_operator, string_conversion)
 
     num = BigInt("-0");
     EXPECT_STREQ(std::string(num).data(), "0");
+}
+
+
+
+TEST(test_input_output_operators, input)
+{
+    std::stringstream in;
+    in << "-18906937482";
+
+    BigInt num;
+    in >> num;
+    EXPECT_STREQ(std::string(num).data(), "-18906937482");
+}
+
+TEST(test_input_output_operators, output)
+{
+    std::ostringstream out;
+    out << BigInt("-18906937482");
+    EXPECT_STREQ(out.str().data(), "-18906937482");
 }
 
 
