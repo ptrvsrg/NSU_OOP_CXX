@@ -3,10 +3,9 @@ cmake_minimum_required(VERSION 3.22.1)
 set(CMAKE_C_COMPILER "/usr/bin/gcc")
 set(CMAKE_CXX_COMPILER "/usr/bin/g++")
 set(PROJECT_NAME Task1)
-set(SOURCE_DIR src)
-set(SOURCE ${SOURCE_DIR}/main.cpp)
+set(SOURCE src/main.cpp)
 set(LIBRARY_DIR lib)
-set(LIBRARY google_tests big_int string_arithmetic)
+set(LIBRARY big_int string_arithmetic)
 
 project(${PROJECT_NAME} CXX)
 
