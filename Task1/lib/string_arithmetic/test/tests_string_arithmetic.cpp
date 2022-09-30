@@ -40,7 +40,7 @@ TEST(test_constructors, string_constructor)
     }
     catch (std::invalid_argument const& ex)
     {
-        EXPECT_STREQ(ex.what(), "Wrong string number");
+        EXPECT_STREQ(ex.what(), "Wrong number");
     }
 
     // not number with minus
@@ -50,7 +50,7 @@ TEST(test_constructors, string_constructor)
     }
     catch (std::invalid_argument const& ex)
     {
-        EXPECT_STREQ(ex.what(), "Wrong string number");
+        EXPECT_STREQ(ex.what(), "Wrong number");
     }
 }
 
