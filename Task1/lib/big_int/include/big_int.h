@@ -70,6 +70,7 @@ BigInt operator|(const BigInt&, const BigInt&);
 BigInt operator&(const BigInt&, const BigInt&);
 BigInt operator^(const BigInt&, const BigInt&);
 
-//std::ostream& operator<<(std::ostream&, const BigInt&);
+std::ostream& operator<<(std::ostream&, const BigInt&);
+std::istream& operator>>(std::istream&, BigInt&);
 
 #endif // BIG_INT_H
