@@ -20,7 +20,7 @@ static bool IsDigit(char sym)
     return sym >= '0' && sym <= '9';
 }
 
-static bool IsNumber(const std::string &num)
+static bool IsNumber(const std::string & num)
 {
     if (num.size() == 1 && IsNegative(num))
     {
@@ -45,11 +45,11 @@ String::String()
     data_ = "0";
 }
 
-String::String(const std::string& src)
+String::String(const std::string & src)
 {
     if (!IsNumber(src))
     {
-        throw std::invalid_argument("Wrong string number");
+        throw std::invalid_argument("Wrong number");
     }
     if (IsNegative(src))
     {
@@ -60,14 +60,14 @@ String::String(const std::string& src)
     delete_begin_zero();
 }
 
-String::String(const String& src)
+String::String(const String & src)
 {
     data_.assign(src.data_);
 }
 
 
 
-String &String::operator=(const String & src)
+String & String::operator=(const String & src)
 {
     if (&src != this)
     {
@@ -77,7 +77,7 @@ String &String::operator=(const String & src)
     return *this;
 }
 
-String &String::operator+=(const String & addend)
+String & String::operator+=(const String & addend)
 {
     auto sumIter = data_.rbegin();
     auto sumEnd = data_.rend();
@@ -115,7 +115,7 @@ String &String::operator+=(const String & addend)
     return *this;
 }
 
-String &String::operator-=(const String & subtrahend)
+String & String::operator-=(const String & subtrahend)
 {
     if (*this < subtrahend)
     {
@@ -150,13 +150,13 @@ String &String::operator-=(const String & subtrahend)
     return *this;
 }
 
-String &String::operator*=(const String & multiplier2)
+String & String::operator*=(const String & multiplier2)
 {
     String multiplier1(*this);
     data_.clear();
     *this = String();
 
-    for (auto multiplierIter1 = multiplier1.data_.crbegin(); multiplierIter1 != multiplier1.data_.crend(); ++multiplierIter1)
+    for (auto multiplierIter1 = multiplier1.data_.crbegin(); multiplierIter1 < multiplier1.data_.crend(); ++multiplierIter1)
     {
         String buffer;
         buffer.data_.clear();
@@ -182,7 +182,7 @@ String &String::operator*=(const String & multiplier2)
     return *this;
 }
 
-String &String::operator/=(const String & divisor)
+String & String::operator/=(const String & divisor)
 {
     if (divisor == String("0"))
     {
@@ -216,7 +216,7 @@ String &String::operator/=(const String & divisor)
     return *this;
 }
 
-String &String::operator%=(const String & divisor)
+String & String::operator%=(const String & divisor)
 {
     if (divisor == String("0"))
     {
