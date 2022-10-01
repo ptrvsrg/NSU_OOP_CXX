@@ -29,7 +29,8 @@ TEST(test_constructors, string_constructor)
 {
     EXPECT_EQ(int(BigInt("-64228")), -64228);
 
-    EXPECT_STREQ(std::string(BigInt("-642253753738")).data(), "-642253753738");
+    // 100000000 000000000 000000000 000000000
+    EXPECT_STREQ(std::string(BigInt("4294967296")).data(), "4294967296");
 
     // empty string
     EXPECT_EQ(int(BigInt("")), 0);
