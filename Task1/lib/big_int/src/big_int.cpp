@@ -40,7 +40,7 @@ BigInt::BigInt(const std::string & str)
     String quotient(is_positive_ ? str : str.substr(1, str.size()));
     String base(std::to_string(base_));
 
-    while (base < quotient)
+    while (base <= quotient)
     {
         bytes_.push_back((Byte)stoi((quotient % base).to_string()));
         quotient /= base;
