@@ -47,6 +47,11 @@ BigInt::BigInt(const std::string & str)
     }
 
     bytes_.push_back((Byte)stoi(quotient.to_string()));
+
+    if (*(bytes_.crbegin()) == 0)
+    {
+        is_positive_ = true;
+    }
 }
 
 BigInt::BigInt(const BigInt & src)
