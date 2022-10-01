@@ -363,6 +363,17 @@ TEST(test_comparison_operators, less)
     EXPECT_FALSE(String("873156") < String("873156"));
 }
 
+TEST(test_comparison_operators, less_or_equal)
+{
+    EXPECT_TRUE(String("856") <= String("670068"));
+    EXPECT_FALSE(String("670068") <= String("856"));
+
+    EXPECT_TRUE(String("870068") <= String("873156"));
+    EXPECT_FALSE(String("873156") <= String("870068"));
+
+    EXPECT_TRUE(String("873156") <= String("873156"));
+}
+
 TEST(test_comparison_operators, greater_or_equal)
 {
     EXPECT_FALSE(String("856") >= String("670068"));
