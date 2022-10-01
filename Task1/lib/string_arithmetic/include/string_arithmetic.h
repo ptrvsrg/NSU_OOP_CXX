@@ -21,6 +21,7 @@ public:
 
     bool operator==(const String&) const;
     bool operator<(const String&) const;
+    bool operator<=(const String&) const;
     bool operator>=(const String&) const;
 
     void delete_begin_zero();

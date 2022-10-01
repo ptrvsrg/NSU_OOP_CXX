@@ -280,6 +280,11 @@ bool String::operator<(const String & cmp) const
     return false;
 }
 
+bool String::operator<=(const String & cmp) const
+{
+    return (*this < cmp) || (*this == cmp);
+}
+
 bool String::operator>=(const String & cmp) const
 {
     return !(*this < cmp);
