@@ -2,390 +2,303 @@
 #include "gtest/gtest.h"
 #include "string_arithmetic.h"
 
-TEST(test_constructors, constructor)
+struct StringArgs
 {
-    String num;
-    EXPECT_STREQ(num.to_string().data(), "0");
+    std::string arg1_;
+    std::string arg2_;
+    std::string arg3_;
+
+    StringArgs(std::string arg1, std::string arg2)
+            :   arg1_(std::move(arg1)), arg2_(std::move(arg2)) {}
+    StringArgs(std::string arg1, std::string arg2, std::string arg3)
+            :   arg1_(std::move(arg1)), arg2_(std::move(arg2)), arg3_(std::move(arg3)) {}
+};
+
+TEST(test_constructors, constructor_without_args)
+{
+    String str;
+    EXPECT_STREQ(((std::string)str).data(), "0");
 }
 
-TEST(test_constructors, string_constructor)
+class ConstructorTest : public ::testing::TestWithParam<StringArgs> {};
+INSTANTIATE_TEST_SUITE_P
+(
+    test_constructors,
+    ConstructorTest,
+    ::testing::Values
+    (
+        StringArgs("", "0"),
+        StringArgs("41736571836", "41736571836"),
+        StringArgs("000000041736571836", "41736571836"),        // many begin zeros
+        StringArgs("0000000", "0"),                             // many zeros
+        StringArgs("-41736571836", "Number must be positive"),  // negative number
+        StringArgs("365sd718=36", "Wrong number"),              // not number
+        StringArgs("-365sd718=36", "Wrong number")              // negative and not number
+    )
+);
+
+TEST_P(ConstructorTest, constructor)
 {
-    String num;
-
-    num = String("41736571836");
-    EXPECT_STREQ(num.to_string().data(), "41736571836");
-
-    // many begin zeros
-    num = String("000000041736571836");
-    EXPECT_STREQ(num.to_string().data(), "41736571836");
-
-    // many zeros
-    num = String("0000000");
-    EXPECT_STREQ(num.to_string().data(), "0");
-
-    // negative number
+    StringArgs params = GetParam();
     try
     {
-        num = String("-41736571836");
+        String str(params.arg1_);
+        EXPECT_EQ((std::string)str, params.arg2_);
     }
-    catch (std::invalid_argument const& ex)
+    catch (const std::invalid_argument & ex)
     {
-        EXPECT_STREQ(ex.what(), "Number must be positive");
-    }
-
-    // not number
-    try
-    {
-        num = String("365sd718=36");
-    }
-    catch (std::invalid_argument const& ex)
-    {
-        EXPECT_STREQ(ex.what(), "Wrong number");
-    }
-
-    // not number with minus
-    try
-    {
-        num = String("-365sd718=36");
-    }
-    catch (std::invalid_argument const& ex)
-    {
-        EXPECT_STREQ(ex.what(), "Wrong number");
+        EXPECT_STREQ(ex.what(), params.arg2_.data());
     }
 }
 
 TEST(test_constructors, copy_constructor)
 {
-    String src("41736571836");
-    String dest(src);
+    std::string str = "41736571836";
+    String src(str);
+    const String & dest(src);
 
-    EXPECT_STREQ("41736571836", src.to_string().data());
-    EXPECT_STREQ("41736571836", dest.to_string().data());
-    EXPECT_NE(&src, &dest);
+    EXPECT_EQ(str, (std::string)src);
+    EXPECT_EQ(str, (std::string)dest);
 }
-
-
 
 TEST(test_assignment_operators, assignment)
 {
-    String src("41736571836");
+    std::string str = "41736571836";
+    String src(str);
     String dest = src;
-    EXPECT_STREQ("41736571836", src.to_string().data());
-    EXPECT_STREQ("41736571836", dest.to_string().data());
-    EXPECT_NE(&src, &dest);
+
+    EXPECT_EQ(str, (std::string)src);
+    EXPECT_EQ(str, (std::string)dest);
 
     // self-assignment
-    String* pSrc = &src;
     src = src;
-    EXPECT_STREQ("41736571836", src.to_string().data());
-    EXPECT_EQ(&src, pSrc);
+    EXPECT_EQ(str, (std::string)src);
 }
 
-TEST(test_assignment_operators, addition_assignment)
+class ArithmeticOperatorTest : public ::testing::TestWithParam<StringArgs> {};
+INSTANTIATE_TEST_SUITE_P
+(
+    test_arithmetic_operators,
+    ArithmeticOperatorTest,
+    ::testing::Values
+    (
+        StringArgs("0", "0", "Division by zero"),
+        StringArgs("0", "534", "String minuend must be greater than string subtrahend"),
+        StringArgs("534", "0", "Division by zero"),
+        StringArgs("62", "53194", "String minuend must be greater than string subtrahend"),
+        StringArgs("51934", "62")
+    )
+);
+
+TEST_P(ArithmeticOperatorTest, addition_operator)
 {
-    String sum;
-
-    sum = String("0");
-    sum += String("0");
-    EXPECT_STREQ(sum.to_string().data(), "0");
-
-    sum = String("561056");
-    sum += String("0");
-    EXPECT_STREQ(sum.to_string().data(), "561056");
-
-    sum = String("0");
-    sum += String("561056");
-    EXPECT_STREQ(sum.to_string().data(), "561056");
-
-    sum = String("561056");
-    sum += String("714");
-    EXPECT_STREQ(sum.to_string().data(), std::to_string(561056+714).data());
-
-    sum = String("714");
-    sum += String("561056");
-    EXPECT_STREQ(sum.to_string().data(), std::to_string(714+561056).data());
+    StringArgs params = GetParam();
+    EXPECT_EQ
+    (
+        (std::string)(String(params.arg1_) + String(params.arg2_)),
+        std::to_string(std::stoi(params.arg1_) + std::stoi(params.arg2_))
+    );
 }
 
-TEST(test_assignment_operators, subtraction_assignment)
+TEST_P(ArithmeticOperatorTest, addition_assignment_operator)
 {
-    String difference;
+    StringArgs params = GetParam();
+    String result(params.arg1_);
+    result += String(params.arg2_);
+    EXPECT_EQ
+    (
+        (std::string)result,
+        std::to_string(std::stoi(params.arg1_) + std::stoi(params.arg2_))
+    );
+}
 
-    difference = String("0");
-    difference -= String("0");
-    EXPECT_STREQ(difference.to_string().data(), "0");
-
-    difference = String("561056");
-    difference -= String("0");
-    EXPECT_STREQ(difference.to_string().data(), "561056");
-
-    difference = String("561056");
-    difference -= String("714");
-    EXPECT_STREQ(difference.to_string().data(), std::to_string(561056 - 714).data());
-
+TEST_P(ArithmeticOperatorTest, subtraction_operator)
+{
+    StringArgs params = GetParam();
     try
     {
-        difference = String("0");
-        difference -= String("561056");
+        String result = String(params.arg1_) - String(params.arg2_);
+        EXPECT_EQ
+        (
+            (std::string)result,
+            std::to_string(std::stoi(params.arg1_) - std::stoi(params.arg2_))
+        );
     }
-    catch (std::invalid_argument const& ex)
+    catch (const std::invalid_argument & ex)
     {
-        EXPECT_STREQ(ex.what(), "String minuend must be greater than string subtrahend");
+        EXPECT_STREQ(ex.what(), params.arg3_.data());
     }
+}
 
+TEST_P(ArithmeticOperatorTest, subtraction_assignment_operator)
+{
+    StringArgs params = GetParam();
     try
     {
-        difference = String("714");
-        difference -= String("561056");
+        String result(params.arg1_);
+        result -= String(params.arg2_);
+        EXPECT_EQ
+        (
+                (std::string)result,
+                std::to_string(std::stoi(params.arg1_) - std::stoi(params.arg2_))
+        );
     }
-    catch (std::invalid_argument const& ex)
+    catch (const std::invalid_argument & ex)
     {
-        EXPECT_STREQ(ex.what(), "String minuend must be greater than string subtrahend");
+        EXPECT_STREQ(ex.what(), params.arg3_.data());
     }
 }
 
-TEST(test_assignment_operators, multiplication_assignment)
+TEST_P(ArithmeticOperatorTest, multiplication_operator)
 {
-    String product;
-
-    product = String("0");
-    product *= String("0");
-    EXPECT_STREQ(product.to_string().data(), "0");
-
-    product = String("561056");
-    product *= String("0");
-    EXPECT_STREQ(product.to_string().data(), "0");
-
-    product = String("0");
-    product *= String("561056");
-    EXPECT_STREQ(product.to_string().data(), "0");
-
-    product = String("561056");
-    product *= String("714");
-    EXPECT_STREQ(product.to_string().data(), std::to_string(561056 * 714).data());
-
-    product = String("714");
-    product *= String("561056");
-    EXPECT_STREQ(product.to_string().data(), std::to_string(714 * 561056).data());
+    StringArgs params = GetParam();
+    EXPECT_EQ
+    (
+        (std::string)(String(params.arg1_) * String(params.arg2_)),
+        std::to_string(std::stoi(params.arg1_) * std::stoi(params.arg2_))
+    );
 }
 
-TEST(test_assignment_operators, division_assignment)
+TEST_P(ArithmeticOperatorTest, multiplication_assignment_operator)
 {
-    String remainder;
+    StringArgs params = GetParam();
+    String result(params.arg1_);
+    result *= String(params.arg2_);
+    EXPECT_EQ
+    (
+        (std::string)result,
+        std::to_string(std::stoi(params.arg1_) * std::stoi(params.arg2_))
+    );
+}
 
-    remainder = String("0");
-    remainder %= String("561056");
-    EXPECT_STREQ(remainder.to_string().data(), "0");
-
-    remainder = String("561056");
-    remainder %= String("714");
-    EXPECT_STREQ(remainder.to_string().data(), std::to_string(561056 % 714).data());
-
-    remainder = String("714");
-    remainder %= String("561056");
-    EXPECT_STREQ(remainder.to_string().data(), std::to_string(714 % 561056).data());
-
+TEST_P(ArithmeticOperatorTest, division_operator)
+{
+    StringArgs params = GetParam();
     try
     {
-        remainder = String("561056");
-        remainder %= String("0");
+        String result = String(params.arg1_) / String(params.arg2_);
+        EXPECT_EQ
+        (
+                (std::string)(result),
+                std::to_string(std::stoi(params.arg1_) / std::stoi(params.arg2_))
+        );
     }
-    catch (std::invalid_argument const& ex)
+    catch (const std::invalid_argument & ex)
     {
-        EXPECT_STREQ(ex.what(), "Division by zero");
+        EXPECT_STREQ(ex.what(), params.arg3_.data());
     }
+}
 
+TEST_P(ArithmeticOperatorTest, division_assignment_operator)
+{
+    StringArgs params = GetParam();
     try
     {
-        remainder = String("0");
-        remainder %= String("0");
+        String result(params.arg1_);
+        result /= String(params.arg2_);
+        EXPECT_EQ
+        (
+            (std::string)(result),
+            std::to_string(std::stoi(params.arg1_) / std::stoi(params.arg2_))
+        );
     }
-    catch (std::invalid_argument const& ex)
+    catch (const std::invalid_argument & ex)
     {
-        EXPECT_STREQ(ex.what(), "Division by zero");
+        EXPECT_STREQ(ex.what(), params.arg3_.data());
     }
 }
 
-TEST(test_assignment_operators, modulo_assignment)
+TEST_P(ArithmeticOperatorTest, modulo_operator)
 {
-    String remainder;
-
-    remainder = String("0");
-    remainder %= String("561056");
-    EXPECT_STREQ(remainder.to_string().data(), "0");
-
-    remainder = String("561056");
-    remainder %= String("714");
-    EXPECT_STREQ(remainder.to_string().data(), std::to_string(561056 % 714).data());
-
-    remainder = String("714");
-    remainder %= String("561056");
-    EXPECT_STREQ(remainder.to_string().data(), std::to_string(714 % 561056).data());
-
+    StringArgs params = GetParam();
     try
     {
-        remainder = String("561056");
-        remainder %= String("0");
+        String result = String(params.arg1_) % String(params.arg2_);
+        EXPECT_EQ
+        (
+            (std::string)(result),
+            std::to_string(std::stoi(params.arg1_) % std::stoi(params.arg2_))
+        );
     }
-    catch (std::invalid_argument const& ex)
+    catch (const std::invalid_argument & ex)
     {
-        EXPECT_STREQ(ex.what(), "Division by zero");
+        EXPECT_STREQ(ex.what(), params.arg3_.data());
     }
+}
 
+TEST_P(ArithmeticOperatorTest, modulo_assignment_operator)
+{
+    StringArgs params = GetParam();
     try
     {
-        remainder = String("0");
-        remainder %= String("0");
+        String result(params.arg1_);
+        result %= String(params.arg2_);
+        EXPECT_EQ
+        (
+            (std::string)(result),
+            std::to_string(std::stoi(params.arg1_) % std::stoi(params.arg2_))
+        );
     }
-    catch (std::invalid_argument const& ex)
+    catch (const std::invalid_argument & ex)
     {
-        EXPECT_STREQ(ex.what(), "Division by zero");
+        EXPECT_STREQ(ex.what(), params.arg3_.data());
     }
 }
 
+class ComparisonOperatorTest : public ::testing::TestWithParam<StringArgs> {};
+INSTANTIATE_TEST_SUITE_P
+(
+    test_comparison_operators,
+    ComparisonOperatorTest,
+    ::testing::Values
+    (
+        StringArgs("856", "670068"),
+        StringArgs("670068", "856"),
+        StringArgs("870068", "873156"),
+        StringArgs("873156", "870068"),
+        StringArgs("873156", "873156")
+    )
+);
 
-
-TEST(test_arithmetic_operators, addition)
+TEST_P(ComparisonOperatorTest, equal)
 {
-    String addend1("6420");
-    String* ptrAddend1 = &addend1;
-
-    String addend2("167");
-    String* ptrAddend2 = &addend2;
-
-    String sum = addend1 + addend2;
-    String* ptrSum = &sum;
-
-    EXPECT_STREQ(addend1.to_string().data(), "6420");
-    EXPECT_STREQ(addend2.to_string().data(), "167");
-
-    EXPECT_STREQ(sum.to_string().data(), std::to_string(6420 + 167).data());
-    EXPECT_NE(ptrAddend1, ptrSum);
-    EXPECT_NE(ptrAddend2, ptrSum);
+    StringArgs params = GetParam();
+    EXPECT_EQ
+    (
+        String(params.arg1_) == String(params.arg2_),
+        std::stoi(params.arg1_) == std::stoi(params.arg2_)
+    );
 }
 
-TEST(test_arithmetic_operators, subtraction)
+TEST_P(ComparisonOperatorTest, less)
 {
-    String minuend("6420");
-    String* ptrMinuend = &minuend;
-
-    String subtrahend("167");
-    String* ptrSubtrahend = &subtrahend;
-
-    String difference = minuend - subtrahend;
-    String* ptrDifference = &difference;
-
-    EXPECT_STREQ(minuend.to_string().data(), "6420");
-    EXPECT_STREQ(subtrahend.to_string().data(), "167");
-
-    EXPECT_STREQ(difference.to_string().data(), std::to_string(6420 - 167).data());
-    EXPECT_NE(ptrMinuend, ptrDifference);
-    EXPECT_NE(ptrSubtrahend, ptrDifference);
+    StringArgs params = GetParam();
+    EXPECT_EQ
+    (
+        String(params.arg1_) < String(params.arg2_),
+        std::stoi(params.arg1_) < std::stoi(params.arg2_)
+    );
 }
 
-TEST(test_arithmetic_operators, multiplication)
+TEST_P(ComparisonOperatorTest, less_or_equal)
 {
-    String multiplier1("6420");
-    String* ptrMultiplier1 = &multiplier1;
-
-    String multiplier2("167");
-    String* ptrMultiplier2 = &multiplier2;
-
-    String product = multiplier1 * multiplier2;
-    String* ptrProduct = &product;
-
-    EXPECT_STREQ(multiplier1.to_string().data(), "6420");
-    EXPECT_STREQ(multiplier2.to_string().data(), "167");
-
-    EXPECT_STREQ(product.to_string().data(), std::to_string(6420 * 167).data());
-    EXPECT_NE(ptrMultiplier1, ptrProduct);
-    EXPECT_NE(ptrMultiplier2, ptrProduct);
+    StringArgs params = GetParam();
+    EXPECT_EQ
+    (
+        String(params.arg1_) <= String(params.arg2_),
+        std::stoi(params.arg1_) <= std::stoi(params.arg2_)
+    );
 }
 
-TEST(test_arithmetic_operators, division)
+TEST_P(ComparisonOperatorTest, greater_or_equal)
 {
-    String dividend("6420");
-    String* ptrDividend = &dividend;
-
-    String divisor("167");
-    String* ptrDivisor = &divisor;
-
-    String quotient = dividend / divisor;
-    String* ptrQuotient = &quotient;
-
-    EXPECT_STREQ(dividend.to_string().data(), "6420");
-    EXPECT_STREQ(divisor.to_string().data(), "167");
-
-    EXPECT_STREQ(quotient.to_string().data(), std::to_string(6420 / 167).data());
-    EXPECT_NE(ptrDividend, ptrQuotient);
-    EXPECT_NE(ptrDivisor, ptrQuotient);
+    StringArgs params = GetParam();
+    EXPECT_EQ
+    (
+        String(params.arg1_) >= String(params.arg2_),
+        std::stoi(params.arg1_) >= std::stoi(params.arg2_)
+    );
 }
-
-TEST(test_arithmetic_operators, modulo)
-{
-    String dividend("6420");
-    String* ptrDividend = &dividend;
-
-    String divisor("167");
-    String* ptrDivisor = &divisor;
-
-    String remainder = dividend % divisor;
-    String* ptrRemainder = &remainder;
-
-    EXPECT_STREQ(dividend.to_string().data(), "6420");
-    EXPECT_STREQ(divisor.to_string().data(), "167");
-
-    EXPECT_STREQ(remainder.to_string().data(), std::to_string(6420 % 167).data());
-    EXPECT_NE(ptrDividend, ptrRemainder);
-    EXPECT_NE(ptrDivisor, ptrRemainder);
-}
-
-
-
-TEST(test_comparison_operators, equal)
-{
-    EXPECT_FALSE(String("856") == String("670068"));
-    EXPECT_FALSE(String("670068") == String("856"));
-
-    EXPECT_FALSE(String("870068") == String("873156"));
-    EXPECT_FALSE(String("873156") == String("870068"));
-
-    EXPECT_TRUE(String("873156") == String("873156"));
-}
-
-TEST(test_comparison_operators, less)
-{
-    EXPECT_TRUE(String("856") < String("670068"));
-    EXPECT_FALSE(String("670068") < String("856"));
-
-    EXPECT_TRUE(String("870068") < String("873156"));
-    EXPECT_FALSE(String("873156") < String("870068"));
-
-    EXPECT_FALSE(String("873156") < String("873156"));
-}
-
-TEST(test_comparison_operators, less_or_equal)
-{
-    EXPECT_TRUE(String("856") <= String("670068"));
-    EXPECT_FALSE(String("670068") <= String("856"));
-
-    EXPECT_TRUE(String("870068") <= String("873156"));
-    EXPECT_FALSE(String("873156") <= String("870068"));
-
-    EXPECT_TRUE(String("873156") <= String("873156"));
-}
-
-TEST(test_comparison_operators, greater_or_equal)
-{
-    EXPECT_FALSE(String("856") >= String("670068"));
-    EXPECT_TRUE(String("670068") >= String("856"));
-
-    EXPECT_FALSE(String("870068") >= String("873156"));
-    EXPECT_TRUE(String("873156") >= String("870068"));
-
-    EXPECT_TRUE(String("873156") >= String("873156"));
-}
-
-
 
 int main(int argc, char** argv)
 {
