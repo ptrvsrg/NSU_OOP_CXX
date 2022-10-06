@@ -20,16 +20,16 @@ static bool IsDigit(char sym)
     return sym >= '0' && sym <= '9';
 }
 
-static bool IsNumber(const std::string & num)
+static bool IsNumber(const std::string & str)
 {
-    if (num.size() == 1 && IsNegative(num))
+    if (str.size() == 1 && IsNegative(str))
     {
         return false;
     }
 
-    for (int i = IsNegative(num) ? 1 : 0; i < num.size(); ++i)
+    for (int i = IsNegative(str) ? 1 : 0; i < str.size(); ++i)
     {
-        if (!IsDigit(num[i]))
+        if (!IsDigit(str[i]))
         {
             return false;
         }
@@ -45,18 +45,25 @@ String::String()
     data_ = "0";
 }
 
-String::String(const std::string & src)
+String::String(const std::string & str)
 {
-    if (!IsNumber(src))
+    if (str.empty())
+    {
+        *this = String();
+        return;
+    }
+
+    if (!IsNumber(str))
     {
         throw std::invalid_argument("Wrong number");
     }
-    if (IsNegative(src))
+
+    if (IsNegative(str))
     {
         throw std::invalid_argument("Number must be positive");
     }
 
-    data_.assign(src);
+    data_.assign(str);
     delete_begin_zero();
 }
 
@@ -300,7 +307,7 @@ void String::delete_begin_zero()
     }
 }
 
-std::string String::to_string()
+String::operator std::string() const
 {
     return data_;
 }
