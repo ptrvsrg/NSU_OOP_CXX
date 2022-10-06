@@ -25,7 +25,7 @@ public:
     bool operator>=(const String&) const;
 
     void delete_begin_zero();
-    std::string to_string();
+    explicit operator std::string() const;
 private:
     std::string data_;
 };
