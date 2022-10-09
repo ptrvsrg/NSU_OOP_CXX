@@ -96,6 +96,16 @@ TEST(test_constructors, copy_constructor)
     EXPECT_NE(&src, &dest);
 }
 
+TEST(test_constructors, move_constructor)
+{
+    BigInt tmp(3146);
+    BigInt src(std::move(tmp));
+
+    EXPECT_EQ((int)src, 3146);
+    EXPECT_EQ((int)tmp, 0);
+    EXPECT_EQ((std::string)tmp, std::string("0"));
+}
+
 TEST(test_assignment_operators, assignment)
 {
     BigInt src(-654087);
@@ -107,6 +117,16 @@ TEST(test_assignment_operators, assignment)
     // self-assigment
     src = src;
     EXPECT_EQ(int(src), -654087);
+}
+
+TEST(test_assignment_operators, move_assignment)
+{
+    BigInt tmp(3146);
+    BigInt src = std::move(tmp);
+
+    EXPECT_EQ((int)src, 3146);
+    EXPECT_EQ((int)tmp, 0);
+    EXPECT_EQ((std::string)tmp, std::string("0"));
 }
 
 class ArithmeticOperatorTest : public ::testing::TestWithParam<IntArgs> {};

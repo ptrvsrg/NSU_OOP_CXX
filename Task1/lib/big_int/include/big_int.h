@@ -14,37 +14,39 @@ class BigInt
 public:
     BigInt();
     explicit BigInt(int);
-    explicit BigInt(const std::string&);
-    BigInt(const BigInt&);
+    explicit BigInt(const std::string &);
+    BigInt(const BigInt &);
+    BigInt(BigInt &&) noexcept;
     ~BigInt();
 
-    BigInt& operator=(const BigInt&);
+    BigInt & operator=(const BigInt &);
+    BigInt & operator=(BigInt &&) noexcept;
 
     BigInt operator+() const;
     BigInt operator-() const;
 
-    BigInt& operator+=(const BigInt&);
-    BigInt& operator-=(const BigInt&);
-    BigInt& operator*=(const BigInt&);
-    BigInt& operator/=(const BigInt&);
-    BigInt& operator%=(const BigInt&);
+    BigInt & operator+=(const BigInt &);
+    BigInt & operator-=(const BigInt &);
+    BigInt & operator*=(const BigInt &);
+    BigInt & operator/=(const BigInt &);
+    BigInt & operator%=(const BigInt &);
 
-    BigInt& operator++();
+    BigInt & operator++();
     const BigInt operator++(int);
-    BigInt& operator--();
+    BigInt & operator--();
     const BigInt operator--(int);
 
     BigInt operator~() const;
-    BigInt& operator|=(const BigInt&);
-    BigInt& operator&=(const BigInt&);
-    BigInt& operator^=(const BigInt&);
+    BigInt & operator|=(const BigInt &);
+    BigInt & operator&=(const BigInt &);
+    BigInt & operator^=(const BigInt &);
 
-    bool operator==(const BigInt&) const;
-    bool operator!=(const BigInt&) const;
-    bool operator<(const BigInt&) const;
-    bool operator>(const BigInt&) const;
-    bool operator<=(const BigInt&) const;
-    bool operator>=(const BigInt&) const;
+    bool operator==(const BigInt &) const;
+    bool operator!=(const BigInt &) const;
+    bool operator<(const BigInt &) const;
+    bool operator>(const BigInt &) const;
+    bool operator<=(const BigInt &) const;
+    bool operator>=(const BigInt &) const;
 
     explicit operator int() const;
     explicit operator std::string() const;
@@ -56,15 +58,15 @@ private:
     std::vector <Byte> bytes_;
 
     void delete_null_bytes();
-    friend BigInt abs(const BigInt&);
-    friend bool abs_compare(const BigInt&, const BigInt&);
+    friend BigInt abs(const BigInt &);
+    friend bool abs_compare(const BigInt &, const BigInt &);
 };
 
-BigInt operator+(const BigInt&, const BigInt&);
-BigInt operator-(const BigInt&, const BigInt&);
-BigInt operator*(const BigInt&, const BigInt&);
-BigInt operator/(const BigInt&, const BigInt&);
-BigInt operator%(const BigInt&, const BigInt&);
+BigInt operator+(const BigInt &, const BigInt &);
+BigInt operator-(const BigInt &, const BigInt &);
+BigInt operator*(const BigInt &, const BigInt &);
+BigInt operator/(const BigInt &, const BigInt &);
+BigInt operator%(const BigInt &, const BigInt& );
 
 BigInt operator|(const BigInt&, const BigInt&);
 BigInt operator&(const BigInt&, const BigInt&);

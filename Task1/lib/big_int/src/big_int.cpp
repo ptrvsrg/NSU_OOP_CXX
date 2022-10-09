@@ -42,11 +42,11 @@ BigInt::BigInt(const std::string & str)
 
     while (base <= quotient)
     {
-        bytes_.push_back((Byte)stoi((quotient % base).to_string()));
+        bytes_.push_back((Byte)stoi((std::string)(quotient % base)));
         quotient /= base;
     }
 
-    bytes_.push_back((Byte)stoi(quotient.to_string()));
+    bytes_.push_back((Byte)stoi((std::string)quotient));
 
     if (*(bytes_.crbegin()) == 0)
     {
@@ -58,6 +58,14 @@ BigInt::BigInt(const BigInt & src)
 {
     is_positive_ = src.is_positive_;
     bytes_.assign(src.bytes_.begin(), src.bytes_.end());
+}
+
+BigInt::BigInt(BigInt && tmp) noexcept
+{
+    bytes_.clear();
+
+    std::swap(bytes_, tmp.bytes_);
+    is_positive_ = tmp.is_positive_;
 }
 
 BigInt::~BigInt()
@@ -75,6 +83,16 @@ BigInt & BigInt::operator=(const BigInt & src)
         is_positive_ = src.is_positive_;
         bytes_.assign(src.bytes_.begin(), src.bytes_.end());
     }
+
+    return *this;
+}
+
+BigInt & BigInt::operator=(BigInt && tmp) noexcept
+{
+    bytes_.clear();
+
+    std::swap(bytes_, tmp.bytes_);
+    is_positive_ = tmp.is_positive_;
 
     return *this;
 }
@@ -522,7 +540,7 @@ BigInt::operator std::string() const
         number += byte;
     }
 
-    std::string numberStr = number.to_string();
+    std::string numberStr = (std::string)number;
     if (!is_positive_ && numberStr != "0")
     {
         numberStr.insert(numberStr.cbegin(), '-');
@@ -557,7 +575,6 @@ bool abs_compare(const BigInt & cmp1, const BigInt & cmp2)
 {
     return abs(cmp1) >= abs(cmp2);
 }
-
 
 
 BigInt operator+(const BigInt & addend1, const BigInt & addend2)
