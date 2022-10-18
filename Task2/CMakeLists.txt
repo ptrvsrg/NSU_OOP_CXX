@@ -3,13 +3,13 @@ cmake_minimum_required(VERSION 3.22.1)
 set(CMAKE_C_COMPILER "/usr/bin/gcc")
 set(CMAKE_CXX_COMPILER "/usr/bin/g++")
 set(SUBDIR
+        libs/abstract_mode
         libs/cl_parser
         libs/game
-        libs/strategies
-        libs/abstract_mode
+        libs/matrix
         libs/modes
-        libs/strategy_interface
-        libs/matrix)
+        libs/strategies
+        libs/strategy_interface)
 set(LIBRARY
         cl_parser
         game)
