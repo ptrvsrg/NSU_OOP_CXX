@@ -1,17 +1,18 @@
 #include "tit_for_tat.h"
 
+
 Choice TitForTatStrategy::vote()
 {
-    return (previous_move == C) ? D : C;
+    return choice_;
 }
 
 void TitForTatStrategy::update(Choice move1, Choice move2)
 {
-    previous_move = (move1 == D || move2 == D) ? D : C;
+    choice_ = (move1 == D || move2 == D) ? D : C;
 }
 
 Strategy * CreateStrategy(Matrix matrix,
-                          std::string configDir)
+                          std::string config_dir)
 {
     return new TitForTatStrategy();
 }
