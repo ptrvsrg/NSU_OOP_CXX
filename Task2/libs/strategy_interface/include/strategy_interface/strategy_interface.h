@@ -4,8 +4,6 @@
 #include <array>
 #include <string>
 
-template<class T> using Trio = std::array<T, 3>;
-
 enum Choice
 {
     C,  // cooperation
@@ -17,7 +15,8 @@ class Strategy
 public:
     virtual ~Strategy() = default;
     virtual Choice vote() = 0;
-    virtual void update(Choice, Choice) {}
+    virtual void update(Choice choice1,
+                        Choice choice2) {}
 };
 
 #endif // TASK2_STRATEGY_INTERFACE_H
