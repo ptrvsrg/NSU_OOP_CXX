@@ -11,7 +11,7 @@ public:
     void Launch() override;
 private:
     void PrintDescription();
-    void PrintCurrentScores(Trio<Choice> voting_result);
+    void PrintScores(Trio<Choice> voting_result);
 };
 
 #endif //TASK2_DETAILED_MODE_H
