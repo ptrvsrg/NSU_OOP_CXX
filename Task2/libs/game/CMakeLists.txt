@@ -20,3 +20,13 @@ target_link_libraries(game PUBLIC
         detailed_mode
         fast_mode
         tournament_mode)
+
+enable_testing()
+find_package(GTest REQUIRED)
+
+add_executable(tests_game
+        test/tests_game.cpp)
+target_link_libraries(tests_game PUBLIC
+        game
+        gtest
+        gtest_main)
