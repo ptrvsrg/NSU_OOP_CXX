@@ -32,27 +32,33 @@ void Game::Launch(std::vector<std::string> & strategy_names,
                   config_dir,
                   matrix_);
     process->Launch();
+    process->Clear();
 
     delete process;
 }
 
 void Game::UpdateMatrix(std::string matrix_file)
 {
-    std::ifstream inFile(matrix_file, std::ios::in);
-    if (!inFile.is_open())
+    std::ifstream in_file(matrix_file, std::ios::in);
+    if (!in_file.is_open())
     {
         throw std::invalid_argument(matrix_file + " : File opening error");
     }
 
     int row = 0;
-    while (!inFile.eof())
+    while (!in_file.eof())
     {
         if (row == 8)
         {
-            throw std::invalid_argument(matrix_file + " : Wrong matrix_");
+            throw std::invalid_argument(matrix_file + " : Wrong matrix");
         }
 
-        inFile >> matrix_[row][0] >> matrix_[row][1] >> matrix_[row][2];
+        in_file >> matrix_[row][0] >> matrix_[row][1] >> matrix_[row][2];
         ++row;
+    }
+
+    if (row != 8)
+    {
+        throw std::invalid_argument(matrix_file + " : Wrong matrix");
     }
 }
