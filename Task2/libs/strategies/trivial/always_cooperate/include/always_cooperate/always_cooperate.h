@@ -1,6 +1,7 @@
 #ifndef TASK2_ALWAYS_COOPERATE_H
 #define TASK2_ALWAYS_COOPERATE_H
 
+#include "matrix.h"
 #include "strategy_interface.h"
 
 class AlwaysCooperateStrategy : public Strategy
@@ -11,6 +12,6 @@ public:
 };
 
 extern "C" Strategy * CreateStrategy(Matrix matrix,
-                                     std::string configDir);
+                                     std::string config_dir);
 
 #endif // TASK2_ALWAYS_COOPERATE_H

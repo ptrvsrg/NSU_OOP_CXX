@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 
+#include "matrix.h"
 #include "strategy_interface.h"
 
 class RandomStrategy : public Strategy
@@ -11,10 +12,9 @@ class RandomStrategy : public Strategy
 public:
     RandomStrategy();
     Choice vote() override;
-    void update(Choice, Choice) override {}
 };
 
 extern "C" Strategy * CreateStrategy(Matrix matrix,
-                                     std::string configDir);
+                                     std::string config_dir);
 
 #endif // TASK2_RANDOM_H

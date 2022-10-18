@@ -6,7 +6,7 @@ Choice AlwaysCooperateStrategy::vote()
 }
 
 Strategy * CreateStrategy(Matrix matrix,
-                          std::string configDir)
+                          std::string config_dir)
 {
     return new AlwaysCooperateStrategy();
 }

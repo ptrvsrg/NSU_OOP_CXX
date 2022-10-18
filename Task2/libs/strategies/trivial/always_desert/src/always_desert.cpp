@@ -6,7 +6,7 @@ Choice AlwaysDesertStrategy::vote()
 }
 
 Strategy * CreateStrategy(Matrix matrix,
-                          std::string confiDir)
+                          std::string config_dir)
 {
     return new AlwaysDesertStrategy();
 }

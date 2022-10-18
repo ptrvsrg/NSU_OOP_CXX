@@ -1,5 +1,6 @@
 #include "random.h"
 
+
 RandomStrategy::RandomStrategy()
 {
     srand(time(nullptr));
@@ -11,7 +12,7 @@ Choice RandomStrategy::vote()
 }
 
 Strategy* CreateStrategy(Matrix matrix,
-                         std::string configDir)
+                         std::string config_dir)
 {
     return new RandomStrategy();
 }
