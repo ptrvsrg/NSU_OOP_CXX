@@ -1,11 +1,17 @@
 #include "matrix.h"
 
-template<typename type, std::size_t row, std::size_t column>
-void CopyMatrix(Matrix<type, row, column> & dest,
-                Matrix<type, row, column> src)
+int Matrix::GetRow(Trio<Choice> choices)
 {
-    for (int i = 0; i < row; ++i)
+    int row = 0;
+    for(Choice choice : choices)
     {
-        std::copy(src[i].cbegin(), src[i].cend(), dest[i].begin());
+        row = (row << 1) + choice;
     }
+
+    return row;
+}
+
+Trio<int> & Matrix::operator[](int index)
+{
+    return data_[index];
 }
