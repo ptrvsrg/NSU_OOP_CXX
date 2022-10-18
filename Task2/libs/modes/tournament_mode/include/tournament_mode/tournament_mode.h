@@ -13,12 +13,14 @@ public:
 private:
     Trio<int> strategy_nums_;
     std::vector<bool> combination_;
-    Trio<int> intermediate_score_;
+    Trio<int> intermediate_scores_ = {0, 0, 0};
 
     bool GenerateCombination();
-    void UpdateScore();
-    void PrintIntermediateScore();
-    void PrintScore();
+    void UpdateIntermediateScores(Trio<Choice> voting_result,
+                                  Trio<int> strategy_nums);
+    void ClearIntermediateScores();
+    void PrintIntermediateScores();
+    void PrintScores();
 };
 
 #endif //TASK2_TOURNAMENT_MODE_H
