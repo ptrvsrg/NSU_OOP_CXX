@@ -8,7 +8,8 @@ set(TRIVIAL_STRATEGIES
         always_desert
         random)
 set(NON_TRIVIAL_STRATEGIES
-        tit_for_tat)
+        tit_for_tat
+        probability)
 
 
 project(strategies CXX)
