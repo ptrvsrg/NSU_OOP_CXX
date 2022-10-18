@@ -21,16 +21,7 @@ public:
                 std::string & config_dir,
                 std::string & matrix_file);
 private:
-    Matrix<int, 8, 3> matrix_ = {{
-        { 4, 4, 4, },
-        { 3, 3, 9, },
-        { 3, 9, 3, },
-        { 0, 5, 5, },
-        { 9, 3, 3, },
-        { 5, 0, 5, },
-        { 5, 5, 0, },
-        { 1, 1, 1, }
-    }};
+    Matrix matrix_;
 
     void UpdateMatrix(std::string matrix_file);
 };
