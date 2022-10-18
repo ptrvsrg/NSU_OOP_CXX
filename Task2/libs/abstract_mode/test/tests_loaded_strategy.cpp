@@ -1,17 +1,6 @@
 #include "gtest/gtest.h"
 #include "loaded_strategy.h"
 
-Matrix matrix_ = {{
-                      { 4, 4, 4, },
-                      { 3, 3, 9, },
-                      { 3, 9, 3, },
-                      { 0, 5, 5, },
-                      { 9, 3, 3, },
-                      { 5, 0, 5, },
-                      { 5, 5, 0, },
-                      { 1, 1, 1, }
-                  }};
-
 struct Options
 {
     std::string strategy_name_;
@@ -50,6 +39,7 @@ INSTANTIATE_TEST_SUITE_P
 TEST_P(GameTest, launch_exceptions)
 {
     Options params = GetParam();
+    Matrix matrix_;
 
     try
     {
