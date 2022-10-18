@@ -10,7 +10,7 @@ class FastMode : public Mode
 public:
     void Launch() override;
 private:
-    void PrintScore();
+    void PrintScores();
 };
 
 #endif //TASK2_FAST_MODE_H

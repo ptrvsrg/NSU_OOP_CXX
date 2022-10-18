@@ -5,20 +5,21 @@ void FastMode::Launch()
     for (int i = 0; i < steps_; ++i)
     {
         Trio<Choice> voting_result = GetVotingResults();
-        UpdateData(voting_result);
+        UpdateStrategies(voting_result);
+        UpdateScores(voting_result);
     }
 
-    PrintScore();
+    PrintScores();
 }
 
-void FastMode::PrintScore()
+void FastMode::PrintScores()
 {
     std::cout << std::setw(30) << std::left << "Strategies names"
-              << std::setw(30) << std::left << "Final score" << std::endl;
+              << std::setw(30) << std::left << "Final scores" << std::endl;
 
     for (int i = 0; i < 3; ++i)
     {
         std::cout << std::setw(30) << std::left << strategies_[i].name_
-                  << std::setw(30) << std::left << score_[i] << std::endl;
+                  << std::setw(30) << std::left << scores_[i] << std::endl;
     }
 }
