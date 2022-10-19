@@ -11,6 +11,6 @@ target_include_directories(always_desert PUBLIC
 link_directories(
         ${CMAKE_BINARY_DIR}/libs/matrix
         ${CMAKE_BINARY_DIR}/libs/strategy_interface)
-target_link_libraries(always_desert INTERFACE
-        matrix
-        strategy_interface)
+target_link_libraries(always_desert
+        PUBLIC matrix
+        INTERFACE strategy_interface)

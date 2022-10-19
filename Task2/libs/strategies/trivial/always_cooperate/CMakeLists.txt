@@ -11,6 +11,6 @@ target_include_directories(always_cooperate PUBLIC
 link_directories(
         ${CMAKE_BINARY_DIR}/libs/matrix
         ${CMAKE_BINARY_DIR}/libs/strategy_interface)
-target_link_libraries(always_cooperate INTERFACE
-        matrix
-        strategy_interface)
+target_link_libraries(always_cooperate
+        PUBLIC matrix
+        INTERFACE strategy_interface)

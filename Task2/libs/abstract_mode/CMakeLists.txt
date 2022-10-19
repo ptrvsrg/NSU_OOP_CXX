@@ -14,9 +14,9 @@ target_include_directories(abstract_mode PUBLIC
 link_directories(
         ${CMAKE_BINARY_DIR}/libs/matrix
         ${CMAKE_BINARY_DIR}/libs/strategy_interface)
-target_link_libraries(abstract_mode INTERFACE
-        matrix
-        strategy_interface)
+target_link_libraries(abstract_mode
+        PUBLIC matrix
+        INTERFACE strategy_interface)
 
 enable_testing()
 find_package(GTest REQUIRED)

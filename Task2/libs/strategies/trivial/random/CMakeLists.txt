@@ -11,6 +11,6 @@ target_include_directories(random PUBLIC
 link_directories(
         ${CMAKE_BINARY_DIR}/libs/matrix
         ${CMAKE_BINARY_DIR}/libs/strategy_interface)
-target_link_libraries(random INTERFACE
-        matrix
-        strategy_interface)
+target_link_libraries(random
+        PUBLIC matrix
+        INTERFACE strategy_interface)
