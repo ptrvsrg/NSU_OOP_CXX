@@ -18,9 +18,6 @@ void Mode::Init(std::vector<std::string> strategy_names,
                                        matrix);
         strategies_.push_back(loaded_strategy);
     }
-
-    scores_.resize(strategies_.size());
-    std::fill(scores_.begin(), scores_.end(), 0);
 }
 
 void Mode::Clear()
@@ -57,12 +54,11 @@ void Mode::UpdateStrategies(Trio<Choice> voting_result,
     }
 }
 
-void Mode::UpdateScores(Trio<Choice> voting_result,
-                        Trio<int> strategy_nums)
+void Mode::UpdateScores(Trio<Choice> voting_result)
 {
-    int row = matrix_.GetRow(voting_result);
+    int row = matrix_.GetRowIndex(voting_result);
     for (int i = 0; i < 3; ++i)
     {
-        scores_[strategy_nums[i]] += matrix_[row][i];
+        scores_[i] += matrix_[row][i];
     }
 }
