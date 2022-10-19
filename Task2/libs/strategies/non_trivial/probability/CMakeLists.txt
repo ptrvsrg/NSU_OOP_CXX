@@ -11,6 +11,17 @@ target_include_directories(probability PUBLIC
 link_directories(
         ${CMAKE_BINARY_DIR}/libs/matrix
         ${CMAKE_BINARY_DIR}/libs/strategy_interface)
-target_link_libraries(probability INTERFACE
-        matrix
-        strategy_interface)
+target_link_libraries(probability
+        PUBLIC matrix
+        INTERFACE strategy_interface)
+
+
+enable_testing()
+find_package(GTest REQUIRED)
+
+add_executable(tests_probability
+        test/tests_probability.cpp)
+target_link_libraries(tests_probability PUBLIC
+        probability
+        gtest
+        gtest_main)
