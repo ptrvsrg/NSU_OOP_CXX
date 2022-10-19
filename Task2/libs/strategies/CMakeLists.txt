@@ -9,7 +9,8 @@ set(TRIVIAL_STRATEGIES
         random)
 set(NON_TRIVIAL_STRATEGIES
         tit_for_tat
-        probability)
+        probability
+        grim_trigger)
 
 
 project(strategies CXX)
