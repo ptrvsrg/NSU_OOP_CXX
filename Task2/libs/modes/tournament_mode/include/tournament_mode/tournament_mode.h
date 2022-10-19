@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <iomanip>
+#include <vector>
 
 #include "abstract_mode.h"
 
@@ -13,14 +14,13 @@ public:
 private:
     Trio<int> strategy_nums_;
     std::vector<bool> combination_;
-    Trio<int> intermediate_scores_ = {0, 0, 0};
+    std::vector<int> final_scores_;
 
     bool GenerateCombination();
-    void UpdateIntermediateScores(Trio<Choice> voting_result,
-                                  Trio<int> strategy_nums);
-    void ClearIntermediateScores();
-    void PrintIntermediateScores();
+    void UpdateFinalScores(Trio<Choice> voting_result);
+    void ClearScores();
     void PrintScores();
+    void PrintFinalScores();
 };
 
 #endif //TASK2_TOURNAMENT_MODE_H

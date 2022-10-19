@@ -30,6 +30,11 @@ bool TournamentMode::GenerateCombination()
 
 void TournamentMode::Launch()
 {
+    final_scores_.resize(strategies_.size());
+    std::fill(final_scores_.begin(),
+              final_scores_.end(),
+              0);
+
     while (GenerateCombination())
     {
         for (int i = 0; i < steps_; ++i)
@@ -37,36 +42,33 @@ void TournamentMode::Launch()
             Trio<Choice> voting_result = GetVotingResults(strategy_nums_);
             UpdateStrategies(voting_result,
                              strategy_nums_);
-            UpdateIntermediateScores(voting_result,
-                                     strategy_nums_);
-            UpdateScores(voting_result,
-                         strategy_nums_);
+            UpdateScores(voting_result);
+            UpdateFinalScores(voting_result);
         }
 
-        PrintIntermediateScores();
-        ClearIntermediateScores();
+        PrintScores();
+        ClearScores();
         std::cout << std::endl;
     }
 
-    PrintScores();
+    PrintFinalScores();
 }
 
-void TournamentMode::UpdateIntermediateScores(Trio<Choice> voting_result,
-                                              Trio<int> strategy_nums)
+void TournamentMode::UpdateFinalScores(Trio<Choice> voting_result)
 {
-    int row = matrix_.GetRow(voting_result);
+    int row = matrix_.GetRowIndex(voting_result);
     for (int i = 0; i < 3; ++i)
     {
-        intermediate_scores_[strategy_nums[i]] += matrix_[row][i];
+        final_scores_[strategy_nums_[i]] += matrix_[row][i];
     }
 }
 
-void TournamentMode::ClearIntermediateScores()
+void TournamentMode::ClearScores()
 {
-    intermediate_scores_ = {0, 0, 0};
+    scores_ = {0, 0, 0};
 }
 
-void TournamentMode::PrintIntermediateScores()
+void TournamentMode::PrintScores()
 {
     std::cout << std::setw(30) << std::left << "Strategy numbers"
               << std::setw(30) << std::left << "Strategies names"
@@ -76,11 +78,11 @@ void TournamentMode::PrintIntermediateScores()
     {
         std::cout << std::setw(30) << std::left << strategy_nums_[i] + 1
                   << std::setw(30) << std::left << strategies_[strategy_nums_[i]].name_
-                  << std::setw(30) << std::left << intermediate_scores_[i] << std::endl;
+                  << std::setw(30) << std::left << scores_[i] << std::endl;
     }
 }
 
-void TournamentMode::PrintScores()
+void TournamentMode::PrintFinalScores()
 {
     std::cout << std::setw(30) << std::left << "Strategies names"
               << std::setw(30) << std::left << "Final scores" << std::endl;
@@ -88,6 +90,6 @@ void TournamentMode::PrintScores()
     for (int i = 0; i < strategies_.size(); ++i)
     {
         std::cout << std::setw(30) << std::left << strategies_[i].name_
-                  << std::setw(30) << std::left << scores_[i] << std::endl;
+                  << std::setw(30) << std::left << final_scores_[i] << std::endl;
     }
 }
