@@ -1,6 +1,6 @@
 #include "matrix.h"
 
-int Matrix::GetRow(Trio<Choice> choices)
+int Matrix::GetRowIndex(Trio<Choice> choices)
 {
     int row = 0;
     for(Choice choice : choices)

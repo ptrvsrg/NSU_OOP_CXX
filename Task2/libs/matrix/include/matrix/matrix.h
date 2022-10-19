@@ -21,7 +21,7 @@ public:
         }
     }
 
-    int GetRow(Trio<Choice> choices);
+    int GetRowIndex(Trio<Choice> choices);
     Trio<int> & operator[] (int index);
 private:
     std::array<Trio<int>, 8> data_ =

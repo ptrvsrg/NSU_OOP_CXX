@@ -40,7 +40,7 @@ void DetailedMode::PrintScores(Trio<Choice> voting_result)
               << std::setw(30) << std::left << "Points for step"
               << std::setw(30) << std::left << "Scores" << std::endl;
 
-    int row = matrix_.GetRow(voting_result);
+    int row = matrix_.GetRowIndex(voting_result);
     for (int i = 0; i < 3; ++i)
     {
         std::cout << std::setw(30) << std::left << strategies_[i].name_
