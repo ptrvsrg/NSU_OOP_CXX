@@ -1,10 +1,12 @@
 #ifndef TASK2_PROBABILITY_H
 #define TASK2_PROBABILITY_H
 
+#include <algorithm>
+
 #include "matrix.h"
 #include "strategy_interface.h"
 
-class ProbabilityStrategy : Strategy
+class ProbabilityStrategy : public Strategy
 {
 public:
     explicit ProbabilityStrategy(Matrix matrix);
@@ -13,9 +15,8 @@ public:
                 Choice choice2) override;
 private:
     Choice choice_ = C;
-    std::array<float, 4> choices_probabilities_ = {0, 0, 0, 0};
-    int step_count_ = 0;
-    Matrix matrix_;
+    std::array<int, 4> choices_frequencies_ = {0, 0, 0, 0};
+    std::array<Choice, 4> choices_;
 };
 
 extern "C" Strategy * CreateStrategy(Matrix matrix,
