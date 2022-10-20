@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "probability.h"
+#include "grim_trigger.h"
 
 #include <vector>
 
@@ -25,29 +25,24 @@ INSTANTIATE_TEST_SUITE_P
     ::testing::Values
     (
         std::vector<ChoiceArgs>{
-            ChoiceArgs(C, C, D),
-            ChoiceArgs(C, C, D),
-            ChoiceArgs(D, C, D),
-            ChoiceArgs(D, C, D),
-            ChoiceArgs(C, C, D),
-            ChoiceArgs(D, D, D),
+            ChoiceArgs(C, C, C),
+            ChoiceArgs(C, C, C),
+            ChoiceArgs(C, C, C),
+            ChoiceArgs(C, C, C),
+            ChoiceArgs(C, C, C),
+            ChoiceArgs(D, D, C),
             ChoiceArgs(C, D, D),
             ChoiceArgs(C, C, D),
             ChoiceArgs(D, D, D),
             ChoiceArgs(C, D, D),
-            ChoiceArgs(D, D, D),
-            ChoiceArgs(C, C, D),
-            ChoiceArgs(D, C, D),
-            ChoiceArgs(D, D, D),
-            ChoiceArgs(C, D, D)
+            ChoiceArgs(D, D, D)
         }
     )
 );
 
 TEST_P(StrategyTest, test_vote_update)
 {
-    Matrix matrix;
-    ProbabilityStrategy strategy(matrix);
+    HandshakeStrategy strategy;
 
     std::vector<ChoiceArgs> params_vector = GetParam();
 

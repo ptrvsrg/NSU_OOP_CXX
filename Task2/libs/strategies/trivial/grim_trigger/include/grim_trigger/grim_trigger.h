@@ -4,10 +4,10 @@
 #include "matrix.h"
 #include "strategy_interface.h"
 
-class GrimTriggerStrategy : public Strategy
+class HandshakeStrategy : public Strategy
 {
 public:
-    GrimTriggerStrategy() {}
+    HandshakeStrategy() {}
     Choice vote() override;
     void update(Choice choice1,
                 Choice choice2) override;

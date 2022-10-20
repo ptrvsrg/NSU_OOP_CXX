@@ -1,12 +1,12 @@
 #include "grim_trigger.h"
 
-Choice GrimTriggerStrategy::vote()
+Choice HandshakeStrategy::vote()
 {
     return choice_;
 }
 
-void GrimTriggerStrategy::update(Choice choice1,
-                                 Choice choice2)
+void HandshakeStrategy::update(Choice choice1,
+                               Choice choice2)
 {
     if (choice1 == D || choice2 == D)
     {
@@ -17,5 +17,5 @@ void GrimTriggerStrategy::update(Choice choice1,
 Strategy * CreateStrategy(Matrix matrix,
                           std::string config_dir)
 {
-    return new GrimTriggerStrategy();
+    return new HandshakeStrategy();
 }

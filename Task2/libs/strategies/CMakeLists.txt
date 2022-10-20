@@ -6,11 +6,10 @@ set(LIBRARY_OUTPUT_PATH
 set(TRIVIAL_STRATEGIES
         always_cooperate
         always_desert
-        random)
-set(NON_TRIVIAL_STRATEGIES
+        random
         tit_for_tat
-        probability
         grim_trigger)
+set(NON_TRIVIAL_STRATEGIES)
 
 
 project(strategies CXX)
