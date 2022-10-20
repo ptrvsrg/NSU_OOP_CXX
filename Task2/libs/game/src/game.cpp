@@ -32,7 +32,6 @@ void Game::Launch(std::vector<std::string> & strategy_names,
                   config_dir,
                   matrix_);
     process->Launch();
-    process->Clear();
 
     delete process;
 }
