@@ -8,49 +8,28 @@ void Mode::Init(std::vector<std::string> strategy_names,
 {
     steps_ = steps;
     config_dir_ = config_dir;
+    lib_dir_ = lib_dir;
     matrix_ = matrix;
-
-    for (const std::string & name : strategy_names)
-    {
-        LoadedStrategy loaded_strategy(name,
-                                       lib_dir,
-                                       config_dir,
-                                       matrix);
-        strategies_.push_back(loaded_strategy);
-    }
+    strategy_names_ = strategy_names;
 }
 
-void Mode::Clear()
-{
-    for (LoadedStrategy strategy : strategies_)
-    {
-        strategy.Clear();
-    }
-}
-
-Mode::~Mode()
-{
-    strategies_.clear();
-}
-
-Trio<Choice> Mode::GetVotingResults(Trio<int> strategy_nums)
+Trio<Choice> Mode::GetVotingResults()
 {
     Trio<Choice> voting_result;
     for (int i = 0; i < 3; ++i)
     {
-        voting_result[i] = (strategies_[strategy_nums[i]].object_ptr_->vote());
+        voting_result[i] = (strategies_[i].object_ptr_->vote());
     }
 
     return voting_result;
 }
 
-void Mode::UpdateStrategies(Trio<Choice> voting_result,
-                            Trio<int> strategy_nums)
+void Mode::UpdateStrategies(Trio<Choice> voting_result)
 {
     for (int i = 0; i < 3; ++i)
     {
-        strategies_[strategy_nums[i]].object_ptr_->update(voting_result[(i + 1) % 3],
-                                                          voting_result[(i + 2) % 3]);
+        strategies_[i].object_ptr_->update(voting_result[(i + 1) % 3],
+                                           voting_result[(i + 2) % 3]);
     }
 }
 
@@ -60,5 +39,24 @@ void Mode::UpdateScores(Trio<Choice> voting_result)
     for (int i = 0; i < 3; ++i)
     {
         scores_[i] += matrix_[row][i];
+    }
+}
+
+void Mode::LoadStrategies(Trio<int> strategy_nums)
+{
+    for (int i = 0; i < 3; ++i)
+    {
+        strategies_[i] = LoadedStrategy(strategy_names_[strategy_nums[i]],
+                                        lib_dir_,
+                                        config_dir_,
+                                        matrix_);
+    }
+}
+
+void Mode::ClearStrategies()
+{
+    for (LoadedStrategy strategy : strategies_)
+    {
+        strategy.Clear();
     }
 }

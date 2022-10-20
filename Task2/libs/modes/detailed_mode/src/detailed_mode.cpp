@@ -8,6 +8,8 @@ void DetailedMode::PrintDescription()
 
 void DetailedMode::Launch()
 {
+    LoadStrategies();
+
     PrintDescription();
     while (true)
     {
@@ -31,6 +33,8 @@ void DetailedMode::Launch()
             PrintDescription();
         }
     }
+
+    ClearStrategies();
 }
 
 void DetailedMode::PrintScores(Trio<Choice> voting_result)
@@ -43,7 +47,7 @@ void DetailedMode::PrintScores(Trio<Choice> voting_result)
     int row = matrix_.GetRowIndex(voting_result);
     for (int i = 0; i < 3; ++i)
     {
-        std::cout << std::setw(30) << std::left << strategies_[i].name_
+        std::cout << std::setw(30) << std::left << strategy_names_[i]
                   << std::setw(30) << std::left << voting_result[i]
                   << std::setw(30) << std::left << matrix_[row][i]
                   << std::setw(30) << std::left << scores_[i] << std::endl;

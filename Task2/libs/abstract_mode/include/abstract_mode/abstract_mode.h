@@ -16,21 +16,23 @@ public:
          std::string lib_dir,
          std::string config_dir,
          Matrix matrix);
-    void Clear();
     virtual void Launch() = 0;
-    virtual ~Mode();
+    virtual ~Mode() = default;
 
 protected:
-    std::vector<LoadedStrategy> strategies_;
+    std::vector<std::string> strategy_names_;
+    Trio<LoadedStrategy> strategies_;
     int steps_;
-    Matrix matrix_;
+    std::string lib_dir_;
     std::string config_dir_;
+    Matrix matrix_;
     Trio<int> scores_ = {0, 0, 0};
 
-    Trio<Choice> GetVotingResults(Trio<int> strategy_nums = {0, 1, 2});
-    void UpdateStrategies(Trio<Choice> voting_result,
-                          Trio<int> strategy_nums = {0, 1, 2});
+    Trio<Choice> GetVotingResults();
+    void UpdateStrategies(Trio<Choice> voting_result);
     void UpdateScores(Trio<Choice> voting_result);
+    void LoadStrategies(Trio<int> strategy_nums = {0, 1, 2});
+    void ClearStrategies();
 };
 
 #endif //TASK2_ABSTRACT_MODE_H
