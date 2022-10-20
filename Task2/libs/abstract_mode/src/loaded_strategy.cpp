@@ -1,12 +1,15 @@
 #include "loaded_strategy.h"
 
+LoadedStrategy::LoadedStrategy()
+:   object_ptr_(nullptr),
+    handle_(nullptr) {}
+
 LoadedStrategy::LoadedStrategy(std::string strategy_name,
                                std::string lib_dir,
                                std::string config_dir,
                                Matrix matrix)
-    :   name_(strategy_name)
 {
-    std::string dll_name = lib_dir + name_ + ".so";
+    std::string dll_name = lib_dir + strategy_name + ".so";
     handle_ = dlopen(dll_name.c_str(), RTLD_LAZY);
     if (!handle_)
     {
@@ -24,7 +27,6 @@ LoadedStrategy::LoadedStrategy(std::string strategy_name,
 
 void LoadedStrategy::Clear()
 {
-    name_.clear();
     delete object_ptr_;
     if (dlclose(handle_))
     {

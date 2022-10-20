@@ -11,9 +11,9 @@
 class LoadedStrategy
 {
 public:
-    std::string name_;
     Strategy * object_ptr_;
 
+    LoadedStrategy();
     LoadedStrategy(std::string strategy_name,
                    std::string lib_dir,
                    std::string config_dir,
