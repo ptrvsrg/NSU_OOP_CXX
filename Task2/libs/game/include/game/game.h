@@ -22,8 +22,6 @@ public:
                 std::string & matrix_file);
 private:
     Matrix matrix_;
-
-    void UpdateMatrix(std::string matrix_file);
 };
 
 #endif // TASK2_GAME_H

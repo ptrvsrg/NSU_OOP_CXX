@@ -2,6 +2,7 @@
 #define TASK2_MATRIX_H
 
 #include <array>
+#include <fstream>
 
 #include "strategy_interface.h"
 
@@ -22,6 +23,7 @@ public:
     }
 
     int GetRowIndex(Trio<Choice> choices);
+    void Update(std::string matrix_file);
     Trio<int> & operator[] (int index);
 private:
     std::array<Trio<int>, 8> data_ =

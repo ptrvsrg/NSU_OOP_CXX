@@ -8,56 +8,30 @@ void Game::Launch(std::vector<std::string> & strategy_names,
                   std::string & matrix_file)
 {
     if (strategy_names.size() < 3) throw std::invalid_argument("Not enough strategies");
-    if (!matrix_file.empty()) UpdateMatrix(matrix_file);
+    if (!matrix_file.empty()) matrix_.Update(matrix_file);
 
     Mode * process;
     if (modes == "detailed")
-    {
-        process = new DetailedMode;
-    }
+        process = new DetailedMode(strategy_names,
+                                   steps,
+                                   lib_dir,
+                                   config_dir,
+                                   matrix_);
     else if (modes == "fast")
-    {
-        process = new FastMode;
-    }
+        process = new FastMode(strategy_names,
+                               steps,
+                               lib_dir,
+                               config_dir,
+                               matrix_);
     else if (modes == "tournament")
-    {
-        process = new TournamentMode;
-    }
+        process = new TournamentMode(strategy_names,
+                                     steps,
+                                     lib_dir,
+                                     config_dir,
+                                     matrix_);
     else throw std::invalid_argument("Wrong modes");
 
-
-    process->Init(strategy_names,
-                  steps,
-                  lib_dir,
-                  config_dir,
-                  matrix_);
     process->Launch();
 
     delete process;
-}
-
-void Game::UpdateMatrix(std::string matrix_file)
-{
-    std::ifstream in_file(matrix_file, std::ios::in);
-    if (!in_file.is_open())
-    {
-        throw std::invalid_argument(matrix_file + " : File opening error");
-    }
-
-    int row = 0;
-    while (!in_file.eof())
-    {
-        if (row == 8)
-        {
-            throw std::invalid_argument(matrix_file + " : Wrong matrix");
-        }
-
-        in_file >> matrix_[row][0] >> matrix_[row][1] >> matrix_[row][2];
-        ++row;
-    }
-
-    if (row != 8)
-    {
-        throw std::invalid_argument(matrix_file + " : Wrong matrix");
-    }
 }
