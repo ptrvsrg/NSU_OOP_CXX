@@ -1,5 +1,16 @@
 #include "detailed_mode.h"
 
+DetailedMode::DetailedMode(std::vector<std::string> strategy_names,
+                           int steps,
+                           std::string lib_dir,
+                           std::string config_dir,
+                           Matrix matrix)
+: Mode(strategy_names,
+       steps,
+       lib_dir,
+       config_dir,
+       matrix) {}
+
 void DetailedMode::PrintDescription()
 {
     std::cout << "Enter \"step\" to take one step\n";
@@ -16,10 +27,7 @@ void DetailedMode::Launch()
         std::string cmd;
         std::cin >> cmd;
 
-        if (cmd == "quit")
-        {
-            break;
-        }
+        if (cmd == "quit") break;
         else if (cmd == "step")
         {
             Trio<Choice> voting_result = GetVotingResults();

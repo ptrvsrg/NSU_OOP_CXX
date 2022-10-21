@@ -1,5 +1,16 @@
 #include "fast_mode.h"
 
+FastMode::FastMode(std::vector<std::string> strategy_names,
+                   int steps,
+                   std::string lib_dir,
+                   std::string config_dir,
+                   Matrix matrix)
+: Mode(strategy_names,
+       steps,
+       lib_dir,
+       config_dir,
+       matrix) {}
+
 void FastMode::Launch()
 {
     LoadStrategies();

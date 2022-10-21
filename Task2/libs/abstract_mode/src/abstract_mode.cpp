@@ -1,17 +1,15 @@
 #include "abstract_mode.h"
 
-void Mode::Init(std::vector<std::string> strategy_names,
+Mode::Mode(std::vector<std::string> strategy_names,
            int steps,
            std::string lib_dir,
            std::string config_dir,
            Matrix matrix)
-{
-    steps_ = steps;
-    config_dir_ = config_dir;
-    lib_dir_ = lib_dir;
-    matrix_ = matrix;
-    strategy_names_ = strategy_names;
-}
+:   steps_(steps),
+    config_dir_(config_dir),
+    lib_dir_(lib_dir),
+    matrix_(matrix),
+    strategy_names_(strategy_names) {}
 
 Trio<Choice> Mode::GetVotingResults()
 {

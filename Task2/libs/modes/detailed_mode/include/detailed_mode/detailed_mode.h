@@ -8,6 +8,11 @@
 class DetailedMode : public Mode
 {
 public:
+    DetailedMode(std::vector<std::string> strategy_names,
+                 int steps,
+                 std::string lib_dir,
+                 std::string config_dir,
+                 Matrix matrix);
     void Launch() override;
 private:
     void PrintDescription();

@@ -1,5 +1,16 @@
 #include "tournament_mode.h"
 
+TournamentMode::TournamentMode(std::vector<std::string> strategy_names,
+                               int steps,
+                               std::string lib_dir,
+                               std::string config_dir,
+                               Matrix matrix)
+: Mode(strategy_names,
+       steps,
+       lib_dir,
+       config_dir,
+       matrix) {}
+
 bool TournamentMode::GenerateCombination()
 {
     if (combination_.empty())

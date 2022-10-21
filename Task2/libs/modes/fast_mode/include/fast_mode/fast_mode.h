@@ -8,6 +8,11 @@
 class FastMode : public Mode
 {
 public:
+    FastMode(std::vector<std::string> strategy_names,
+             int steps,
+             std::string lib_dir,
+             std::string config_dir,
+             Matrix matrix);
     void Launch() override;
 private:
     void PrintScores();
