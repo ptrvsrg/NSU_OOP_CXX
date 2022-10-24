@@ -1,37 +1,22 @@
 #include "game.h"
 
-void Game::Launch(std::vector<std::string> & strategy_names,
-                  std::string & modes,
-                  int & steps,
-                  std::string & lib_dir,
-                  std::string & config_dir,
-                  std::string & matrix_file)
+void Game::Launch(const std::vector<std::string> & strategy_names,
+                  const std::string & mode,
+                  int steps,
+                  const std::string & config_dir,
+                  const std::string & matrix_file)
 {
     if (strategy_names.size() < 3) throw std::invalid_argument("Not enough strategies");
-    if (!matrix_file.empty()) matrix_.Update(matrix_file);
 
-    Mode * process;
-    if (modes == "detailed")
-        process = new DetailedMode(strategy_names,
-                                   steps,
-                                   lib_dir,
-                                   config_dir,
-                                   matrix_);
-    else if (modes == "fast")
-        process = new FastMode(strategy_names,
-                               steps,
-                               lib_dir,
-                               config_dir,
-                               matrix_);
-    else if (modes == "tournament")
-        process = new TournamentMode(strategy_names,
-                                     steps,
-                                     lib_dir,
-                                     config_dir,
-                                     matrix_);
-    else throw std::invalid_argument("Wrong modes");
+    Matrix matrix;
+    if (!matrix_file.empty()) matrix.Update(matrix_file);
+
+    ModeCreator creator;
+    std::unique_ptr<Mode> process = creator.Create(strategy_names,
+                                                   mode,
+                                                   steps,
+                                                   config_dir,
+                                                   matrix);
 
     process->Launch();
-
-    delete process;
 }

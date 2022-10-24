@@ -3,25 +3,21 @@
 
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "matrix.h"
-#include "detailed_mode.h"
-#include "fast_mode.h"
-#include "tournament_mode.h"
+#include "mode_creator.h"
 
 class Game
 {
 public:
-    void Launch(std::vector<std::string> & strategy_names,
-                std::string & modes,
-                int & steps,
-                std::string & lib_dir,
-                std::string & config_dir,
-                std::string & matrix_file);
-private:
-    Matrix matrix_;
+    void Launch(const std::vector<std::string> & strategy_names,
+                const std::string & mode,
+                int steps,
+                const std::string & config_dir,
+                const std::string & matrix_file);
 };
 
 #endif // TASK2_GAME_H
