@@ -4,31 +4,20 @@
 
 int main(int argc, char ** argv)
 {
-    std::vector<std::string> strategy_names;
-    std::string mode;
-    int steps;
-    std::string lib_dir;
-    std::string config_dir;
-    std::string matrix_file;
-
-    if (!GetOptions(argc, argv,
-               strategy_names,
-               mode,
-               steps,
-               lib_dir,
-               config_dir,
-               matrix_file))
+    Options opts;
+    if (!GetOptions(argc,
+                    argv,
+                    opts))
     {
         return EXIT_SUCCESS;
     }
 
     Game game;
-    game.Launch(strategy_names,
-                mode,
-                steps,
-                lib_dir,
-                config_dir,
-                matrix_file);
+    game.Launch(opts.strategy_name_,
+                opts.mode_,
+                opts.steps_,
+                opts.config_dir_,
+                opts.matrix_file_);
 
     return EXIT_SUCCESS;
 }
