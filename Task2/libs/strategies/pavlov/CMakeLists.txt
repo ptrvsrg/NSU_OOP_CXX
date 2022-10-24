@@ -15,3 +15,14 @@ target_link_libraries(pavlov
         PUBLIC ${Boost_LIBRARIES}
         INTERFACE strategy_interface)
 target_compile_definitions(pavlov PUBLIC -DBOOST_BIND_GLOBAL_PLACEHOLDERS)
+
+message(STATUS "Creating tests for library of strategy \"pavlov\"")
+
+enable_testing()
+find_package(GTest REQUIRED)
+add_executable(tests_pavlov
+        test/tests_pavlov.cpp)
+target_link_libraries(tests_pavlov PUBLIC
+        pavlov
+        gtest
+        gtest_main)
