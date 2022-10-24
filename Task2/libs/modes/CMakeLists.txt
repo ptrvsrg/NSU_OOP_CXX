@@ -1,10 +1,10 @@
-set(MODES
+set(SUBDIRS
+        abstract_mode
         detailed_mode
         fast_mode
-        tournament_mode)
+        tournament_mode
+        mode_creator)
 
-message(STATUS "Creating libraries of modes ...")
-
-foreach(MODE ${MODES})
-    add_subdirectory(${MODE})
-endforeach(MODE)
+foreach(SUBDIR ${SUBDIRS})
+    add_subdirectory(${SUBDIR})
+endforeach(SUBDIR)
