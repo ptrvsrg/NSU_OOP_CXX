@@ -13,21 +13,23 @@ PavlovStrategy::PavlovStrategy(const std::string & config_dir)
 
 Choice PavlovStrategy::vote()
 {
+    ++steps_count_;
     return loaded_strategy_->vote();
 }
 
 void PavlovStrategy::update(Choice choice1,
                             Choice choice2)
 {
+    loaded_strategy_->update(choice1,
+                             choice2);
+
     if (steps_count_ < 6)
     {
-        ++steps_count_;
         count_D1_ += choice1;
         count_D2_ += choice2;
     }
     else if (steps_count_ == 6)
     {
-        ++steps_count_;
         std::string case_name;
         StrategyCreator creator;
 
@@ -50,9 +52,6 @@ void PavlovStrategy::update(Choice choice1,
         loaded_strategy_ = creator.Create(config_tree_.get<std::string>(case_name),
                                           config_dir_);
     }
-
-    loaded_strategy_->update(choice1,
-                             choice2);
 }
 
 PavlovStrategy::Case PavlovStrategy::GetCase(int count_D)

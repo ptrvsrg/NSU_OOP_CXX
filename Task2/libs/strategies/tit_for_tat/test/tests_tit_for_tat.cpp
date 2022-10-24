@@ -15,23 +15,33 @@ struct ChoiceArgs
         strategy_choice_(strategy_choice) {}
 };
 
-TEST(test_tit_for_tat, test_vote_update)
-{
-    std::vector<ChoiceArgs> steps =
-    {
-        ChoiceArgs(D, C, C),
-        ChoiceArgs(C, D, D),
-        ChoiceArgs(D, D, D),
-        ChoiceArgs(C, C, D),
-        ChoiceArgs(C, C, C)
-    };
+class TitForTatStrategyTest : public ::testing::TestWithParam<std::vector<ChoiceArgs>> {};
+INSTANTIATE_TEST_SUITE_P
+(
+    test_parser,
+    TitForTatStrategyTest,
+    ::testing::Values
+        (
+            std::vector<ChoiceArgs>{
+                ChoiceArgs(D, C, C),
+                ChoiceArgs(C, D, D),
+                ChoiceArgs(D, D, D),
+                ChoiceArgs(C, C, D),
+                ChoiceArgs(C, C, C)
+            }
+        )
+);
 
+TEST_P(TitForTatStrategyTest, test_vote_update)
+{
     TitForTatStrategy strategy;
 
-    for (ChoiceArgs step : steps)
+    std::vector<ChoiceArgs> params_vector = GetParam();
+
+    for (ChoiceArgs params : params_vector)
     {
-        EXPECT_EQ(strategy.vote(), step.strategy_choice_);
-        strategy.update(step.opponent1_choice_, step.opponent2_choice_);
+        EXPECT_EQ(strategy.vote(), params.strategy_choice_);
+        strategy.update(params.opponent1_choice_, params.opponent2_choice_);
     }
 }
 

@@ -17,11 +17,11 @@ struct ChoiceArgs
         strategy_choice_(strategy_choice) {}
 };
 
-class StrategyTest : public ::testing::TestWithParam<std::vector<ChoiceArgs>> {};
+class GrimTriggerStrategyTest : public ::testing::TestWithParam<std::vector<ChoiceArgs>> {};
 INSTANTIATE_TEST_SUITE_P
 (
     test_parser,
-    StrategyTest,
+    GrimTriggerStrategyTest,
     ::testing::Values
     (
         std::vector<ChoiceArgs>{
@@ -40,7 +40,7 @@ INSTANTIATE_TEST_SUITE_P
     )
 );
 
-TEST_P(StrategyTest, test_vote_update)
+TEST_P(GrimTriggerStrategyTest, test_vote_update)
 {
     GrimTriggerStrategy strategy;
 
