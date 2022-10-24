@@ -1,26 +1,16 @@
-cmake_minimum_required(VERSION 3.22.1)
-
-
-set(LIBRARY_OUTPUT_PATH
-        ${CMAKE_SOURCE_DIR}/strategy_libs)
-set(TRIVIAL_STRATEGIES
+set(STRATEGIES
         always_cooperate
-        always_desert
+        always_defect
         random
         tit_for_tat
-        grim_trigger)
-set(NON_TRIVIAL_STRATEGIES)
+        grim_trigger
+        pavlov
+        CACHE STRING "Strategies name" FORCE)
 
+add_subdirectory(strategy_interface)
 
-project(strategies CXX)
+foreach(STRATEGY ${STRATEGIES})
+    add_subdirectory(${STRATEGY})
+endforeach(STRATEGY)
 
-
-message(STATUS "Creating dynamic libraries of strategies ...")
-
-
-foreach(TRIVIAL_STRATEGY ${TRIVIAL_STRATEGIES})
-    add_subdirectory(trivial/${TRIVIAL_STRATEGY})
-endforeach(TRIVIAL_STRATEGY)
-foreach(NON_TRIVIAL_STRATEGY ${NON_TRIVIAL_STRATEGIES})
-    add_subdirectory(non_trivial/${NON_TRIVIAL_STRATEGY})
-endforeach(NON_TRIVIAL_STRATEGY)
+add_subdirectory(strategy_creator)
