@@ -6,8 +6,8 @@
 
 enum Choice
 {
-    C,  // cooperation
-    D   // desertion
+    C = 0,  // cooperation
+    D = 1   // defection
 };
 
 class Strategy
