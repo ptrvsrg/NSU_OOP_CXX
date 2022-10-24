@@ -10,6 +10,8 @@ target_link_directories(tit_for_tat PUBLIC
 target_link_libraries(tit_for_tat INTERFACE
         strategy_interface)
 
+message(STATUS "Creating tests for library of strategy \"tit_for_tat\"")
+
 enable_testing()
 find_package(GTest REQUIRED)
 add_executable(tests_tit_for_tat

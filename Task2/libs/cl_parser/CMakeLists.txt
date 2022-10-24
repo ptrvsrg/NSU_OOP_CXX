@@ -8,6 +8,8 @@ target_include_directories(cl_parser PUBLIC
 target_link_libraries(cl_parser PUBLIC
         ${Boost_LIBRARIES})
 
+message(STATUS "Creating tests for library \"cl_parser\"")
+
 enable_testing()
 find_package(GTest REQUIRED)
 add_executable(tests_cl_parser

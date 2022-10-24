@@ -10,6 +10,8 @@ target_link_directories(grim_trigger PUBLIC
 target_link_libraries(grim_trigger INTERFACE
         strategy_interface)
 
+message(STATUS "Creating tests for library of strategy \"grim trigger\"")
+
 enable_testing()
 find_package(GTest REQUIRED)
 add_executable(tests_grim_trigger

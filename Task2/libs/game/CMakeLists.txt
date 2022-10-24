@@ -13,6 +13,8 @@ target_link_libraries(game PUBLIC
         matrix
         mode_creator)
 
+message(STATUS "Creating tests for library \"game\"")
+
 enable_testing()
 find_package(GTest REQUIRED)
 add_executable(tests_game
