@@ -6,7 +6,7 @@
 
 #include "strategy_interface.h"
 
-template<class T> using Trio = std::array<T, 3>;
+template <class T> using Trio = std::array<T, 3>;
 
 class Matrix
 {
@@ -23,7 +23,7 @@ public:
     }
 
     int GetRowIndex(Trio<Choice> choices);
-    void Update(std::string matrix_file);
+    void Update(const std::string & matrix_file);
     Trio<int> & operator[] (int index);
 private:
     std::array<Trio<int>, 8> data_ =

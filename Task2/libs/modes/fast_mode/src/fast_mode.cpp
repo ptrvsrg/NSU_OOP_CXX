@@ -1,29 +1,26 @@
 #include "fast_mode.h"
 
-FastMode::FastMode(std::vector<std::string> strategy_names,
+FastMode::FastMode(const std::vector<std::string> & strategy_names,
                    int steps,
-                   std::string lib_dir,
-                   std::string config_dir,
+                   const std::string & config_dir,
                    Matrix matrix)
 : Mode(strategy_names,
        steps,
-       lib_dir,
        config_dir,
        matrix) {}
 
 void FastMode::Launch()
 {
-    LoadStrategies();
+    CreateStrategies();
 
     for (int i = 0; i < steps_; ++i)
     {
         Trio<Choice> voting_result = GetVotingResults();
-        UpdateStrategies(voting_result);
+        UpdateStrategyData(voting_result);
         UpdateScores(voting_result);
     }
 
     PrintScores();
-    ClearStrategies();
 }
 
 void FastMode::PrintScores()

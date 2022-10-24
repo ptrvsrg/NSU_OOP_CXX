@@ -1,13 +1,11 @@
 #include "detailed_mode.h"
 
-DetailedMode::DetailedMode(std::vector<std::string> strategy_names,
+DetailedMode::DetailedMode(const std::vector<std::string> & strategy_names,
                            int steps,
-                           std::string lib_dir,
-                           std::string config_dir,
+                           const std::string & config_dir,
                            Matrix matrix)
 : Mode(strategy_names,
        steps,
-       lib_dir,
        config_dir,
        matrix) {}
 
@@ -19,8 +17,7 @@ void DetailedMode::PrintDescription()
 
 void DetailedMode::Launch()
 {
-    LoadStrategies();
-
+    CreateStrategies();
     PrintDescription();
     while (true)
     {
@@ -31,7 +28,7 @@ void DetailedMode::Launch()
         else if (cmd == "step")
         {
             Trio<Choice> voting_result = GetVotingResults();
-            UpdateStrategies(voting_result);
+            UpdateStrategyData(voting_result);
             UpdateScores(voting_result);
             PrintScores(voting_result);
         }
@@ -41,8 +38,6 @@ void DetailedMode::Launch()
             PrintDescription();
         }
     }
-
-    ClearStrategies();
 }
 
 void DetailedMode::PrintScores(Trio<Choice> voting_result)

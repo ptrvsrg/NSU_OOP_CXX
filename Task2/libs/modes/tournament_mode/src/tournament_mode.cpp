@@ -1,13 +1,11 @@
 #include "tournament_mode.h"
 
-TournamentMode::TournamentMode(std::vector<std::string> strategy_names,
+TournamentMode::TournamentMode(const std::vector<std::string> & strategy_names,
                                int steps,
-                               std::string lib_dir,
-                               std::string config_dir,
+                               const std::string & config_dir,
                                Matrix matrix)
 : Mode(strategy_names,
        steps,
-       lib_dir,
        config_dir,
        matrix) {}
 
@@ -48,12 +46,12 @@ void TournamentMode::Launch()
 
     while (GenerateCombination())
     {
-        LoadStrategies(strategy_nums_);
+        UpdateStrategies(strategy_nums_);
 
         for (int i = 0; i < steps_; ++i)
         {
             Trio<Choice> voting_result = GetVotingResults();
-            UpdateStrategies(voting_result);
+            UpdateStrategyData(voting_result);
             UpdateScores(voting_result);
             UpdateFinalScores(voting_result);
         }
@@ -61,8 +59,6 @@ void TournamentMode::Launch()
         PrintScores();
         ClearScores();
         std::cout << std::endl;
-
-        ClearStrategies();
     }
 
     PrintFinalScores();
@@ -98,12 +94,14 @@ void TournamentMode::PrintScores()
 
 void TournamentMode::PrintFinalScores()
 {
-    std::cout << std::setw(30) << std::left << "Strategies names"
+    std::cout << std::setw(30) << std::left << "Strategy numbers"
+              << std::setw(30) << std::left << "Strategies names"
               << std::setw(30) << std::left << "Final scores" << std::endl;
 
     for (int i = 0; i < strategy_names_.size(); ++i)
     {
-        std::cout << std::setw(30) << std::left << strategy_names_[i]
+        std::cout << std::setw(30) << std::left << i + 1
+                  << std::setw(30) << std::left << strategy_names_[i]
                   << std::setw(30) << std::left << final_scores_[i] << std::endl;
     }
 }

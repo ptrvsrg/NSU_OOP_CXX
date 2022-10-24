@@ -10,10 +10,9 @@
 class TournamentMode : public Mode
 {
 public:
-    TournamentMode(std::vector<std::string> strategy_names,
+    TournamentMode(const std::vector<std::string> & strategy_names,
                    int steps,
-                   std::string lib_dir,
-                   std::string config_dir,
+                   const std::string & config_dir,
                    Matrix matrix);
     void Launch() override;
 private:

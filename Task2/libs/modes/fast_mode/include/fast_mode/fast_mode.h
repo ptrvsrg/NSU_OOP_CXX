@@ -8,10 +8,9 @@
 class FastMode : public Mode
 {
 public:
-    FastMode(std::vector<std::string> strategy_names,
+    FastMode(const std::vector<std::string> & strategy_names,
              int steps,
-             std::string lib_dir,
-             std::string config_dir,
+             const std::string & config_dir,
              Matrix matrix);
     void Launch() override;
 private:
