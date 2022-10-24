@@ -8,12 +8,22 @@
 
 namespace po = boost::program_options;
 
-bool GetOptions(int argc, char ** argv,
-                std::vector<std::string> & strategyName,
-                std::string & mode,
-                int & steps,
-                std::string & libDir,
-                std::string & configDir,
-                std::string & matrixFile);
+struct Options
+{
+    std::vector<std::string> strategy_name_;
+    std::string mode_;
+    int steps_;
+    std::string config_dir_;
+    std::string matrix_file_;
+
+    Options()
+    :   mode_("detailed"),
+        steps_(-1)
+    {}
+};
+
+bool GetOptions(int argc,
+                char ** argv,
+                Options & opts);
 
 #endif // TASK2_CL_PARSER_H

@@ -1,25 +1,21 @@
 #include "cl_parser.h"
 
-bool GetOptions(int argc, char ** argv,
-                std::vector<std::string> & strategyName,
-                std::string & mode,
-                int & steps,
-                std::string & libDir,
-                std::string & configDir,
-                std::string & matrixFile)
+bool GetOptions(int argc,
+                char ** argv,
+                Options & opts)
 {
     po::options_description desc("General options");
     desc.add_options()
         ("help,h", "Show options description")
-        ("names,n", po::value<std::vector<std::string>>(&strategyName)->multitoken(), "Strategy names")
-        ("modes,m", po::value<std::string>(&mode), "Game modes")
-        ("steps,s", po::value<int>(&steps)->default_value(-1), "Number of game steps")
-        ("libs,l", po::value<std::string>(&libDir), "Path to the directory with strategy strategy dynamic libraries")
-        ("configs,c", po::value<std::string>(&configDir), "Path to the directory with strategy configuration files")
-        ("matrix,M", po::value<std::string>(&matrixFile), "Path to the file with game matrix");
+        ("names,n", po::value<std::vector<std::string>>(&opts.strategy_name_)->multitoken(), "Strategy names")
+        ("modes,m", po::value<std::string>(&opts.mode_), "Game modes")
+        ("steps,s", po::value<int>(&opts.steps_), "Number of game steps")
+        ("configs,c", po::value<std::string>(&opts.config_dir_), "Path to the directory with strategy configuration files")
+        ("matrix,M", po::value<std::string>(&opts.matrix_file_), "Path to the file with game matrix");
 
     po::variables_map vm;
-    po::store(po::command_line_parser(argc, argv).options(desc).run(), vm);
+    po::store(po::command_line_parser(argc, argv).options(desc).run(),
+              vm);
     po::notify(vm);
 
     if (vm.count("help"))

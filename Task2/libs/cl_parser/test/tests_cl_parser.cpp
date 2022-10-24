@@ -8,7 +8,6 @@ struct ParserArgs
     std::vector<std::string> strategy_name_;
     std::string mode_;
     int steps_ = -1;
-    std::string lib_dir_;
     std::string config_dir_;
     std::string matrix_file_;
     bool exception_;
@@ -17,15 +16,13 @@ struct ParserArgs
                std::vector<std::string> strategy_name,
                std::string mode,
                int steps,
-               std::string lib_dir,
                std::string config_dir,
                std::string matrix_file,
                bool exception)
-        : argc_(static_cast<int>(args.size())),
+    :   argc_(static_cast<int>(args.size())),
         strategy_name_(strategy_name),
         mode_(mode),
         steps_(steps),
-        lib_dir_(lib_dir),
         config_dir_(config_dir),
         matrix_file_(matrix_file),
         exception_(exception)
@@ -48,17 +45,15 @@ INSTANTIATE_TEST_SUITE_P
         (
             ParserArgs({"./main", "--names", "player1", "player2", "player3"},
                        std::vector<std::string>({"player1", "player2", "player3"}),
-                       std::string(""),
+                       std::string("detailed"),
                        -1,
-                       std::string(""),
                        std::string(""),
                        std::string(""),
                        false),
             ParserArgs({"./main", "-n", "player1", "player2", "player3"},
                        std::vector<std::string>({"player1", "player2", "player3"}),
-                       std::string(""),
+                       std::string("detailed"),
                        -1,
-                       std::string(""),
                        std::string(""),
                        std::string(""),
                        false),
@@ -68,7 +63,6 @@ INSTANTIATE_TEST_SUITE_P
                        -1,
                        std::string(""),
                        std::string(""),
-                       std::string(""),
                        false),
             ParserArgs({"./main", "-mfast"},
                        std::vector<std::string>(),
@@ -76,117 +70,88 @@ INSTANTIATE_TEST_SUITE_P
                        -1,
                        std::string(""),
                        std::string(""),
-                       std::string(""),
                        false),
             ParserArgs({"./main", "--steps=15"},
                        std::vector<std::string>(),
-                       std::string(""),
+                       std::string("detailed"),
                        15,
-                       std::string(""),
                        std::string(""),
                        std::string(""),
                        false),
             ParserArgs({"./main", "--steps=-15"},
                        std::vector<std::string>(),
-                       std::string(""),
+                       std::string("detailed"),
                        -15,
-                       std::string(""),
                        std::string(""),
                        std::string(""),
                        false),
             ParserArgs({"./main", "-s15"},
                        std::vector<std::string>(),
-                       std::string(""),
+                       std::string("detailed"),
                        15,
-                       std::string(""),
-                       std::string(""),
-                       std::string(""),
-                       false),
-            ParserArgs({"./main", "--libs=/home/"},
-                       std::vector<std::string>(),
-                       std::string(""),
-                       -1,
-                       std::string("/home/"),
-                       std::string(""),
-                       std::string(""),
-                       false),
-            ParserArgs({"./main", "-l/home/"},
-                       std::vector<std::string>(),
-                       std::string(""),
-                       -1,
-                       std::string("/home/"),
                        std::string(""),
                        std::string(""),
                        false),
             ParserArgs({"./main", "--configs=/home/"},
                        std::vector<std::string>(),
-                       std::string(""),
+                       std::string("detailed"),
                        -1,
-                       std::string(""),
                        std::string("/home/"),
                        std::string(""),
                        false),
             ParserArgs({"./main", "-c/home/"},
                        std::vector<std::string>(),
-                       std::string(""),
+                       std::string("detailed"),
                        -1,
-                       std::string(""),
                        std::string("/home/"),
                        std::string(""),
                        false),
             ParserArgs({"./main", "--matrix=/home/matrix.txt"},
                        std::vector<std::string>(),
-                       std::string(""),
+                       std::string("detailed"),
                        -1,
-                       std::string(""),
                        std::string(""),
                        std::string("/home/matrix.txt"),
                        false),
             ParserArgs({"./main", "-M/home/matrix.txt"},
                        std::vector<std::string>(),
-                       std::string(""),
+                       std::string("detailed"),
                        -1,
-                       std::string(""),
                        std::string(""),
                        std::string("/home/matrix.txt"),
                        false),
             ParserArgs({"./main", "--help"},
                        std::vector<std::string>(),
-                       std::string(""),
+                       std::string("detailed"),
                        -1,
-                       std::string(""),
                        std::string(""),
                        std::string(""),
                        false),
             ParserArgs({"./main", "-h"},
                        std::vector<std::string>(),
-                       std::string(""),
+                       std::string("detailed"),
                        -1,
-                       std::string(""),
                        std::string(""),
                        std::string(""),
                        false),
             ParserArgs({"./main", "-r"},
                        std::vector<std::string>(),
-                       std::string(""),
+                       std::string("detailed"),
                        -1,
-                       std::string(""),
                        std::string(""),
                        std::string(""),
                        true),
             ParserArgs({"./main", "--auto"},
                        std::vector<std::string>(),
-                       std::string(""),
+                       std::string("detailed"),
                        -1,
-                       std::string(""),
                        std::string(""),
                        std::string(""),
                        true),
             ParserArgs({"./main", "--theme=dark"},
                        std::vector<std::string>(),
-                       std::string(""),
+                       std::string("detailed"),
                        -1,
-                       std::string(""),
                        std::string(""),
                        std::string(""),
                        true)
@@ -196,49 +161,41 @@ INSTANTIATE_TEST_SUITE_P
 TEST_P(ParserTest, main_test)
 {
     ParserArgs params = GetParam();
-
-    std::vector<std::string> strategy_name;
-    std::string mode;
-    int steps = -1;
-    std::string lib_dir;
-    std::string config_dir;
-    std::string matrix_file;
+    Options opts;
 
     if (params.exception_)
     {
         EXPECT_THROW(
             {
-                GetOptions(params.argc_, params.argv_,
-                           strategy_name,
-                           mode,
-                           steps,
-                           lib_dir,
-                           config_dir,
-                           matrix_file);
+                GetOptions(params.argc_,
+                           params.argv_,
+                           opts);
             },
             std::exception
         );
         return;
     }
 
-    GetOptions(params.argc_, params.argv_,
-               strategy_name,
-               mode,
-               steps,
-               lib_dir,
-               config_dir,
-               matrix_file);
+    GetOptions(params.argc_,
+               params.argv_,
+               opts);
 
-    EXPECT_EQ(strategy_name, params.strategy_name_);
-    EXPECT_EQ(mode, params.mode_);
-    EXPECT_EQ(steps, params.steps_);
-    EXPECT_EQ(lib_dir, params.lib_dir_);
-    EXPECT_EQ(config_dir, params.config_dir_);
-    EXPECT_EQ(matrix_file, params.matrix_file_);
+    EXPECT_EQ(opts.strategy_name_,
+              params.strategy_name_);
+    EXPECT_EQ(opts.mode_,
+              params.mode_);
+    EXPECT_EQ(opts.steps_,
+              params.steps_);
+    EXPECT_EQ(opts.config_dir_,
+              params.config_dir_);
+    EXPECT_EQ(opts.matrix_file_,
+              params.matrix_file_);
 }
 
-int main(int argc, char** argv)
+int main(int argc,
+         char** argv)
 {
-    ::testing::InitGoogleTest(&argc, argv);
+    ::testing::InitGoogleTest(&argc,
+                              argv);
     return RUN_ALL_TESTS();
 }
