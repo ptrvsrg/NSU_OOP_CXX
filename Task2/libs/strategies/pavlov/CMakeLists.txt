@@ -14,7 +14,8 @@ target_link_libraries(pavlov
         PUBLIC strategy_creator
         PUBLIC ${Boost_LIBRARIES}
         INTERFACE strategy_interface)
-target_compile_definitions(pavlov PUBLIC -DBOOST_BIND_GLOBAL_PLACEHOLDERS)
+target_compile_definitions(pavlov PUBLIC
+        -DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 
 message(STATUS "Creating tests for library of strategy \"pavlov\"")
 
