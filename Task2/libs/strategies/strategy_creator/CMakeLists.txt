@@ -21,3 +21,14 @@ target_link_libraries(strategy_creator
         PUBLIC matrix
         PUBLIC ${STRATEGIES}
         INTERFACE strategy_interface)
+
+message(STATUS "Creating tests for library of strategy \"strategy_creator\"")
+
+enable_testing()
+find_package(GTest REQUIRED)
+add_executable(tests_strategy_creator
+        test/tests_strategy_creator.cpp)
+target_link_libraries(tests_strategy_creator PUBLIC
+        strategy_creator
+        gtest
+        gtest_main)
