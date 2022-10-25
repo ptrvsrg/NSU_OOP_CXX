@@ -1,4 +1,4 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "pavlov.h"
 
 struct ChoiceArgs
@@ -15,10 +15,22 @@ struct ChoiceArgs
         strategy_choice_(strategy_choice) {}
 };
 
+TEST(test_pavlov, test_constructors)
+{
+    EXPECT_THROW
+    (
+        {
+            PavlovStrategy strategy(
+                "/home/acer/NSU_OOP_CXX/Task2/libs/strategies/tit_for_tat_with_forgiveness/test/");
+        },
+        boost::property_tree::json_parser_error
+    );
+}
+
 class PavlovStrategyTest : public ::testing::TestWithParam<std::vector<ChoiceArgs>> {};
 INSTANTIATE_TEST_SUITE_P
 (
-    test_parser,
+    test_pavlov,
     PavlovStrategyTest,
     ::testing::Values
         (
@@ -95,7 +107,6 @@ INSTANTIATE_TEST_SUITE_P
 TEST_P(PavlovStrategyTest, test_vote_update)
 {
     PavlovStrategy strategy("/home/acer/NSU_OOP_CXX/Task2/config/");
-
     std::vector<ChoiceArgs> params_vector = GetParam();
 
     for (ChoiceArgs params : params_vector)
