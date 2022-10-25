@@ -12,6 +12,7 @@
 #include "pavlov.h"
 #include "random.h"
 #include "tit_for_tat.h"
+#include "tit_for_tat_with_forgiveness.h"
 
 using StrategyPtr = std::unique_ptr<Strategy>;
 

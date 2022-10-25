@@ -1,10 +1,11 @@
 set(STRATEGIES
         always_cooperate
         always_defect
-        random
-        tit_for_tat
         grim_trigger
         pavlov
+        random
+        tit_for_tat
+        tit_for_tat_with_forgiveness
         CACHE STRING "Strategies name" FORCE)
 
 add_subdirectory(strategy_interface)
