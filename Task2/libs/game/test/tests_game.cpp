@@ -1,7 +1,7 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "game.h"
 
-struct Options
+struct OptionArgs
 {
     std::vector<std::string> strategy_name_;
     std::string mode_;
@@ -10,13 +10,13 @@ struct Options
     std::string matrix_file_;
     std::string error_message_;
 
-    Options(std::vector<std::string> strategy_name,
-            std::string mode,
-            int steps,
-            std::string config_dir,
-            std::string matrix_file,
-            std::string error_message)
-       : strategy_name_(strategy_name),
+    OptionArgs(std::vector<std::string> strategy_name,
+               std::string mode,
+               int steps,
+               std::string config_dir,
+               std::string matrix_file,
+               std::string error_message)
+   :    strategy_name_(strategy_name),
         mode_(mode),
         steps_(steps),
         config_dir_(config_dir),
@@ -24,14 +24,14 @@ struct Options
         error_message_(error_message) {}
 };
 
-class GameTest : public ::testing::TestWithParam<Options> {};
+class GameTest : public ::testing::TestWithParam<OptionArgs> {};
 INSTANTIATE_TEST_SUITE_P
 (
     test_game,
     GameTest,
     ::testing::Values
         (
-            Options({"strategy1", "strategy2"},
+            OptionArgs({"strategy1", "strategy2"},
                     "detailed",
                     20,
                     "",
@@ -40,9 +40,9 @@ INSTANTIATE_TEST_SUITE_P
         )
 );
 
-TEST_P(GameTest, launch_exceptions)
+TEST_P(GameTest, test_launch)
 {
-    Options params = GetParam();
+    OptionArgs params = GetParam();
     Game game;
 
     try

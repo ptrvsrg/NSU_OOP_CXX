@@ -1,4 +1,4 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "grim_trigger.h"
 
 #include <vector>
@@ -20,7 +20,7 @@ struct ChoiceArgs
 class GrimTriggerStrategyTest : public ::testing::TestWithParam<std::vector<ChoiceArgs>> {};
 INSTANTIATE_TEST_SUITE_P
 (
-    test_parser,
+    test_grim_trigger_strategy,
     GrimTriggerStrategyTest,
     ::testing::Values
     (
@@ -43,7 +43,6 @@ INSTANTIATE_TEST_SUITE_P
 TEST_P(GrimTriggerStrategyTest, test_vote_update)
 {
     GrimTriggerStrategy strategy;
-
     std::vector<ChoiceArgs> params_vector = GetParam();
 
     for (ChoiceArgs params : params_vector)

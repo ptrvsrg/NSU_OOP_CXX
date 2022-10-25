@@ -5,8 +5,8 @@ Choice TitForTatStrategy::vote()
     return choice_;
 }
 
-void TitForTatStrategy::update(Choice move1,
-                               Choice move2)
+void TitForTatStrategy::update(Choice choice1,
+                               Choice choice2)
 {
-    choice_ = (move1 == D || move2 == D) ? D : C;
+    choice_ = (choice1 == D || choice2 == D) ? D : C;
 }

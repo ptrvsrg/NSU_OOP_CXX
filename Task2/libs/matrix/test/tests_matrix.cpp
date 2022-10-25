@@ -1,4 +1,4 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "matrix.h"
 
 std::array<Trio<int>, 8> matrix_data_ =
@@ -13,18 +13,18 @@ std::array<Trio<int>, 8> matrix_data_ =
          { 1, 1, 1, }
      }};
 
-struct Options
+struct OptionArgs
 {
     std::string matrix_file_;
     bool exception_;
     std::string error_message_;
 
-    Options(std::string matrix_file,
-            bool exception,
-            std::string error_message)
-    :   matrix_file_(matrix_file),
+    OptionArgs(std::string matrix_file,
+               bool exception,
+               std::string error_message)
+    :   matrix_file_(std::move(matrix_file)),
         exception_(exception),
-        error_message_(error_message) {}
+        error_message_(std::move(error_message)) {}
 };
 
 TEST(test_constructors, without_args)
@@ -40,31 +40,31 @@ TEST(test_constructors, without_args)
     }
 }
 
-class MatrixUpdateTest : public ::testing::TestWithParam<Options> {};
+class MatrixUpdateTest : public ::testing::TestWithParam<OptionArgs> {};
 INSTANTIATE_TEST_SUITE_P
 (
     test_update,
     MatrixUpdateTest,
     ::testing::Values
         (
-            Options("/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/matrix.txt",
-                    false,
-                    ""),
-            Options("/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix0.txt",
-                    true,
-                    "/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix0.txt : File opening error"),
-            Options("/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix1.txt",
-                    true,
-                    "/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix1.txt : Wrong matrix"),
-            Options("/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix2.txt",
-                    true,
-                    "/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix2.txt : Wrong matrix")
+            OptionArgs("/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/matrix.txt",
+                       false,
+                       ""),
+            OptionArgs("/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix0.txt",
+                       true,
+                       "/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix0.txt : File opening error"),
+            OptionArgs("/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix1.txt",
+                       true,
+                       "/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix1.txt : Wrong matrix"),
+            OptionArgs("/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix2.txt",
+                       true,
+                       "/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix2.txt : Wrong matrix")
         )
 );
 
 TEST_P(MatrixUpdateTest, file_exceptions)
 {
-    Options params = GetParam();
+    OptionArgs params = GetParam();
     Matrix matrix;
 
     try

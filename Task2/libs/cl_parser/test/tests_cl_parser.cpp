@@ -1,4 +1,4 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "cl_parser.h"
 
 struct ParserArgs
@@ -20,11 +20,11 @@ struct ParserArgs
                std::string matrix_file,
                bool exception)
     :   argc_(static_cast<int>(args.size())),
-        strategy_name_(strategy_name),
+        strategy_name_(std::move(strategy_name)),
         mode_(mode),
         steps_(steps),
-        config_dir_(config_dir),
-        matrix_file_(matrix_file),
+        config_dir_(std::move(config_dir)),
+        matrix_file_(std::move(matrix_file)),
         exception_(exception)
     {
         argv_ = new char * [argc_];
@@ -158,10 +158,10 @@ INSTANTIATE_TEST_SUITE_P
         )
 );
 
-TEST_P(ParserTest, main_test)
+TEST_P(ParserTest, check_options)
 {
     ParserArgs params = GetParam();
-    Options opts;
+    OptionArgs opts;
 
     if (params.exception_)
     {

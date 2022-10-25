@@ -1,4 +1,4 @@
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "tit_for_tat.h"
 
 struct ChoiceArgs
@@ -18,7 +18,7 @@ struct ChoiceArgs
 class TitForTatStrategyTest : public ::testing::TestWithParam<std::vector<ChoiceArgs>> {};
 INSTANTIATE_TEST_SUITE_P
 (
-    test_parser,
+    test_tit_for_tat_strategy,
     TitForTatStrategyTest,
     ::testing::Values
         (
@@ -35,7 +35,6 @@ INSTANTIATE_TEST_SUITE_P
 TEST_P(TitForTatStrategyTest, test_vote_update)
 {
     TitForTatStrategy strategy;
-
     std::vector<ChoiceArgs> params_vector = GetParam();
 
     for (ChoiceArgs params : params_vector)
