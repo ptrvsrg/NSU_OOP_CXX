@@ -27,7 +27,8 @@ struct OptionArgs
         error_message_(std::move(error_message)) {}
 };
 
-TEST(test_constructors, without_args)
+TEST(test_constructors,
+     without_args)
 {
     Matrix matrix;
 
@@ -35,7 +36,8 @@ TEST(test_constructors, without_args)
     {
         for (int j = 0; j < 3; ++j)
         {
-            EXPECT_EQ(matrix_data_[i][j], matrix[i][j]);
+            EXPECT_EQ(matrix_data_[i][j],
+                      matrix[i][j]);
         }
     }
 }
@@ -62,7 +64,8 @@ INSTANTIATE_TEST_SUITE_P
         )
 );
 
-TEST_P(MatrixUpdateTest, file_exceptions)
+TEST_P(MatrixUpdateTest,
+       file_exceptions)
 {
     OptionArgs params = GetParam();
     Matrix matrix;
@@ -76,18 +79,22 @@ TEST_P(MatrixUpdateTest, file_exceptions)
         {
             for (int j = 0; j < 3; ++j)
             {
-                EXPECT_EQ(matrix[i][j], 1);
+                EXPECT_EQ(matrix[i][j],
+                          1);
             }
         }
     }
     catch (const std::invalid_argument & ex)
     {
-        EXPECT_STREQ(ex.what(), params.error_message_.c_str());
+        EXPECT_STREQ(ex.what(),
+                     params.error_message_.c_str());
     }
 }
 
-int main(int argc, char** argv)
+int main(int argc,
+         char** argv)
 {
-    ::testing::InitGoogleTest(&argc, argv);
+    ::testing::InitGoogleTest(&argc,
+                              argv);
     return RUN_ALL_TESTS();
 }

@@ -31,7 +31,8 @@ struct ParserArgs
         for (int i = 0; i < argc_; ++i)
         {
             argv_[i] = new char [(args.begin() + i)->size()];
-            strcpy(argv_[i], (args.begin() + i)->data());
+            strcpy(argv_[i],
+                   (args.begin() + i)->data());
         }
     }
 };
@@ -158,10 +159,11 @@ INSTANTIATE_TEST_SUITE_P
         )
 );
 
-TEST_P(ParserTest, check_options)
+TEST_P(ParserTest,
+       check_options)
 {
     ParserArgs params = GetParam();
-    OptionArgs opts;
+    Options opts;
 
     if (params.exception_)
     {
