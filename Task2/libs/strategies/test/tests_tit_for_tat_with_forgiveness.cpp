@@ -15,12 +15,13 @@ struct ChoiceArgs
             strategy_choice_(strategy_choice) {}
 };
 
-TEST(test_tit_for_tat_with_forgiveness, test_constructors)
+TEST(test_tit_for_tat_with_forgiveness,
+     test_constructors)
 {
     EXPECT_THROW(
         {
             TitForTatWithForgivenessStrategy strategy(
-                "/home/acer/NSU_OOP_CXX/Task2/libs/strategies/tit_for_tat_with_forgiveness/test/");
+                "/home/acer/NSU_OOP_CXX/Task2/libs/strategies/test");
         },
         boost::property_tree::json_parser_error
     );
@@ -28,21 +29,23 @@ TEST(test_tit_for_tat_with_forgiveness, test_constructors)
     try
     {
         TitForTatWithForgivenessStrategy strategy(
-            "/home/acer/NSU_OOP_CXX/Task2/libs/strategies/tit_for_tat_with_forgiveness/test/config1/");
+            "/home/acer/NSU_OOP_CXX/Task2/libs/strategies/test/config1/");
     }
     catch(const std::invalid_argument & ex)
     {
-        EXPECT_STREQ(ex.what(), "Wrong forgiveness percentage");
+        EXPECT_STREQ(ex.what(),
+                     "Wrong forgiveness percentage");
     }
 
     try
     {
         TitForTatWithForgivenessStrategy strategy(
-            "/home/acer/NSU_OOP_CXX/Task2/libs/strategies/tit_for_tat_with_forgiveness/test/config2/");
+            "/home/acer/NSU_OOP_CXX/Task2/libs/strategies/test/config2/");
     }
     catch(const std::invalid_argument & ex)
     {
-        EXPECT_STREQ(ex.what(), "Wrong forgiveness percentage");
+        EXPECT_STREQ(ex.what(),
+                     "Wrong forgiveness percentage");
     }
 }
 
@@ -69,20 +72,25 @@ INSTANTIATE_TEST_SUITE_P
         )
 );
 
-TEST_P(TitForTatWithForgivenessStrategyTest, test_vote_update)
+TEST_P(TitForTatWithForgivenessStrategyTest,
+       test_vote_update)
 {
     TitForTatWithForgivenessStrategy strategy("/home/acer/NSU_OOP_CXX/Task2/config/");
     std::vector<ChoiceArgs> params_vector = GetParam();
 
     for (ChoiceArgs params : params_vector)
     {
-        EXPECT_EQ(strategy.vote(), params.strategy_choice_);
-        strategy.update(params.opponent1_choice_, params.opponent2_choice_);
+        EXPECT_EQ(strategy.vote(),
+                  params.strategy_choice_);
+        strategy.update(params.opponent1_choice_,
+                        params.opponent2_choice_);
     }
 }
 
-int main(int argc, char** argv)
+int main(int argc,
+         char** argv)
 {
-    ::testing::InitGoogleTest(&argc, argv);
+    ::testing::InitGoogleTest(&argc,
+                              argv);
     return RUN_ALL_TESTS();
 }

@@ -1,8 +1,6 @@
 #ifndef TASK2_TIT_FOR_TAT_H
 #define TASK2_TIT_FOR_TAT_H
 
-#include <vector>
-
 #include "strategy_interface.h"
 
 class TitForTatStrategy : public Strategy

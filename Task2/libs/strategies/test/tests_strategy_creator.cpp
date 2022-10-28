@@ -50,7 +50,8 @@ INSTANTIATE_TEST_SUITE_P
     )
 );
 
-TEST_P(StrategyCreatorTest, test_create)
+TEST_P(StrategyCreatorTest,
+       test_create)
 {
     NameArgs params = GetParam();
 
@@ -58,17 +59,21 @@ TEST_P(StrategyCreatorTest, test_create)
 
     try
     {
-        StrategyPtr strategy_ptr = creator.Create(params.name_, params.config_dir_);
+        StrategyPtr strategy_ptr = creator.Create(params.name_,
+                                                  params.config_dir_);
         EXPECT_FALSE(params.exception_);
     }
     catch(const std::invalid_argument & ex)
     {
-        EXPECT_STREQ(ex.what(), "Wrong strategy name");
+        EXPECT_STREQ(ex.what(),
+                     "Wrong strategy name");
     }
 }
 
-int main(int argc, char** argv)
+int main(int argc,
+         char** argv)
 {
-    ::testing::InitGoogleTest(&argc, argv);
+    ::testing::InitGoogleTest(&argc,
+                              argv);
     return RUN_ALL_TESTS();
 }

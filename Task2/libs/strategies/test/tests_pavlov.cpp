@@ -15,7 +15,8 @@ struct ChoiceArgs
         strategy_choice_(strategy_choice) {}
 };
 
-TEST(test_pavlov, test_constructors)
+TEST(test_pavlov,
+     test_constructors)
 {
     EXPECT_THROW
     (
@@ -111,13 +112,17 @@ TEST_P(PavlovStrategyTest, test_vote_update)
 
     for (ChoiceArgs params : params_vector)
     {
-        EXPECT_EQ(strategy.vote(), params.strategy_choice_);
-        strategy.update(params.opponent1_choice_, params.opponent2_choice_);
+        EXPECT_EQ(strategy.vote(),
+                  params.strategy_choice_);
+        strategy.update(params.opponent1_choice_,
+                        params.opponent2_choice_);
     }
 }
 
-int main(int argc, char** argv)
+int main(int argc,
+         char** argv)
 {
-    ::testing::InitGoogleTest(&argc, argv);
+    ::testing::InitGoogleTest(&argc,
+                              argv);
     return RUN_ALL_TESTS();
 }
