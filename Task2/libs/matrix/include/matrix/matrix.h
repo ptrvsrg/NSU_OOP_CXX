@@ -12,15 +12,7 @@ class Matrix
 {
 public:
     Matrix() {};
-    Matrix(const Matrix & src)
-    {
-        for (int i = 0; i < 8; ++i)
-        {
-            std::copy(src.data_[i].cbegin(),
-                      src.data_[i].cend(),
-                      data_[i].begin());
-        }
-    }
+    Matrix(const Matrix & src);
 
     int GetRowIndex(Trio<Choice> choices);
     void Update(const std::string & matrix_file);

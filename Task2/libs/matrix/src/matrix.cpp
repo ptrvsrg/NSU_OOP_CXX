@@ -1,5 +1,15 @@
 #include "matrix.h"
 
+Matrix::Matrix(const Matrix & src)
+{
+    for (int i = 0; i < 8; ++i)
+    {
+        std::copy(src.data_[i].cbegin(),
+                  src.data_[i].cend(),
+                  data_[i].begin());
+    }
+}
+
 int Matrix::GetRowIndex(Trio<Choice> choices)
 {
     int row = 0;
