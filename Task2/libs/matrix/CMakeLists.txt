@@ -4,7 +4,7 @@ add_library(matrix STATIC
         src/matrix.cpp)
 target_include_directories(matrix PUBLIC
         include/matrix
-        ${CMAKE_SOURCE_DIR}/libs/strategies/strategy_interface/include/strategy_interface)
+        ${CMAKE_SOURCE_DIR}/libs/strategies/include/strategy_interface)
 target_link_directories(matrix PUBLIC
         ${CMAKE_BINARY_DIR}/strategies/libs/strategy_interface)
 target_link_libraries(matrix INTERFACE

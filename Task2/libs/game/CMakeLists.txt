@@ -5,10 +5,10 @@ add_library(game STATIC
 target_include_directories(game PUBLIC
         include/game
         ${CMAKE_SOURCE_DIR}/libs/matrix/include/matrix
-        ${CMAKE_SOURCE_DIR}/libs/modes/mode_creator/include/mode_creator)
+        ${CMAKE_SOURCE_DIR}/libs/modes/include/mode_creator)
 target_link_directories(game PUBLIC
         ${CMAKE_BINARY_DIR}/libs/matrix
-        ${CMAKE_BINARY_DIR}/libs/modes/mode_creator)
+        ${CMAKE_BINARY_DIR}/libs/modes)
 target_link_libraries(game PUBLIC
         matrix
         mode_creator)
