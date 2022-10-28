@@ -1,10 +1,7 @@
 #ifndef TASK2_GAME_H
 #define TASK2_GAME_H
 
-#include <fstream>
-#include <iostream>
 #include <memory>
-#include <string>
 #include <vector>
 
 #include "matrix.h"
