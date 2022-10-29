@@ -12,7 +12,7 @@ void Game::Launch(const std::vector<std::string> & strategy_names,
     if (!matrix_file.empty()) matrix.Update(matrix_file);
 
     ModeCreator creator;
-    std::unique_ptr<Mode> process = creator.Create(strategy_names,
+    const ModePtr process = creator.Create(strategy_names,
                                                    mode,
                                                    steps,
                                                    config_dir,
