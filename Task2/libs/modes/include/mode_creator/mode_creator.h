@@ -9,10 +9,12 @@
 #include "fast_mode.h"
 #include "tournament_mode.h"
 
+using ModePtr = std::unique_ptr<Mode>;
+
 class ModeCreator
 {
 public:
-    std::unique_ptr<Mode> Create(const std::vector<std::string> & strategy_names,
+    ModePtr Create(const std::vector<std::string> & strategy_names,
                                  const std::string & mode,
                                  int steps,
                                  const std::string & config_dir,

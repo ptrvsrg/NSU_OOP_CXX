@@ -1,6 +1,6 @@
 #include "mode_creator.h"
 
-std::unique_ptr<Mode> ModeCreator::Create(const std::vector<std::string> & strategy_names,
+ModePtr ModeCreator::Create(const std::vector<std::string> & strategy_names,
                                           const std::string & mode,
                                           int steps,
                                           const std::string & config_dir,
