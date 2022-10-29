@@ -28,15 +28,20 @@ void Matrix::Update(const std::string & matrix_file)
     if (!in_file.is_open()) throw std::invalid_argument(matrix_file + " : File opening error");
 
     int row = 0;
+    std::array<Trio<int>, 8> buffer;
     while (!in_file.eof())
     {
         if (row == 8) throw std::invalid_argument(matrix_file + " : Wrong matrix");
 
-        in_file >> data_[row][0] >> data_[row][1] >> data_[row][2];
+        in_file >> buffer[row][0]
+                >> buffer[row][1]
+                >> buffer[row][2];
         ++row;
     }
 
     if (row != 8) throw std::invalid_argument(matrix_file + " : Wrong matrix");
+
+    data_ = std::move(buffer);
 }
 
 Trio<int> & Matrix::operator[](int index)
