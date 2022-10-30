@@ -46,22 +46,17 @@ TEST_P(GameTest,
     OptionArgs params = GetParam();
     Game game;
 
-    try
-    {
-        game.Launch(params.strategy_name_,
-                    params.mode_,
-                    params.steps_,
-                    params.config_dir_,
-                    params.matrix_file_);
-    }
-    catch (const std::invalid_argument & ex)
-    {
-        EXPECT_STREQ(ex.what(),
-                     params.error_message_.c_str());
-        return;
-    }
-
-    FAIL();
+    EXPECT_THROW
+    (
+        {
+            game.Launch(params.strategy_name_,
+                        params.mode_,
+                        params.steps_,
+                        params.config_dir_,
+                        params.matrix_file_);
+        },
+        StrategyCountException
+    );
 }
 
 int main(int argc,

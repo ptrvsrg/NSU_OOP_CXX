@@ -1,5 +1,11 @@
 #include "matrix.h"
 
+LittleMatrixException::LittleMatrixException(const std::string & matrix_file)
+    :   std::invalid_argument(matrix_file + " : Little matrix") {}
+
+BigMatrixException::BigMatrixException(const std::string & matrix_file)
+    :   std::invalid_argument(matrix_file + " : Big matrix") {}
+
 Matrix::Matrix(const Matrix & src)
 {
     for (int i = 0; i < 8; ++i)
@@ -25,13 +31,13 @@ void Matrix::Update(const std::string & matrix_file)
 {
     std::ifstream in_file(matrix_file,
                           std::ios::in);
-    if (!in_file.is_open()) throw std::invalid_argument(matrix_file + " : File opening error");
+    in_file.exceptions(std::ios::badbit | std::ios::failbit) ;
 
     int row = 0;
     std::array<Trio<int>, 8> buffer;
     while (!in_file.eof())
     {
-        if (row == 8) throw std::invalid_argument(matrix_file + " : Wrong matrix");
+        if (row == 8) throw BigMatrixException(matrix_file);
 
         in_file >> buffer[row][0]
                 >> buffer[row][1]
@@ -39,7 +45,7 @@ void Matrix::Update(const std::string & matrix_file)
         ++row;
     }
 
-    if (row != 8) throw std::invalid_argument(matrix_file + " : Wrong matrix");
+    if (row != 8) throw LittleMatrixException(matrix_file);
 
     data_ = std::move(buffer);
 }

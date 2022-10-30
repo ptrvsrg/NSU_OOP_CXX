@@ -7,6 +7,12 @@
 #include "matrix.h"
 #include "mode_creator.h"
 
+class StrategyCountException : std::invalid_argument
+{
+public:
+    StrategyCountException();
+};
+
 class Game
 {
 public:

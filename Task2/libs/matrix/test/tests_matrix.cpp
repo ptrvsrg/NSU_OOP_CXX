@@ -16,15 +16,18 @@ std::array<Trio<int>, 8> matrix_data_ =
 struct OptionArgs
 {
     std::string matrix_file_;
-    bool exception_;
-    std::string error_message_;
+    enum ExceptionType
+    {
+        NO,
+        STREAM_EXCEPTION_TYPE,
+        BIG_MATRIX_EXCEPTION_TYPE,
+        LITTLE_MATRIX_EXCEPTION_TYPE
+    } exception_type_;
 
     OptionArgs(std::string matrix_file,
-               bool exception,
-               std::string error_message)
+               ExceptionType exception_type)
     :   matrix_file_(std::move(matrix_file)),
-        exception_(exception),
-        error_message_(std::move(error_message)) {}
+        exception_type_(exception_type) {}
 };
 
 TEST(test_constructors,
@@ -50,17 +53,13 @@ INSTANTIATE_TEST_SUITE_P
     ::testing::Values
         (
             OptionArgs("/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/matrix.txt",
-                       false,
-                       ""),
+                       OptionArgs::NO),
             OptionArgs("/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix0.txt",
-                       true,
-                       "/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix0.txt : File opening error"),
+                       OptionArgs::STREAM_EXCEPTION_TYPE),
             OptionArgs("/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix1.txt",
-                       true,
-                       "/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix1.txt : Wrong matrix"),
+                       OptionArgs::LITTLE_MATRIX_EXCEPTION_TYPE),
             OptionArgs("/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix2.txt",
-                       true,
-                       "/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix2.txt : Wrong matrix")
+                       OptionArgs::BIG_MATRIX_EXCEPTION_TYPE)
         )
 );
 
@@ -70,24 +69,45 @@ TEST_P(MatrixUpdateTest,
     OptionArgs params = GetParam();
     Matrix matrix;
 
-    try
+    switch(params.exception_type_)
     {
-        matrix.Update(params.matrix_file_);
-        EXPECT_FALSE(params.exception_);
-
-        for (int i = 0; i < 8; ++i)
-        {
-            for (int j = 0; j < 3; ++j)
+        case OptionArgs::NO:
+            matrix.Update(params.matrix_file_);
+            for (int i = 0; i < 8; ++i)
             {
-                EXPECT_EQ(matrix[i][j],
-                          1);
+                for (int j = 0; j < 3; ++j)
+                {
+                    EXPECT_EQ(matrix[i][j],
+                              1);
+                }
             }
-        }
-    }
-    catch (const std::invalid_argument & ex)
-    {
-        EXPECT_STREQ(ex.what(),
-                     params.error_message_.c_str());
+            break;
+        case OptionArgs::STREAM_EXCEPTION_TYPE:
+            EXPECT_THROW
+            (
+                {
+                    matrix.Update(params.matrix_file_);
+                },
+                std::ios_base::failure
+            );
+            break;
+        case OptionArgs::LITTLE_MATRIX_EXCEPTION_TYPE:
+            EXPECT_THROW
+            (
+                {
+                    matrix.Update(params.matrix_file_);
+                },
+                LittleMatrixException
+            );
+            break;
+        case OptionArgs::BIG_MATRIX_EXCEPTION_TYPE:
+            EXPECT_THROW
+            (
+                {
+                    matrix.Update(params.matrix_file_);
+                },
+                BigMatrixException
+            );
     }
 }
 

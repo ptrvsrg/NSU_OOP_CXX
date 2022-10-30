@@ -8,6 +8,18 @@
 
 template <class T> using Trio = std::array<T, 3>;
 
+class LittleMatrixException : std::invalid_argument
+{
+public:
+    LittleMatrixException(const std::string & matrix_file);
+};
+
+class BigMatrixException : std::invalid_argument
+{
+public:
+    BigMatrixException(const std::string & matrix_file);
+};
+
 class Matrix
 {
 public:

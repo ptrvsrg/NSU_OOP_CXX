@@ -16,6 +16,12 @@
 
 using StrategyPtr = std::unique_ptr<Strategy>;
 
+class StrategyNameException : std::invalid_argument
+{
+public:
+    StrategyNameException();
+};
+
 class StrategyCreator
 {
 public:

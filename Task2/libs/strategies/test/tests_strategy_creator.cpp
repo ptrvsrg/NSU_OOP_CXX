@@ -57,16 +57,24 @@ TEST_P(StrategyCreatorTest,
 
     StrategyCreator creator;
 
-    try
+    if (params.exception_)
     {
-        StrategyPtr strategy_ptr = creator.Create(params.name_,
-                                                  params.config_dir_);
-        EXPECT_FALSE(params.exception_);
+        EXPECT_THROW
+        (
+            {
+                StrategyPtr strategy_ptr = creator.Create(params.name_,
+                                                          params.config_dir_);
+            },
+            StrategyNameException
+        );
     }
-    catch(const std::invalid_argument & ex)
+    else
     {
-        EXPECT_STREQ(ex.what(),
-                     "Wrong strategy name");
+        EXPECT_NO_THROW
+        (
+            StrategyPtr strategy_ptr = creator.Create(params.name_,
+                                                      params.config_dir_);
+        );
     }
 }
 
