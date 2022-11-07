@@ -4,7 +4,8 @@ find_package(Boost COMPONENTS program_options REQUIRED)
 add_library(cl_parser STATIC
         src/cl_parser.cpp)
 target_include_directories(cl_parser PUBLIC
-        include/cl_parser)
+        include/cl_parser
+        ${Boost_INCLUDE_DIR})
 target_link_libraries(cl_parser PUBLIC
         ${Boost_LIBRARIES})
 
