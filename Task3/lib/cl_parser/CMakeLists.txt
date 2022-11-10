@@ -2,7 +2,8 @@ message(STATUS "Creating library \"cl_parser\"")
 
 find_package(Boost COMPONENTS program_options REQUIRED)
 add_library(cl_parser STATIC
-        src/cl_parser.cpp)
+        src/cl_parser.cpp
+        src/cl_parser_errors.cpp)
 target_include_directories(cl_parser PUBLIC
         include/cl_parser
         ${Boost_INCLUDE_DIR})

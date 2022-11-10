@@ -1,22 +1,7 @@
 #include "cl_parser.h"
-
+#include "cl_parser_errors.h"
 #include <boost/program_options.hpp>
 #include <iostream>
-
-const char * NoConfigFileError::what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW
-{
-    return "The configuration file is missing\n";
-}
-
-const char * NoOutputFileError::what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW
-{
-    return "The output file is missing\n";
-}
-
-const char * NoInputFilesError::what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW
-{
-    return "The input files is missing\n";
-}
 
 namespace po = boost::program_options;
 bool GetOptions(int argc,
@@ -57,9 +42,9 @@ bool GetOptions(int argc,
         return false;
     }
 
-    if (opts.config_file_.empty()) throw NoConfigFileError();
-    if (opts.output_file_.empty()) throw NoOutputFileError();
-    if (opts.input_files_.empty()) throw NoInputFilesError();
+    if (opts.config_file_.empty()) throw NoConfigFileException();
+    if (opts.output_file_.empty()) throw NoOutputFileException();
+    if (opts.input_files_.empty()) throw NoInputFilesException();
 
     return true;
 }

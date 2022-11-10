@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
-#include <sstream>
 #include "cl_parser.h"
+#include "cl_parser_errors.h"
 
-struct ParserArgs
+struct CommandLineParserArgs
 {
     int argc_;
     char ** argv_;
@@ -17,7 +17,7 @@ struct ParserArgs
         NO_INPUT_FILES
     } exception_type_;
 
-    ParserArgs(std::initializer_list<std::string> args,
+    CommandLineParserArgs(std::initializer_list<std::string> args,
                std::string config_file,
                std::string output_file,
                std::vector<std::string> input_files,
@@ -38,63 +38,63 @@ struct ParserArgs
     }
 };
 
-class ParserTest : public ::testing::TestWithParam<ParserArgs> {};
+class CommandLineParserTest : public ::testing::TestWithParam<CommandLineParserArgs> {};
 INSTANTIATE_TEST_SUITE_P
 (
-    test_parser,
-    ParserTest,
+    test_command_line_parser,
+    CommandLineParserTest,
     ::testing::Values
         (
-            ParserArgs({"./main", "-c", "/home/", "-O", "/bin/", "-I", "/lib/", "/dev/"}, // 0
-                       "/home/",
-                       "/bin/",
-                       { "/lib/", "/dev/" },
-                       ParserArgs::ExceptionType::NO_EXCEPTION),
-            ParserArgs({"./main", "-c/home/", "-O/bin/", "-I/lib/", "/dev/"}, // 1
-                       "/home/",
-                       "/bin/",
-                       { "/lib/", "/dev/" },
-                       ParserArgs::ExceptionType::NO_EXCEPTION),
-            ParserArgs({"./main", "--config", "/home/", "--output", "/bin/", "--input", "/lib/", "/dev/"}, // 2
-                       "/home/",
-                       "/bin/",
-                       { "/lib/", "/dev/" },
-                       ParserArgs::ExceptionType::NO_EXCEPTION),
-            ParserArgs({"./main", "--config=/home/", "--output=/bin/", "--input=/lib/", "/dev/"}, // 3
-                       "/home/",
-                       "/bin/",
-                       { "/lib/", "/dev/" },
-                       ParserArgs::ExceptionType::NO_EXCEPTION),
+            CommandLineParserArgs({"./main", "-c", "/home/", "-O", "/bin/", "-I", "/lib/", "/dev/"}, // 0
+                                  "/home/",
+                                  "/bin/",
+                                  { "/lib/", "/dev/" },
+                                  CommandLineParserArgs::ExceptionType::NO_EXCEPTION),
+            CommandLineParserArgs({"./main", "-c/home/", "-O/bin/", "-I/lib/", "/dev/"}, // 1
+                                  "/home/",
+                                  "/bin/",
+                                  { "/lib/", "/dev/" },
+                                  CommandLineParserArgs::ExceptionType::NO_EXCEPTION),
+            CommandLineParserArgs({"./main", "--config", "/home/", "--output", "/bin/", "--input", "/lib/", "/dev/"}, // 2
+                                  "/home/",
+                                  "/bin/",
+                                  { "/lib/", "/dev/" },
+                                  CommandLineParserArgs::ExceptionType::NO_EXCEPTION),
+            CommandLineParserArgs({"./main", "--config=/home/", "--output=/bin/", "--input=/lib/", "/dev/"}, // 3
+                                  "/home/",
+                                  "/bin/",
+                                  { "/lib/", "/dev/" },
+                                  CommandLineParserArgs::ExceptionType::NO_EXCEPTION),
 
-            ParserArgs({"./main", "-c/home/", "-O/bin/"}, // 4
-                       "/home/",
-                       "/bin/",
-                       {},
-                       ParserArgs::ExceptionType::NO_INPUT_FILES),
+            CommandLineParserArgs({"./main", "-c/home/", "-O/bin/"}, // 4
+                                  "/home/",
+                                  "/bin/",
+                                  {},
+                                  CommandLineParserArgs::ExceptionType::NO_INPUT_FILES),
 
-            ParserArgs({"./main", "-c/home/", "-I/bin/"}, // 5
-                       "/home/",
-                       "",
-                       { "/bin/" },
-                       ParserArgs::ExceptionType::NO_OUTPUT_FILE),
+            CommandLineParserArgs({"./main", "-c/home/", "-I/bin/"}, // 5
+                                  "/home/",
+                                  "",
+                                  { "/bin/" },
+                                  CommandLineParserArgs::ExceptionType::NO_OUTPUT_FILE),
 
-            ParserArgs({"./main", "-O/home/", "-I/bin/"}, // 6
-                       "",
-                       "/home/",
-                       { "/bin/" },
-                       ParserArgs::ExceptionType::NO_CONFIG_FILE)
+            CommandLineParserArgs({"./main", "-O/home/", "-I/bin/"}, // 6
+                                  "",
+                                  "/home/",
+                                  { "/bin/" },
+                                  CommandLineParserArgs::ExceptionType::NO_CONFIG_FILE)
         )
 );
 
-TEST_P(ParserTest,
+TEST_P(CommandLineParserTest,
        check_options)
 {
-    ParserArgs params = GetParam();
+    CommandLineParserArgs params = GetParam();
     Options opts;
 
     switch (params.exception_type_)
     {
-        case ParserArgs::ExceptionType::NO_EXCEPTION:
+        case CommandLineParserArgs::ExceptionType::NO_EXCEPTION:
             GetOptions(params.argc_,
                        params.argv_,
                        opts);
@@ -106,34 +106,34 @@ TEST_P(ParserTest,
             EXPECT_EQ(opts.input_files_,
                       params.input_files_);
             break;
-        case ParserArgs::ExceptionType::NO_CONFIG_FILE:
+        case CommandLineParserArgs::ExceptionType::NO_CONFIG_FILE:
             EXPECT_THROW(
-                {
+            {
                     GetOptions(params.argc_,
                                params.argv_,
                                opts);
                 },
-                NoConfigFileError
+                NoConfigFileException
             );
             break;
-        case ParserArgs::ExceptionType::NO_OUTPUT_FILE:
+        case CommandLineParserArgs::ExceptionType::NO_OUTPUT_FILE:
             EXPECT_THROW(
-                {
+            {
                     GetOptions(params.argc_,
                                params.argv_,
                                opts);
                 },
-                NoOutputFileError
+                NoOutputFileException
             );
             break;
-        case ParserArgs::ExceptionType::NO_INPUT_FILES:
+        case CommandLineParserArgs::ExceptionType::NO_INPUT_FILES:
             EXPECT_THROW(
-                {
+            {
                     GetOptions(params.argc_,
                                params.argv_,
                                opts);
                 },
-                NoInputFilesError
+                NoInputFilesException
             );
             break;
     }

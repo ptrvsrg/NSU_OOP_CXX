@@ -4,27 +4,6 @@
 #include <string>
 #include <vector>
 
-class NoConfigFileError : public std::exception
-{
-public:
-    NoConfigFileError() = default;
-    const char * what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW override;
-};
-
-class NoOutputFileError : public std::exception
-{
-public:
-    NoOutputFileError() = default;
-    const char * what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW override;
-};
-
-class NoInputFilesError : public std::exception
-{
-public:
-    NoInputFilesError() = default;
-    const char * what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW override;
-};
-
 struct Options
 {
     std::vector<std::string> input_files_;
