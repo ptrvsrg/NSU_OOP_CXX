@@ -130,92 +130,65 @@ TEST(test_WAV_reader,
     EXPECT_THROW
     (
         {
-            WAVReader wav_reader(test_dir + "without_data.wav");
+            WAVReader wav_reader(test_dir + "without_DATA_chunk.wav");
         },
         FileFormatException
     );
 }
 
-struct WAVWriterArgs
+TEST(test_WAV_writer,
+     check_constructor)
 {
-    std::string file_;
-    enum class ExceptionType
-    {
-        NO_EXCEPTION,
-        FILE_OPENING_EXCEPTION,
-    } exception_type_;
-
-    WAVWriterArgs(std::string file,
-                  ExceptionType exception_type)
-        :   file_(std::move(file)),
-            exception_type_(exception_type) {}
-};
-
-class WAVWriterTest : public ::testing::TestWithParam<WAVWriterArgs> {};
-INSTANTIATE_TEST_SUITE_P
-(
-    test_WAV_writer,
-    WAVWriterTest,
-    ::testing::Values
-        (
-            WAVWriterArgs(test_dir + "writer.wav",
-                          WAVWriterArgs::ExceptionType::NO_EXCEPTION)
-        )
-);
-
-TEST_P(WAVWriterTest,
-       check_constructor)
-{
-    WAVWriterArgs params = GetParam();
-    switch (params.exception_type_)
-    {
-        case WAVWriterArgs::ExceptionType::NO_EXCEPTION:
-            EXPECT_NO_THROW
-            (
-                {
-                    WAVWriter wav_writer(params.file_);
-                }
-            );
-            break;
-        case WAVWriterArgs::ExceptionType::FILE_OPENING_EXCEPTION:
-            EXPECT_THROW
-            (
-                {
-                    WAVWriter wav_writer(params.file_);
-                },
-                FileOpeningException
-            );
-            break;
-    }
+    EXPECT_NO_THROW
+    (
+        {
+            WAVWriter wav_writer(test_dir + "without_DATA_data.wav");
+        }
+    );
 }
 
-//TEST(test_WAV_reader_writer, copy)
-//{
-//    {
-//        WAVReader wav_reader(test_dir + "sample-3s.wav");
-//        WAVWriter wav_writer(test_dir + "sample-3s-copy.wav");
-//
-//        char buffer;
-//        while (wav_reader.Read(&buffer,
-//                               1) == 1)
-//        {
-//            wav_writer.Write(&buffer,
-//                             1);
-//        }
-//    }
-//
-////    WAVReader original_reading(test_dir + "sample-3s.wav");
-////    WAVReader copy_reading(test_dir + "sample-3s-copy.wav");
-////
-////    char original_buffer;
-////    char copy_buffer;
-////    while (original_reading.Read(&original_buffer, 1) == 1 ||
-////           copy_reading.Read(&copy_buffer, 1) == 1)
-////    {
-////        EXPECT_EQ(original_buffer,
-////                  copy_buffer);
-////    }
-//}
+TEST(test_WAV_reader_writer,
+     copy)
+{
+    EXPECT_NO_THROW
+    (
+        {
+            {
+                WAVReader wav_reader(test_dir + "correct.wav");
+                WAVWriter wav_writer(test_dir + "correct_copy.wav");
+
+                char buffer[256];
+                while (true)
+                {
+                    size_t read_count = wav_reader.Read(buffer,
+                                                        sizeof(buffer));
+                    if (read_count == 0) break;
+                    wav_writer.Write(buffer,
+                                     read_count);
+                }
+            }
+
+            WAVReader original_reading(test_dir + "correct.wav");
+            WAVReader copy_reading(test_dir + "correct_copy.wav");
+
+            char original_buffer;
+            char copy_buffer;
+            while (true)
+            {
+                size_t original_reading_count = original_reading.Read(&original_buffer,
+                                                                      sizeof(original_buffer));
+                size_t copy_reading_count = copy_reading.Read(&copy_buffer,
+                                                              sizeof(copy_buffer));
+                if (original_reading_count == 0 && copy_reading_count == 0) break;
+
+                EXPECT_EQ(original_buffer,
+                          copy_buffer);
+                EXPECT_EQ(original_reading_count,
+                          copy_reading_count);
+            }
+        }
+    );
+}
 
 int main(int argc,
          char** argv)
