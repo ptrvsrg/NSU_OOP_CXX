@@ -14,36 +14,34 @@ WAVWriter::WAVWriter(const std::string & file_name)
         RIFF,
         0
     };
-    Write((const char *)&RIFF_header,
-          sizeof(RIFF_header));
+    stream_.write((const char *)&RIFF_header,
+                  sizeof(RIFF_header));
 
     // write format type
-    FormatType format_type = {
-        WAVE
-    };
-    Write((const char *)&format_type,
-          sizeof(format_type));
+    FormatType format_type;
+    stream_.write((const char *)&format_type,
+                  sizeof(format_type));
 
     // write FMT header
     ChunkHeader FMT_header = {
         FMT_,
         sizeof(FMTChunkData)
     };
-    Write((const char *)&FMT_header,
-          sizeof(FMT_header));
+    stream_.write((const char *)&FMT_header,
+                  sizeof(FMT_header));
 
     // write FMT data
     FMTChunkData fmt_data;
-    Write((const char *)&fmt_data,
-          sizeof(fmt_data));
+    stream_.write((const char *)&fmt_data,
+                  sizeof(fmt_data));
 
     // write DATA header
     ChunkHeader data_header = {
         DATA,
         0
     };
-    Write((const char *)&data_header,
-          sizeof(data_header));
+    stream_.write((const char *)&data_header,
+                  sizeof(data_header));
 }
 
 WAVWriter::~WAVWriter()
@@ -57,8 +55,8 @@ WAVWriter::~WAVWriter()
     stream_.seekp(sizeof(RIFF),             // RIFF ID size
                   std::ios_base::beg);
     file_size -= sizeof(ChunkHeader);       // RIFF header
-    Write((const char *)&file_size,
-          sizeof(file_size));
+    stream_.write((const char *)&file_size,
+                  sizeof(file_size));
 
     // get DATA header size position
     file_size -= sizeof(FormatType)         // Format type size
@@ -71,15 +69,13 @@ WAVWriter::~WAVWriter()
                   + sizeof(FMTChunkData)    // FMT data size
                   + sizeof(DATA),           // DATA ID size
                   std::ios_base::beg);
-    Write((char *)&file_size,
-          sizeof(file_size));
+    stream_.write((char *)&file_size,
+                  sizeof(file_size));
 }
 
-void WAVWriter::Write(const char * buffer,
-                      size_t count)
+bool WAVWriter::WriteSample(Sample sample)
 {
-    stream_.write((const char *)buffer,
-                  static_cast<std::streamsize>(count));
-    if (!stream_.good()) {
-        throw WritingException(file_name_); }
+    stream_.write((const char *)&sample,
+                  sizeof(sample));
+    return stream_.good();
 }

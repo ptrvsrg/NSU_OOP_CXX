@@ -8,8 +8,7 @@ class WAVWriter : public WAV
 public:
     explicit WAVWriter(const std::string & file_name);
     ~WAVWriter();
-    void Write(const char * buffer,
-               size_t count);
+    bool WriteSample(Sample sample);
 private:
 };
 
