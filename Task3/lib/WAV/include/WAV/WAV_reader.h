@@ -8,8 +8,9 @@ class WAVReader : public WAV
 public:
     explicit WAVReader(const std::string & file_name);
     size_t Read(char * buffer,
-              size_t count);
+                  size_t count);
 private:
+    size_t data_size_;
     WAV::ChunkHeader FindChunk(uint32_t chunk_ID);
 };
 
