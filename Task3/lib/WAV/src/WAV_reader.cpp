@@ -35,22 +35,18 @@ WAVReader::WAVReader(const std::string & file_name)
     if (fmt_chunk_data.bits_per_sample_ != 16)              throw SampleBitsException(file_name_);
     if (fmt_chunk_data.samples_rate_ != SAMPLING_RATE)      throw SampleRateException(file_name_);
 
-    // get DATA data
-    ChunkHeader DATA_header = FindChunk(DATA);
-    data_size_ = DATA_header.size_;
+    // find DATA data
+    FindChunk(DATA);
 }
 
-size_t WAVReader::Read(char * buffer,
-                       size_t count)
+bool WAVReader::ReadSample(Sample & sample)
 {
-    if (data_size_ >= count) data_size_ -= count;
-    else count = data_size_;
-    stream_.read(buffer,
-                 static_cast<std::streamsize>(count));
-    return count;
+    stream_.read((char *)&sample,
+                 sizeof(sample));
+    return stream_.good();
 }
 
-WAV::ChunkHeader WAVReader::FindChunk(uint32_t chunk_ID)
+void WAVReader::FindChunk(uint32_t chunk_ID)
 {
     ChunkHeader chunk_header{};
     while (true)
@@ -62,6 +58,4 @@ WAV::ChunkHeader WAVReader::FindChunk(uint32_t chunk_ID)
         stream_.seekg(chunk_header.size_,
                       std::fstream::cur);
     }
-
-    return chunk_header;
 }
