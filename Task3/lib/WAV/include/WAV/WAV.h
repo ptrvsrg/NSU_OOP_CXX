@@ -4,6 +4,8 @@
 #include <fstream>
 #include <cstdint>
 
+using Sample = int16_t;
+
 class WAV
 {
 protected:
