@@ -7,7 +7,7 @@ FileFormatException::FileFormatException(const std::string & file_name)
     : std::logic_error(file_name + ": Wrong file format\n") {}
 
 WritingException::WritingException(const std::string & file_name)
-    : logic_error(file_name+ ": Writing error") {}
+    : std::logic_error(file_name + ": Writing error") {}
 
 AudioFormatException::AudioFormatException(const std::string & file_name)
     : std::runtime_error(file_name + ": Wrong audio format\n") {}
