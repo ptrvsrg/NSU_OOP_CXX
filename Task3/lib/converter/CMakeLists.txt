@@ -1,7 +1,8 @@
 message(STATUS "Creating converter libraries")
 
 set(SUBDIRS
-        mute)
+        mute
+        mix)
 
 foreach(SUBDIR ${SUBDIRS})
     add_subdirectory(${SUBDIR})
