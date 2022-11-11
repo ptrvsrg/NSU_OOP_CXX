@@ -26,7 +26,7 @@ TEST(test_mute,
 }
 
 TEST(test_mute,
-     check_procces)
+     check_convert)
 {
     MuteConverter mute_converter(20,
                                  672);
