@@ -9,7 +9,6 @@ class WAV
 protected:
     std::string file_name_;
     std::fstream stream_;
-    uint32_t size_ = 0;
 
     static const uint32_t RIFF = 0x46464952;
     static const uint32_t WAVE = 0x45564157;
@@ -23,17 +22,15 @@ protected:
     static const uint32_t BYTE_RATE = BLOCK_ALIGN * SAMPLING_RATE;
     static const uint16_t BITS_PER_SAMPLE = 8 * sizeof(int16_t);
 
-    struct WAVHeader
-    {
-        uint32_t ID_ = RIFF;
-        uint32_t size_ = 0;
-        uint32_t format_ = WAVE;
-    };
-
     struct ChunkHeader
     {
-        uint32_t ID_{};
-        uint32_t size_{};
+        uint32_t ID_;
+        uint32_t size_;
+    };
+
+    struct FormatType
+    {
+        uint32_t format_ = WAVE;
     };
 
     struct FMTChunkData
