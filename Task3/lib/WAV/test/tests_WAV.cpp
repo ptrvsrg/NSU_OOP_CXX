@@ -157,34 +157,27 @@ TEST(test_WAV_reader_writer,
                 WAVReader wav_reader(test_dir + "correct.wav");
                 WAVWriter wav_writer(test_dir + "correct_copy.wav");
 
-                char buffer[256];
-                while (true)
+                Sample sample;
+                while (wav_reader.ReadSample(sample))
                 {
-                    size_t read_count = wav_reader.Read(buffer,
-                                                        sizeof(buffer));
-                    if (read_count == 0) break;
-                    wav_writer.Write(buffer,
-                                     read_count);
+                    wav_writer.WriteSample(sample);
                 }
             }
 
             WAVReader original_reading(test_dir + "correct.wav");
             WAVReader copy_reading(test_dir + "correct_copy.wav");
 
-            char original_buffer;
-            char copy_buffer;
+            Sample original_sample;
+            Sample copy_sample;
             while (true)
             {
-                size_t original_reading_count = original_reading.Read(&original_buffer,
-                                                                      sizeof(original_buffer));
-                size_t copy_reading_count = copy_reading.Read(&copy_buffer,
-                                                              sizeof(copy_buffer));
-                if (original_reading_count == 0 && copy_reading_count == 0) break;
+                bool original_status = original_reading.ReadSample(original_sample);
+                bool copy_status = copy_reading.ReadSample(copy_sample);
 
-                EXPECT_EQ(original_buffer,
-                          copy_buffer);
-                EXPECT_EQ(original_reading_count,
-                          copy_reading_count);
+                if (!original_status && !copy_status) break;
+
+                EXPECT_EQ(original_sample,
+                          copy_sample);
             }
         }
     );
