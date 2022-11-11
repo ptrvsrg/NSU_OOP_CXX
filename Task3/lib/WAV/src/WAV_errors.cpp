@@ -6,10 +6,7 @@ FileOpeningException::FileOpeningException(const std::string & file_name)
 FileFormatException::FileFormatException(const std::string & file_name)
     : std::logic_error(file_name + ": Wrong file format\n") {}
 
-ClosedFileException::ClosedFileException(const std::string &file_name)
-    : std::logic_error(file_name + ": Working with a closed file") {}
-
-WritingException::WritingException(const std::string &file_name)
+WritingException::WritingException(const std::string & file_name)
     : logic_error(file_name+ ": Writing error") {}
 
 AudioFormatException::AudioFormatException(const std::string & file_name)

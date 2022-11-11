@@ -15,12 +15,6 @@ public:
     explicit FileFormatException(const std::string & file_name);
 };
 
-class ClosedFileException : public std::logic_error
-{
-public:
-    explicit ClosedFileException(const std::string & file_name);
-};
-
 class WritingException : public std::logic_error
 {
 public:
