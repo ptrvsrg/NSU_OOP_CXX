@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.23)
 
 set(SUBDIR
         lib/cl_parser
-        lib/config_parser)
+        lib/config_parser
+        lib/WAV)
 set(LIBRARY
         cl_parser)
 
