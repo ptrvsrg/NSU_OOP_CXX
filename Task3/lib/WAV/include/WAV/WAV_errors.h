@@ -3,46 +3,54 @@
 
 #include <stdexcept>
 
-class FileOpeningException : public std::logic_error
+class OpeningException : public std::logic_error
 {
 public:
-    explicit FileOpeningException(const std::string & file_name);
+    explicit OpeningException(const std::string & file_name);
 };
 
 class FileFormatException : public std::logic_error
 {
+protected:
+    explicit FileFormatException(const std::string & file_name,
+                                 const std::string & desc);
+};
+
+class ExtensionException : public FileFormatException
+{
 public:
-    explicit FileFormatException(const std::string & file_name);
+    explicit ExtensionException(const std::string & file_name);
+};
+
+class RIFFHeaderException : public FileFormatException
+{
+public:
+    explicit RIFFHeaderException(const std::string & file_name);
+};
+
+class FormatTypeException : public FileFormatException
+{
+public:
+    explicit FormatTypeException(const std::string & file_name);
+};
+
+class FormatDataException : public FileFormatException
+{
+public:
+    explicit FormatDataException(const std::string & file_name);
+};
+
+class ChunkSearchException : public FileFormatException
+{
+public:
+    explicit ChunkSearchException(const std::string & file_name,
+                                int32_t chunk_ID);
 };
 
 class WritingException : public std::logic_error
 {
 public:
     explicit WritingException(const std::string & file_name);
-};
-
-class AudioFormatException : public std::runtime_error
-{
-public:
-    explicit AudioFormatException(const std::string & file_name);
-};
-
-class ChannelsNumberException : public std::runtime_error
-{
-public:
-    explicit ChannelsNumberException(const std::string & file_name);
-};
-
-class SampleBitsException : public std::runtime_error
-{
-public:
-    explicit SampleBitsException(const std::string & file_name);
-};
-
-class SampleRateException : public std::runtime_error
-{
-public:
-    explicit SampleRateException(const std::string & file_name);
 };
 
 #endif //TASK3_WAV_ERRORS_H
