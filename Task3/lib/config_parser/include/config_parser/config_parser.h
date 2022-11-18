@@ -18,7 +18,7 @@ struct ConverterCommand
 class ConfigParser
 {
 public:
-    explicit ConfigParser(const std::string & file_name);
+    explicit ConfigParser(const std::string& file_path);
     bool GetConverterCommand(ConverterCommand & cvt_cmd);
     ~ConfigParser();
 private:

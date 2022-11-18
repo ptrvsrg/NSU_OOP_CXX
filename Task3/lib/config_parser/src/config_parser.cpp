@@ -6,11 +6,11 @@ ConverterCommand::ConverterCommand(std::string converter, std::initializer_list<
 :   converter_(std::move(converter)),
     params_(params) {}
 
-ConfigParser::ConfigParser(const std::string & file_name)
+ConfigParser::ConfigParser(const std::string & file_path)
 {
-    in_stream_.open(file_name,
+    in_stream_.open(file_path,
                     std::ios_base::in);
-    if (!in_stream_.good()) throw OpeningException(file_name);
+    if (!in_stream_.good()) throw OpeningException(file_path);
 }
 
 bool ConfigParser::GetConverterCommand(ConverterCommand & cvt_cmd)
