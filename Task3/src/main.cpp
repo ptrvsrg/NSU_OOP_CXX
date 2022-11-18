@@ -12,9 +12,9 @@ int main(int argc,
                    argv,
                    opts);
     }
-    catch ()
+    catch (const std::exception & ex)
     {
-
+        std::cerr << ex.what();
     }
 
     return EXIT_SUCCESS;
