@@ -1,98 +1,175 @@
 #include <gtest/gtest.h>
-#include "WAV.h"
 #include "WAV_errors.h"
+#include "WAV_reader.h"
+#include "WAV_writer.h"
 
 std::string test_dir = "/home/acer/NSU_OOP_CXX/Task3/lib/WAV/test/files/";
 
-TEST(test_WAV,
-     check_constructor)
+struct WAVReaderArgs
 {
-    EXPECT_NO_THROW
-    (
-        {
-            WAV wav_reader(test_dir + "correct.wav",
-                           std::ios_base::in);
-        }
-    );
+    std::string file_;
+    enum class ExceptionType
+    {
+        NO_EXCEPTION,
+        EXTENSION_EXCEPTION,
+        OPENING_EXCEPTION,
+        RIFF_HEADER_EXCEPTION,
+        FORMAT_TYPE_EXCEPTION,
+        FORMAT_DATA_EXCEPTION,
+        AUDIO_FORMAT_EXCEPTION,
+        CHANNELS_NUMBER_EXCEPTION,
+        SAMPLE_BITS_EXCEPTION,
+        SAMPLE_RATE_EXCEPTION,
+        CHUNK_SEARCH_EXCEPTION
+    } exception_type_;
 
-    EXPECT_THROW
-    (
-        {
-            WAV wav_reader(test_dir + "incorrect_extension.txt",
-                           std::ios_base::in);
-        },
-        ExtensionException
-    );
+    WAVReaderArgs(std::string file,
+                  ExceptionType exception_type)
+    :   file_(std::move(file)),
+        exception_type_(exception_type) {}
+};
 
-    EXPECT_THROW
-    (
-        {
-            WAV wav_reader("non_existent.wav",
-                           std::ios_base::in);
-        },
-        OpeningException
-    );
-}
+class WAVReaderTest : public ::testing::TestWithParam<WAVReaderArgs> {};
+INSTANTIATE_TEST_SUITE_P
+(
+    test_WAV_reader,
+    WAVReaderTest,
+    ::testing::Values
+        (
+            WAVReaderArgs(test_dir + "correct.wav",
+                          WAVReaderArgs::ExceptionType::NO_EXCEPTION),
+            WAVReaderArgs(test_dir + "mp3_file_format.mp3",
+                          WAVReaderArgs::ExceptionType::EXTENSION_EXCEPTION),
+            WAVReaderArgs(test_dir + "non_existent.wav",
+                          WAVReaderArgs::ExceptionType::OPENING_EXCEPTION),
+            WAVReaderArgs(test_dir + "empty.wav",
+                          WAVReaderArgs::ExceptionType::RIFF_HEADER_EXCEPTION),
+            WAVReaderArgs(test_dir + "incorrect_RIFF_header.wav",
+                          WAVReaderArgs::ExceptionType::RIFF_HEADER_EXCEPTION),
+            WAVReaderArgs(test_dir + "no_format_type.wav",
+                          WAVReaderArgs::ExceptionType::FORMAT_TYPE_EXCEPTION),
+            WAVReaderArgs(test_dir + "incorrect_format_type.wav",
+                          WAVReaderArgs::ExceptionType::FORMAT_TYPE_EXCEPTION),
+            WAVReaderArgs(test_dir + "incorrect_fmt_chunk.wav",
+                          WAVReaderArgs::ExceptionType::FORMAT_DATA_EXCEPTION),
+            WAVReaderArgs(test_dir + "adpcm_audio_format.wav",
+                          WAVReaderArgs::ExceptionType::AUDIO_FORMAT_EXCEPTION),
+            WAVReaderArgs(test_dir + "stereo.wav",
+                          WAVReaderArgs::ExceptionType::CHANNELS_NUMBER_EXCEPTION),
+            WAVReaderArgs(test_dir + "8_sample_bits.wav",
+                          WAVReaderArgs::ExceptionType::SAMPLE_BITS_EXCEPTION),
+            WAVReaderArgs(test_dir + "8000_hz.wav",
+                          WAVReaderArgs::ExceptionType::SAMPLE_RATE_EXCEPTION),
+            WAVReaderArgs(test_dir + "without_DATA_chunk.wav",
+                          WAVReaderArgs::ExceptionType::CHUNK_SEARCH_EXCEPTION)
+        )
+);
 
-TEST(test_WAV,
-     check_read_header)
+TEST_P(WAVReaderTest,
+       check_constructor)
 {
-    EXPECT_THROW
-    (
-        {
-            WAV wav_reader(test_dir + "empty.wav",
-                           std::ios_base::in);
-        },
-        RIFFHeaderException
-    );
-
-    EXPECT_THROW
-    (
-        {
-            WAV wav_reader(test_dir + "incorrect_RIFF_header.wav",
-                           std::ios_base::in);
-        },
-        RIFFHeaderException
-    );
-
-    EXPECT_THROW
-    (
-        {
-            WAV wav_reader(test_dir + "without_format_type.wav",
-                           std::ios_base::in);
-        },
-        FormatTypeException
-    );
-
-    EXPECT_THROW
-    (
-        {
-            WAV wav_reader(test_dir + "incorrect_format_type.wav",
-                           std::ios_base::in);
-        },
-        FormatTypeException
-    );
-
-    EXPECT_THROW
-    (
-        {
-            WAV wav_reader(test_dir + "without_fmt_data.wav",
-                           std::ios_base::in);
-        },
-        FormatDataException
-    );
-}
-
-TEST(test_WAV,
-     check_search_chunk)
-{
-    EXPECT_THROW
-    (
-        {
-            WAV wav_reader(test_dir + "without_DATA_chunk.wav");
-        },
-        ChunkSearchException
-    );
+    WAVReaderArgs params = GetParam();
+    switch (params.exception_type_)
+    {
+        case WAVReaderArgs::ExceptionType::NO_EXCEPTION:
+            EXPECT_NO_THROW
+            (
+                {
+                    WAVReader wav_reader(params.file_);
+                }
+            );
+            break;
+        case WAVReaderArgs::ExceptionType::EXTENSION_EXCEPTION:
+            EXPECT_THROW
+            (
+                {
+                    WAVReader wav_reader(params.file_);
+                },
+                ExtensionException
+            );
+            break;
+        case WAVReaderArgs::ExceptionType::OPENING_EXCEPTION:
+            EXPECT_THROW
+            (
+                {
+                    WAVReader wav_reader(params.file_);
+                },
+                OpeningException
+            );
+            break;
+        case WAVReaderArgs::ExceptionType::RIFF_HEADER_EXCEPTION:
+            EXPECT_THROW
+            (
+                {
+                    WAVReader wav_reader(params.file_);
+                },
+                RIFFHeaderException
+            );
+            break;
+        case WAVReaderArgs::ExceptionType::FORMAT_TYPE_EXCEPTION:
+            EXPECT_THROW
+            (
+                {
+                    WAVReader wav_reader(params.file_);
+                },
+                FormatTypeException
+            );
+            break;
+        case WAVReaderArgs::ExceptionType::FORMAT_DATA_EXCEPTION:
+            EXPECT_THROW
+            (
+                {
+                    WAVReader wav_reader(params.file_);
+                },
+                FormatDataException
+            );
+            break;
+        case WAVReaderArgs::ExceptionType::AUDIO_FORMAT_EXCEPTION:
+            EXPECT_THROW
+            (
+                {
+                    WAVReader wav_reader(params.file_);
+                },
+                AudioFormatException
+            );
+            break;
+        case WAVReaderArgs::ExceptionType::CHANNELS_NUMBER_EXCEPTION:
+            EXPECT_THROW
+            (
+                {
+                    WAVReader wav_reader(params.file_);
+                },
+                ChannelsNumberException
+            );
+            break;
+        case WAVReaderArgs::ExceptionType::SAMPLE_BITS_EXCEPTION:
+            EXPECT_THROW
+            (
+                {
+                    WAVReader wav_reader(params.file_);
+                },
+                SampleBitsException
+            );
+            break;
+        case WAVReaderArgs::ExceptionType::SAMPLE_RATE_EXCEPTION:
+            EXPECT_THROW
+            (
+                {
+                    WAVReader wav_reader(params.file_);
+                },
+                SamplingRateException
+            );
+            break;
+        case WAVReaderArgs::ExceptionType::CHUNK_SEARCH_EXCEPTION:
+            EXPECT_THROW
+            (
+                {
+                    WAVReader wav_reader(params.file_);
+                },
+                ChunkSearchException
+            );
+            break;
+    }
 }
 
 TEST(test_WAV_writer,
@@ -101,10 +178,44 @@ TEST(test_WAV_writer,
     EXPECT_NO_THROW
     (
         {
-            WAV wav_writer(test_dir + "without_DATA_data.wav",
-                           std::ios_base::out);
+            WAVWriter wav_writer(test_dir + "without_DATA_data.wav");
         }
     );
+}
+
+TEST(test_WAV,
+     copy)
+{
+    Sample original_sample;
+    {
+        WAVReader original_reader(test_dir + "correct.wav");
+        WAVWriter copy_writer(test_dir + "correct_copy.wav");
+
+
+        while (true)
+        {
+            if (original_reader.ReadSample(original_sample) == 0) break;
+            copy_writer.WriteSample(original_sample);
+        }
+    }
+
+    WAVReader original_reader(test_dir + "correct.wav");
+    WAVReader copy_reader(test_dir + "correct_copy.wav");
+
+    Sample copy_sample;
+
+    while (true)
+    {
+        size_t status = original_reader.ReadSample(original_sample);
+
+        EXPECT_EQ(status,
+                  copy_reader.ReadSample(copy_sample));
+
+        if (status == 0) break;
+
+        EXPECT_EQ(original_sample,
+                  copy_sample);
+    }
 }
 
 int main(int argc,

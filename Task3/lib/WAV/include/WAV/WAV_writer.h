@@ -6,9 +6,10 @@
 class WAVWriter : public WAV
 {
 public:
-    explicit WAVWriter(const std::string & file_name);
+    explicit WAVWriter(std::string file_path);
     ~WAVWriter();
-    bool WriteSample(Sample sample);
+    void WriteSample(Sample sample);
+
 private:
     void WriteHeader();
     void FixHeader();

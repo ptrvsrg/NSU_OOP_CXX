@@ -1,41 +1,35 @@
-#include "WAV.h"
+#include "WAV_reader.h"
 #include "WAV_errors.h"
 
-void WAV::ReadHeader()
+WAVReader::WAVReader(std::string file_path)
+:   WAV(std::move(file_path))
 {
-    // check RIFF header
-    ChunkHeader RIFF_header{};
-    stream_.read((char *)&RIFF_header,
-                 sizeof(RIFF_header));
-    if (!stream_.good()) throw RIFFHeaderException(file_name_);
-    if (RIFF_header.ID_ != RIFF) throw RIFFHeaderException(file_name_);
+    // check file extension
+    if (file_path_.find(".wav") == std::string::npos) throw ExtensionException(file_path_);
 
-    // check format type
-    FormatType format_type;
-    stream_.read((char *)&format_type,
-                 sizeof(format_type));
-    if (!stream_.good()) throw FormatTypeException(file_name_);
-    if (format_type != WAVE) throw FormatTypeException(file_name_);
+    // file opening
+    stream_.open(file_path_,
+                 std::ios_base::binary | std::ios_base::in);
+    if (!stream_.good()) throw OpeningException(file_path_);
 
-    // check FMT data
-    SearchChunk(FMT_);
-    FMTData fmt_chunk_data;
-    stream_.read((char *)&fmt_chunk_data,
-                 sizeof(fmt_chunk_data));
-    if (!stream_.good()) throw FormatDataException(file_name_);
-
-    // find DATA data
-    SearchChunk(DATA);
+    ReadHeader();
 }
 
-void WAV::SearchChunk(uint32_t chunk_ID)
+size_t WAVReader::ReadSample(Sample & sample)
+{
+    stream_.read((char *)&sample,
+                 sizeof(sample));
+    return stream_.gcount();
+}
+
+void WAVReader::SearchChunk(uint32_t chunk_ID)
 {
     ChunkHeader chunk_header{};
     while (true)
     {
         stream_.read((char *)&chunk_header,
                      sizeof(chunk_header));
-        if (!stream_.good()) throw ChunkSearchException(file_name_,
+        if (!stream_.good()) throw ChunkSearchException(file_path_,
                                                         chunk_ID);
         if (chunk_header.ID_ == chunk_ID) break;
         stream_.seekg(chunk_header.size_,
@@ -43,9 +37,32 @@ void WAV::SearchChunk(uint32_t chunk_ID)
     }
 }
 
-size_t WAV::ReadSampleBuffer(SampleBuffer & sample_buffer)
+void WAVReader::ReadHeader()
 {
-    stream_.read((char *)sample_buffer.buffer_.data(),
-                 sample_buffer.buffer_.size());
-    return stream_.gcount();
+    // check RIFF header
+    ChunkHeader RIFF_header{};
+    stream_.read((char *)&RIFF_header,
+                 sizeof(RIFF_header));
+    if (!stream_.good() || RIFF_header.ID_ != RIFF) throw RIFFHeaderException(file_path_);
+
+    // check format type
+    FormatType format_type;
+    stream_.read((char *)&format_type,
+                 sizeof(format_type));
+    if (!stream_.good() || format_type.format_ != WAVE) throw FormatTypeException(file_path_);
+
+    // check FMT data
+    SearchChunk(FMT_);
+    FMTChunkData fmt_chunk_data;
+    stream_.read((char *)&fmt_chunk_data,
+                 sizeof(fmt_chunk_data));
+    if (!stream_.good()) throw FormatDataException(file_path_);
+
+    if (fmt_chunk_data.audio_format_ != AUDIO_FORMAT_PCM)   throw AudioFormatException(file_path_);
+    if (fmt_chunk_data.num_channels_ != 1)                  throw ChannelsNumberException(file_path_);
+    if (fmt_chunk_data.bits_per_sample_ != 16)              throw SampleBitsException(file_path_);
+    if (fmt_chunk_data.sampling_rate_ != SAMPLING_RATE)      throw SamplingRateException(file_path_);
+
+    // find DATA data
+    SearchChunk(DATA);
 }

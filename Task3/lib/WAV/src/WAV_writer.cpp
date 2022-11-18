@@ -1,7 +1,31 @@
-#include "WAV.h"
 #include "WAV_errors.h"
+#include "WAV_writer.h"
 
-void WAV::WriteHeader(FMTData fmt_data)
+WAVWriter::WAVWriter(std::string file_path)
+:   WAV(std::move(file_path))
+{
+    // file opening
+    stream_.open(file_path_,
+                 std::ios_base::binary | std::ios_base::out);
+    if (!stream_.good()) throw OpeningException(file_path_);
+
+    WriteHeader();
+}
+
+void WAVWriter::WriteSample(Sample sample)
+{
+    stream_.write((const char *)&sample,
+                  sizeof(sample));
+
+    if (!stream_.good()) throw WritingException(file_path_);
+}
+
+WAVWriter::~WAVWriter()
+{
+    FixHeader();
+}
+
+void WAVWriter::WriteHeader()
 {
     // write RIFF header
     ChunkHeader RIFF_header = {
@@ -12,19 +36,20 @@ void WAV::WriteHeader(FMTData fmt_data)
                   sizeof(RIFF_header));
 
     // write format type
-    FormatType format_type = WAVE;
+    FormatType format_type;
     stream_.write((const char *)&format_type,
                   sizeof(format_type));
 
     // write FMT header
     ChunkHeader FMT_header = {
         FMT_,
-        sizeof(FMTData)
+        sizeof(FMTChunkData)
     };
     stream_.write((const char *)&FMT_header,
                   sizeof(FMT_header));
 
     // write FMT data
+    FMTChunkData fmt_data;
     stream_.write((const char *)&fmt_data,
                   sizeof(fmt_data));
 
@@ -37,7 +62,7 @@ void WAV::WriteHeader(FMTData fmt_data)
                   sizeof(data_header));
 }
 
-void WAV::FixHeader()
+void WAVWriter::FixHeader()
 {
     // get file size
     stream_.seekp(0,
@@ -54,21 +79,14 @@ void WAV::FixHeader()
     // get DATA header size position
     file_size -= sizeof(FormatType)         // Format type size
                  + sizeof(ChunkHeader)      // FMT chunk header size
-                 + sizeof(FMTData)          // FMT chunk data size
+                 + sizeof(FMTChunkData)     // FMT chunk data size
                  + sizeof(ChunkHeader);     // DATA chunk data size
     stream_.seekp(sizeof(ChunkHeader)       // RIFF header size
                   + sizeof(FormatType)      // Format type size
                   + sizeof(ChunkHeader)     // FMT header size
-                  + sizeof(FMTData)         // FMT data size
+                  + sizeof(FMTChunkData)    // FMT data size
                   + sizeof(DATA),           // DATA ID size
                   std::ios_base::beg);
     stream_.write((char *)&file_size,
                   sizeof(file_size));
-}
-
-void WAV::WriteSampleBuffer(SampleBuffer sample_buffer)
-{
-    stream_.write((const char *)sample_buffer.buffer_.data(),
-                  sample_buffer.buffer_.size());
-    if (!stream_.good()) throw WritingException(file_name_);
 }
