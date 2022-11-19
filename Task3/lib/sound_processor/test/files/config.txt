@@ -1,0 +1,2 @@
+# mute the first 30 seconds of input1
+mute 0 10
