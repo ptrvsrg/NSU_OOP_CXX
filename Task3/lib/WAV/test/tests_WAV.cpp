@@ -38,7 +38,7 @@ INSTANTIATE_TEST_SUITE_P
         (
             WAVReaderArgs(test_dir + "correct.wav",
                           WAVReaderArgs::ExceptionType::NO_EXCEPTION),
-            WAVReaderArgs(test_dir + "mp3_file_format.mp3",
+            WAVReaderArgs(test_dir + "incorrect_extension.txt",
                           WAVReaderArgs::ExceptionType::EXTENSION_EXCEPTION),
             WAVReaderArgs(test_dir + "non_existent.wav",
                           WAVReaderArgs::ExceptionType::OPENING_EXCEPTION),
@@ -94,7 +94,7 @@ TEST_P(WAVReaderTest,
                 {
                     WAVReader wav_reader(params.file_);
                 },
-                OpeningException
+                std::ios_base::failure
             );
             break;
         case WAVReaderArgs::ExceptionType::RIFF_HEADER_EXCEPTION:
