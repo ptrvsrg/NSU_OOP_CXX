@@ -7,7 +7,7 @@ WAVWriter::WAVWriter(std::string file_path)
     // file opening
     stream_.open(file_path_,
                  std::ios_base::binary | std::ios_base::out);
-    if (!stream_.good()) throw OpeningException(file_path_);
+    if (!stream_.good()) throw std::ios_base::failure(file_path_ + " ");
 
     WriteHeader();
 }
@@ -17,7 +17,7 @@ void WAVWriter::WriteSample(Sample sample)
     stream_.write((const char *)&sample,
                   sizeof(sample));
 
-    if (!stream_.good()) throw WritingException(file_path_);
+    if (!stream_.good()) throw std::ios_base::failure(file_path_ + " ");
 }
 
 WAVWriter::~WAVWriter()
