@@ -3,10 +3,10 @@
 
 #include <stdexcept>
 
-class OpeningException : std::logic_error
+class IncorrectParamsException : std::invalid_argument
 {
 public:
-    explicit OpeningException(const std::string & file_path);
+    explicit IncorrectParamsException(const std::string & file_path);
 };
 
 #endif //TASK3_CONFIG_PARSER_ERRORS_H

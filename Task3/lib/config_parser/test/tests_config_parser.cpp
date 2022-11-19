@@ -4,29 +4,30 @@
 
 std::string test_dir = "/home/acer/NSU_OOP_CXX/Task3/lib/config_parser/test/files/";
 
-TEST(test_config_parser, check_constructor)
+TEST(test_config_parser,
+     check_constructor)
 {
     EXPECT_THROW
     (
         {
             ConfigParser config_parser(test_dir + "non_existent.txt");
         },
-        OpeningException
+        std::ios_base::failure
     );
 }
 
 struct ConfigParserArgs
 {
     std::string file_;
-    ConverterCommand cvt_cmd_;
-    bool status_;
+    std::vector<std::string> cvt_cmd_;
+    bool exception_;
 
     ConfigParserArgs(std::string file,
-                     ConverterCommand cvt_cmd,
-                     bool status)
-    :   file_(std::move(file)),
-        status_(status),
-        cvt_cmd_(std::move(cvt_cmd))
+                     std::vector<std::string> cvt_cmd,
+                     bool exception)
+    : file_(std::move(file)),
+      cvt_cmd_(std::move(cvt_cmd)),
+      exception_(exception)
     {}
 };
 
@@ -38,30 +39,50 @@ INSTANTIATE_TEST_SUITE_P
     ::testing::Values
         (
             ConfigParserArgs(test_dir + "correct.txt",
-                             ConverterCommand("mute", { "23", "54" }),
-                             true),
+                             {"mute", "23", "54" },
+                             false),
             ConfigParserArgs(test_dir + "correct_with_comment.txt",
-                             ConverterCommand("mute", { "23", "84" }),
-                             true),
+                             {"mute", "23", "84" },
+                             false),
             ConfigParserArgs(test_dir + "only_comment.txt",
-                             ConverterCommand(),
-                             false)
+                             {},
+                             false),
+            ConfigParserArgs(test_dir + "incorrect_link.txt",
+                             {},
+                             true),
+            ConfigParserArgs(test_dir + "incorrect_params.txt",
+                             {},
+                             true)
         )
 );
 
-TEST_P(ConfigParserTest, check_get_converter_command)
+TEST_P(ConfigParserTest,
+       check_get_converter_command)
 {
     ConfigParserArgs params = GetParam();
     ConfigParser config_parser(params.file_);
-    ConverterCommand cvt_cmd;
-    bool status = config_parser.GetConverterCommand(cvt_cmd);
+    std::vector<std::string> cvt_cmd;
 
-    EXPECT_EQ(status,
-              params.status_);
-    EXPECT_EQ(params.cvt_cmd_.converter_,
-              cvt_cmd.converter_);
-    EXPECT_EQ(params.cvt_cmd_.params_,
-              cvt_cmd.params_);
+    if (params.exception_)
+    {
+        EXPECT_THROW
+        (
+            {
+                cvt_cmd = config_parser.GetConverterCommand();
+            },
+            IncorrectParamsException
+        );
+        return;
+    }
+
+    EXPECT_NO_THROW
+    (
+        {
+            cvt_cmd = config_parser.GetConverterCommand();
+        }
+    );
+    EXPECT_EQ(params.cvt_cmd_,
+              cvt_cmd);
 }
 
 int main(int argc,

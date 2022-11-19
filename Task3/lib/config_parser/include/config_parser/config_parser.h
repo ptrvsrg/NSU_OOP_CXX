@@ -5,23 +5,15 @@
 #include <string>
 #include <vector>
 
-struct ConverterCommand
-{
-    std::string converter_;
-    std::vector<std::string> params_;
-
-    ConverterCommand() = default;
-    ConverterCommand(std::string converter,
-                     std::initializer_list<std::string> params);
-};
-
 class ConfigParser
 {
 public:
-    explicit ConfigParser(const std::string& file_path);
-    bool GetConverterCommand(ConverterCommand & cvt_cmd);
+    explicit ConfigParser(std::string file_path);
+    std::vector<std::string> GetConverterCommand();
     ~ConfigParser();
+
 private:
+    std::string file_path_;
     std::ifstream in_stream_;
 };
 
