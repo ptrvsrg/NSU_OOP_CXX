@@ -10,7 +10,7 @@ WAVReader::WAVReader(std::string file_path)
     // file opening
     stream_.open(file_path_,
                  std::ios_base::binary | std::ios_base::in);
-    if (!stream_.good()) throw OpeningException(file_path_);
+    if (!stream_.good()) throw std::ios_base::failure(file_path_ + " ");
 
     ReadHeader();
 }
@@ -19,6 +19,7 @@ size_t WAVReader::ReadSample(Sample & sample)
 {
     stream_.read((char *)&sample,
                  sizeof(sample));
+    if (stream_.gcount() == 0) sample = 0;
     return stream_.gcount();
 }
 
@@ -61,7 +62,7 @@ void WAVReader::ReadHeader()
     if (fmt_chunk_data.audio_format_ != AUDIO_FORMAT_PCM)   throw AudioFormatException(file_path_);
     if (fmt_chunk_data.num_channels_ != 1)                  throw ChannelsNumberException(file_path_);
     if (fmt_chunk_data.bits_per_sample_ != 16)              throw SampleBitsException(file_path_);
-    if (fmt_chunk_data.sampling_rate_ != SAMPLING_RATE)      throw SamplingRateException(file_path_);
+    if (fmt_chunk_data.sampling_rate_ != SAMPLING_RATE)     throw SamplingRateException(file_path_);
 
     // find DATA data
     SearchChunk(DATA);
