@@ -3,13 +3,7 @@
 
 #include <stdexcept>
 
-class OpeningException : public std::logic_error
-{
-public:
-    explicit OpeningException(const std::string & file_path);
-};
-
-class FileFormatException : public std::logic_error
+class FileFormatException : public std::invalid_argument
 {
 protected:
     explicit FileFormatException(const std::string & file_path,
@@ -70,12 +64,6 @@ class ChunkSearchException : public FileFormatException
 public:
     explicit ChunkSearchException(const std::string & file_path,
                                   uint32_t chunk_ID);
-};
-
-class WritingException : public std::logic_error
-{
-public:
-    explicit WritingException(const std::string & file_path);
 };
 
 #endif //TASK3_WAV_ERRORS_H
