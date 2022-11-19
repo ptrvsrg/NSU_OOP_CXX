@@ -3,19 +3,19 @@
 
 #include <stdexcept>
 
-class NoConfigFileException : public std::logic_error
+class NoConfigFileException : public std::invalid_argument
 {
 public:
     NoConfigFileException();
 };
 
-class NoOutputFileException : public std::logic_error
+class NoOutputFileException : public std::invalid_argument
 {
 public:
     NoOutputFileException();
 };
 
-class NoInputFilesException : public std::logic_error
+class NoInputFilesException : public std::invalid_argument
 {
 public:
     NoInputFilesException();
