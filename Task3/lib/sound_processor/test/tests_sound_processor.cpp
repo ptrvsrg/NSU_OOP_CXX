@@ -8,7 +8,8 @@ TEST(test_sound_processor,
 {
     SoundProcessor sound_processor(test_dir + "config.txt",
                                    test_dir + "output.wav",
-                                   {test_dir + "input1.wav"});
+                                   {test_dir + "input1.wav",
+                                    test_dir + "input2.wav"});
     sound_processor.Convert();
 }
 
