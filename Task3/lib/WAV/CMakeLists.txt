@@ -1,7 +1,6 @@
 message(STATUS "Creating library \"WAV\"")
 
 add_library(WAV STATIC
-        src/WAV.cpp
         src/WAV_errors.cpp
         src/WAV_reader.cpp
         src/WAV_writer.cpp)
