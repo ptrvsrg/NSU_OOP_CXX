@@ -28,7 +28,7 @@ private:
     WAVReaderVector OpenWAVReaders();
     ConverterVector CreatePipeline(ConfigParser & config);
     bool UpdateSamplesVector(WAVReaderVector & wav_reader_vector,
-                             SampleVector & sample_vector);
+                             SampleVector & default_samples);
 };
 
 #endif //TASK3_SOUND_PROCESSOR_H

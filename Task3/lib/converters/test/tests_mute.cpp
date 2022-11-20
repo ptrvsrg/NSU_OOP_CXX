@@ -92,17 +92,19 @@ TEST(test_mute,
 {
     MuteConverter mute_converter({"20", "67"});
 
-    SampleVector input_samples(2);
+    SampleVector default_samples(2);
 
     srandom(time(nullptr));
     for (int i = 0; i < 100 * 44100; ++i)
     {
-        FillSampleVector(input_samples);
-        Sample output_sample = mute_converter.Process(input_samples);
+        FillSampleVector(default_samples);
+        Sample work_sample = default_samples[0];
+        mute_converter.Process(work_sample,
+                               default_samples);
 
-        EXPECT_EQ(output_sample,
+        EXPECT_EQ(work_sample,
                   (i >= 20 * 44100 &&
-                   i <= 67 * 44100) ? 0 : input_samples[0]);
+                   i <= 67 * 44100) ? 0 : default_samples[0]);
     }
 }
 

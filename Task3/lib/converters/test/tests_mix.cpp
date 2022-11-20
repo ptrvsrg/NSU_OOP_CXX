@@ -32,14 +32,12 @@ INSTANTIATE_TEST_SUITE_P
             MixArgs({"8"},
                     MixArgs::ExceptionType::INCORRECT_PARAMS_NUM_EXCEPTION),
             MixArgs({"8", "12"},
-                    MixArgs::ExceptionType::INCORRECT_FILE_LINK_EXCEPTION),
-            MixArgs({"$0", "12"},
                     MixArgs::ExceptionType::INCORRECT_FILE_LINK_EXCEPTION)
         )
 );
 
 TEST_P(MixTest,
-       check_init)
+       check_constructor)
 {
     MixArgs params = GetParam();
 
@@ -92,26 +90,30 @@ TEST(test_mix,
 {
     MixConverter mix_converter({"$3", "20"});
 
-    std::vector<Sample> input_samples(2);
+    std::vector<Sample> default_samples(2);
 
     EXPECT_THROW
     (
         {
-            mix_converter.Process(input_samples);
+            Sample working_sample;
+            mix_converter.Process(working_sample,
+                                  default_samples);
         },
         IncorrectFileLink
     );
 
-    input_samples.resize(4);
+    default_samples.resize(4);
     srandom(time(nullptr));
     for (int i = 0; i < 100 * 44100; ++i)
     {
-        FillSampleVector(input_samples);
-        Sample output_sample = mix_converter.Process(input_samples);
-        EXPECT_EQ(output_sample,
+        FillSampleVector(default_samples);
+        Sample working_sample = default_samples[0];
+        mix_converter.Process(working_sample,
+                              default_samples);
+        EXPECT_EQ(working_sample,
                   (i >= 20 * 44100) ?
-                  (input_samples[0] + input_samples[3]) / 2 :
-                  input_samples[0]);
+                  (default_samples[0] + default_samples[3]) / 2 :
+                  default_samples[0]);
     }
 }
 

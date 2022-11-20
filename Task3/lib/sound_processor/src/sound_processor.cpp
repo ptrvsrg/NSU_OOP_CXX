@@ -22,17 +22,20 @@ void SoundProcessor::Convert()
     ConverterVector pipeline = std::move(CreatePipeline(config));
 
     // create sample vector to run on the pipeline
-    SampleVector sample_vector(input_files_.size() + 1);
+    SampleVector default_samples(input_files_.size());
     while (UpdateSamplesVector(wav_reader_vector,
-                               sample_vector))
+                               default_samples))
     {
+        // create a working sample and initialize with a sample from the main WAV file
+        Sample working_sample = default_samples[0];
+
         for (ConverterPtr & converter : pipeline)
         {
-            Sample processed_sample = converter->Process(sample_vector);
-            sample_vector[0] = processed_sample;
+            converter->Process(working_sample,
+                               default_samples);
         }
 
-        wav_writer.WriteSample(sample_vector[0]);
+        wav_writer.WriteSample(working_sample);
     }
 }
 
@@ -65,15 +68,14 @@ ConverterVector SoundProcessor::CreatePipeline(ConfigParser & config)
 }
 
 bool SoundProcessor::UpdateSamplesVector(WAVReaderVector & wav_reader_vector,
-                                         SampleVector & sample_vector)
+                                         SampleVector & default_samples)
 {
     // update main sample stream and check end of file
-    if (wav_reader_vector[0].ReadSample(sample_vector[1]) == 0) return false;
-    sample_vector[0] = sample_vector[1];
+    if (wav_reader_vector[0].ReadSample(default_samples[0]) == 0) return false;
 
     // update additional sample streams
     for (int i = 1; i < wav_reader_vector.size(); ++i)
-        wav_reader_vector[i].ReadSample(sample_vector[i + 1]);
+        wav_reader_vector[i].ReadSample(default_samples[i]);
 
     return true;
 }

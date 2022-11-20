@@ -13,7 +13,8 @@ class ConverterInterface
 {
 public:
     virtual ~ConverterInterface() = default;
-    virtual Sample Process(const SampleVector & input_samples) = 0;
+    virtual void Process(Sample & working_sample,
+                         const SampleVector & default_samples) = 0;
 };
 
 using ConverterPtr = std::unique_ptr<ConverterInterface>;

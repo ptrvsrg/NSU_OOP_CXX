@@ -8,21 +8,18 @@ MixConverter::MixConverter(std::vector<std::string> params)
 
     num_additional_file_ = std::stoi(params[0].substr(1));
 
-    if (num_additional_file_ == 0) throw IncorrectFileLink(params[0]);
-
     start_sample_ = std::stoi(params[1]) * 44100;
     current_sample_ = 0;
 }
 
-Sample MixConverter::Process(const SampleVector & input_samples)
+void MixConverter::Process(Sample & working_sample,
+                           const SampleVector & default_samples)
 {
-    if (num_additional_file_ >= input_samples.size())
+    if (num_additional_file_ >= default_samples.size())
         throw IncorrectFileLink("$" + std::to_string(num_additional_file_));
 
-    Sample output_sample = (current_sample_ >= start_sample_) ?
-                           (input_samples[0] / 2) + (input_samples[num_additional_file_] / 2)  :
-                           input_samples[0];
+    if (current_sample_ >= start_sample_)
+        working_sample = (working_sample / 2) + (default_samples[num_additional_file_] / 2);
 
     ++current_sample_;
-    return output_sample;
 }
