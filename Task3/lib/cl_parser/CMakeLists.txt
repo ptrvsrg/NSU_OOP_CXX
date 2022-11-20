@@ -22,3 +22,6 @@ target_link_libraries(tests_cl_parser
         PUBLIC cl_parser
         PUBLIC gtest
         PUBLIC gtest_main)
+add_test(NAME tests_cl_parser
+        COMMAND tests_cl_parser
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test)

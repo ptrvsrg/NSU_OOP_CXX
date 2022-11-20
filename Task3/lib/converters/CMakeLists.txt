@@ -20,6 +20,9 @@ target_link_libraries(tests_mute
         PUBLIC mute
         PUBLIC gtest
         PUBLIC gtest_main)
+add_test(NAME tests_mute
+        COMMAND tests_mute
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test)
 
 # MIX converters
 message(STATUS "Creating converter library \"mix\"")
@@ -43,6 +46,9 @@ target_link_libraries(tests_mix
         PUBLIC mix
         PUBLIC gtest
         PUBLIC gtest_main)
+add_test(NAME tests_mix
+        COMMAND tests_mix
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test)
 
 # Converter creator
 message(STATUS "Creating converter library \"converter_creator\"")
