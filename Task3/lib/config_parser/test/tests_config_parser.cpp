@@ -2,15 +2,13 @@
 #include "config_parser.h"
 #include "config_parser_errors.h"
 
-std::string test_dir = "/home/acer/NSU_OOP_CXX/Task3/lib/config_parser/test/files/";
-
 TEST(test_config_parser,
      check_constructor)
 {
     EXPECT_THROW
     (
         {
-            ConfigParser config_parser(test_dir + "non_existent.txt");
+            ConfigParser config_parser("files/non_existent.txt");
         },
         std::ios_base::failure
     );
@@ -38,19 +36,19 @@ INSTANTIATE_TEST_SUITE_P
     ConfigParserTest,
     ::testing::Values
         (
-            ConfigParserArgs(test_dir + "correct.txt",
+            ConfigParserArgs("files/correct.txt",
                              {"mute", "23", "54" },
                              false),
-            ConfigParserArgs(test_dir + "correct_with_comment.txt",
+            ConfigParserArgs("files/correct_with_comment.txt",
                              {"mute", "23", "84" },
                              false),
-            ConfigParserArgs(test_dir + "only_comment.txt",
+            ConfigParserArgs("files/only_comment.txt",
                              {},
                              false),
-            ConfigParserArgs(test_dir + "incorrect_link.txt",
+            ConfigParserArgs("files/incorrect_link.txt",
                              {},
                              true),
-            ConfigParserArgs(test_dir + "incorrect_params.txt",
+            ConfigParserArgs("files/incorrect_params.txt",
                              {},
                              true)
         )
