@@ -1,2 +1,2 @@
-# mute the first 30 seconds of input1
-mute 0 10
+mute 30 10000
+mix $1 30
