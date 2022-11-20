@@ -8,7 +8,6 @@
 
 using Sample = int16_t;
 using SampleVector = std::vector<Sample>;
-const int32_t SAMPLING_RATE = 44100;
 
 class ConverterInterface
 {
