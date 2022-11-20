@@ -9,7 +9,6 @@ WAVWriter::WAVWriter(std::string file_path)
 WAVWriter::~WAVWriter()
 {
     FixHeader();
-    stream_.close();
 }
 
 void WAVWriter::Open(std::string file_path)
@@ -17,19 +16,19 @@ void WAVWriter::Open(std::string file_path)
     file_path_ = std::move(file_path);
 
     // file opening
-    stream_.open(file_path_,
-                 std::ios_base::binary | std::ios_base::out);
-    if (!stream_.good()) throw std::ios_base::failure(file_path_ + " ");
+    open(file_path_,
+         std::ios_base::binary);
+    if (!good()) throw std::ios_base::failure(file_path_ + " ");
 
     WriteHeader();
 }
 
 void WAVWriter::WriteSample(Sample sample)
 {
-    stream_.write((const char *)&sample,
-                  sizeof(sample));
+    write((const char *)&sample,
+          sizeof(sample));
 
-    if (!stream_.good()) throw std::ios_base::failure(file_path_ + " ");
+    if (!good()) throw std::ios_base::failure(file_path_ + " ");
 }
 
 void WAVWriter::WriteHeader()
@@ -39,61 +38,61 @@ void WAVWriter::WriteHeader()
         RIFF,
         0
     };
-    stream_.write((const char *)&RIFF_header,
-                  sizeof(RIFF_header));
+    write((const char *)&RIFF_header,
+          sizeof(RIFF_header));
 
     // write format type
-    FormatType format_type;
-    stream_.write((const char *)&format_type,
-                  sizeof(format_type));
+    FormatType format_type = WAVE;
+    write((const char *)&format_type,
+          sizeof(format_type));
 
     // write FMT header
     ChunkHeader FMT_header = {
         FMT_,
         sizeof(FMTChunkData)
     };
-    stream_.write((const char *)&FMT_header,
-                  sizeof(FMT_header));
+    write((const char *)&FMT_header,
+          sizeof(FMT_header));
 
     // write FMT data
     FMTChunkData fmt_data;
-    stream_.write((const char *)&fmt_data,
-                  sizeof(fmt_data));
+    write((const char *)&fmt_data,
+          sizeof(fmt_data));
 
     // write DATA header
     ChunkHeader data_header = {
         DATA,
         0
     };
-    stream_.write((const char *)&data_header,
-                  sizeof(data_header));
+    write((const char *)&data_header,
+          sizeof(data_header));
 }
 
 void WAVWriter::FixHeader()
 {
     // get file size
-    stream_.seekp(0,
-                  std::ios_base::end);
-    uint32_t file_size = stream_.tellp();
+    seekp(0,
+          std::ios_base::end);
+    uint32_t file_size = tellp();
 
     // get RIFF header size position
-    stream_.seekp(sizeof(RIFF),             // RIFF ID size
-                  std::ios_base::beg);
+    seekp(sizeof(RIFF),                     // RIFF ID size
+          std::ios_base::beg);
     file_size -= sizeof(ChunkHeader);       // RIFF header
-    stream_.write((const char *)&file_size,
-                  sizeof(file_size));
+    write((const char *)&file_size,
+          sizeof(file_size));
 
     // get DATA header size position
     file_size -= sizeof(FormatType)         // Format type size
                  + sizeof(ChunkHeader)      // FMT chunk header size
                  + sizeof(FMTChunkData)     // FMT chunk data size
                  + sizeof(ChunkHeader);     // DATA chunk data size
-    stream_.seekp(sizeof(ChunkHeader)       // RIFF header size
-                  + sizeof(FormatType)      // Format type size
-                  + sizeof(ChunkHeader)     // FMT header size
-                  + sizeof(FMTChunkData)    // FMT data size
-                  + sizeof(DATA),           // DATA ID size
-                  std::ios_base::beg);
-    stream_.write((char *)&file_size,
-                  sizeof(file_size));
+    seekp(sizeof(ChunkHeader)               // RIFF header size
+          + sizeof(FormatType)              // Format type size
+          + sizeof(ChunkHeader)             // FMT header size
+          + sizeof(FMTChunkData)            // FMT data size
+          + sizeof(DATA),                   // DATA ID size
+          std::ios_base::beg);
+    write((char *)&file_size,
+          sizeof(file_size));
 }
