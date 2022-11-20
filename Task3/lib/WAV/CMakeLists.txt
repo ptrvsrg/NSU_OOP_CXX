@@ -19,3 +19,6 @@ target_link_libraries(tests_WAV
         PUBLIC WAV
         PUBLIC gtest
         PUBLIC gtest_main)
+add_test(NAME tests_WAV
+        COMMAND tests_WAV
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test)

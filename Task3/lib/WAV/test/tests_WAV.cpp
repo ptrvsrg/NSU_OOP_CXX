@@ -3,8 +3,6 @@
 #include "WAV_reader.h"
 #include "WAV_writer.h"
 
-std::string test_dir = "/home/acer/NSU_OOP_CXX/Task3/lib/WAV/test/files/";
-
 struct WAVReaderArgs
 {
     std::string file_;
@@ -36,31 +34,31 @@ INSTANTIATE_TEST_SUITE_P
     WAVReaderTest,
     ::testing::Values
         (
-            WAVReaderArgs(test_dir + "correct.wav",
+            WAVReaderArgs("files/correct.wav",
                           WAVReaderArgs::ExceptionType::NO_EXCEPTION),
-            WAVReaderArgs(test_dir + "incorrect_extension.txt",
+            WAVReaderArgs("files/incorrect_extension.txt",
                           WAVReaderArgs::ExceptionType::EXTENSION_EXCEPTION),
-            WAVReaderArgs(test_dir + "non_existent.wav",
+            WAVReaderArgs("files/non_existent.wav",
                           WAVReaderArgs::ExceptionType::OPENING_EXCEPTION),
-            WAVReaderArgs(test_dir + "empty.wav",
+            WAVReaderArgs("files/empty.wav",
                           WAVReaderArgs::ExceptionType::RIFF_HEADER_EXCEPTION),
-            WAVReaderArgs(test_dir + "incorrect_RIFF_header.wav",
+            WAVReaderArgs("files/incorrect_RIFF_header.wav",
                           WAVReaderArgs::ExceptionType::RIFF_HEADER_EXCEPTION),
-            WAVReaderArgs(test_dir + "no_format_type.wav",
+            WAVReaderArgs("files/no_format_type.wav",
                           WAVReaderArgs::ExceptionType::FORMAT_TYPE_EXCEPTION),
-            WAVReaderArgs(test_dir + "incorrect_format_type.wav",
+            WAVReaderArgs("files/incorrect_format_type.wav",
                           WAVReaderArgs::ExceptionType::FORMAT_TYPE_EXCEPTION),
-            WAVReaderArgs(test_dir + "incorrect_fmt_chunk.wav",
+            WAVReaderArgs("files/incorrect_fmt_chunk.wav",
                           WAVReaderArgs::ExceptionType::FORMAT_DATA_EXCEPTION),
-            WAVReaderArgs(test_dir + "adpcm_audio_format.wav",
+            WAVReaderArgs("files/adpcm_audio_format.wav",
                           WAVReaderArgs::ExceptionType::AUDIO_FORMAT_EXCEPTION),
-            WAVReaderArgs(test_dir + "stereo.wav",
+            WAVReaderArgs("files/stereo.wav",
                           WAVReaderArgs::ExceptionType::CHANNELS_NUMBER_EXCEPTION),
-            WAVReaderArgs(test_dir + "8_sample_bits.wav",
+            WAVReaderArgs("files/8_sample_bits.wav",
                           WAVReaderArgs::ExceptionType::SAMPLE_BITS_EXCEPTION),
-            WAVReaderArgs(test_dir + "8000_hz.wav",
+            WAVReaderArgs("files/8000_hz.wav",
                           WAVReaderArgs::ExceptionType::SAMPLE_RATE_EXCEPTION),
-            WAVReaderArgs(test_dir + "without_DATA_chunk.wav",
+            WAVReaderArgs("files/without_DATA_chunk.wav",
                           WAVReaderArgs::ExceptionType::CHUNK_SEARCH_EXCEPTION)
         )
 );
@@ -178,7 +176,7 @@ TEST(test_WAV_writer,
     EXPECT_NO_THROW
     (
         {
-            WAVWriter wav_writer(test_dir + "without_DATA_data.wav");
+            WAVWriter wav_writer("files/without_DATA_data.wav");
         }
     );
 }
@@ -188,8 +186,8 @@ TEST(test_WAV,
 {
     Sample original_sample;
     {
-        WAVReader original_reader(test_dir + "correct.wav");
-        WAVWriter copy_writer(test_dir + "correct_copy.wav");
+        WAVReader original_reader("files/correct.wav");
+        WAVWriter copy_writer("files/correct_copy.wav");
 
 
         while (true)
@@ -199,8 +197,8 @@ TEST(test_WAV,
         }
     }
 
-    WAVReader original_reader(test_dir + "correct.wav");
-    WAVReader copy_reader(test_dir + "correct_copy.wav");
+    WAVReader original_reader("files/correct.wav");
+    WAVReader copy_reader("files/correct_copy.wav");
 
     Sample copy_sample;
 
