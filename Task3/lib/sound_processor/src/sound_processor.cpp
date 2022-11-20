@@ -13,27 +13,13 @@ void SoundProcessor::Convert()
     ConfigParser config(config_file_);
 
     // open WAV files for reading
-    WAVReaderVector wav_reader_vector(input_files_.size());
-    for (int i = 0; i < input_files_.size(); ++i)
-        wav_reader_vector[i].Open(input_files_[i]);
+    WAVReaderVector wav_reader_vector = std::move(OpenWAVReaders());
 
     // open WAV file for writing
     WAVWriter wav_writer(output_file_);
 
     // create converters for the pipeline
-    ConverterCreator converter_creator;
-    ConverterVector pipeline;
-    while (true)
-    {
-        ConverterCommand converter_command = config.GetConverterCommand();
-        if (converter_command.empty()) break;
-
-        // create converter
-        ConverterPtr converter_ptr = converter_creator.Create(converter_command);
-
-        // add converter to pipeline
-        pipeline.push_back(std::move(converter_ptr));
-    }
+    ConverterVector pipeline = std::move(CreatePipeline(config));
 
     // create sample vector to run on the pipeline
     SampleVector sample_vector(input_files_.size() + 1);
@@ -50,11 +36,40 @@ void SoundProcessor::Convert()
     }
 }
 
+WAVReaderVector SoundProcessor::OpenWAVReaders()
+{
+    WAVReaderVector wav_reader_vector(input_files_.size());
+    for (int i = 0; i < input_files_.size(); ++i)
+        wav_reader_vector[i].Open(input_files_[i]);
+
+    return wav_reader_vector;
+}
+
+ConverterVector SoundProcessor::CreatePipeline(ConfigParser & config)
+{
+    ConverterCreator converter_creator;
+    ConverterVector pipeline;
+    while (true)
+    {
+        ConverterCommand converter_command = config.GetConverterCommand();
+        if (converter_command.empty()) break;
+
+        // create converter
+        ConverterPtr converter_ptr = converter_creator.Create(converter_command);
+
+        // add converter to pipeline
+        pipeline.push_back(std::move(converter_ptr));
+    }
+
+    return pipeline;
+}
+
 bool SoundProcessor::UpdateSamplesVector(WAVReaderVector & wav_reader_vector,
                                          SampleVector & sample_vector)
 {
     // update main sample stream and check end of file
     if (wav_reader_vector[0].ReadSample(sample_vector[1]) == 0) return false;
+    sample_vector[0] = sample_vector[1];
 
     // update additional sample streams
     for (int i = 1; i < wav_reader_vector.size(); ++i)
