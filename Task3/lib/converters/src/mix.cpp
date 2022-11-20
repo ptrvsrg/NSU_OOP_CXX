@@ -10,7 +10,7 @@ MixConverter::MixConverter(std::vector<std::string> params)
 
     if (num_additional_file_ == 0) throw IncorrectFileLink(params[0]);
 
-    start_sample_ = std::stoi(params[1]) * SAMPLING_RATE;
+    start_sample_ = std::stoi(params[1]) * 44100;
     current_sample_ = 0;
 }
 
@@ -19,12 +19,9 @@ Sample MixConverter::Process(const SampleVector & input_samples)
     if (num_additional_file_ >= input_samples.size())
         throw IncorrectFileLink("$" + std::to_string(num_additional_file_));
 
-    Sample input_sample = input_samples[0];
-    Sample additional_sample = input_samples[num_additional_file_];
-    Sample output_sample = input_sample;
-
-    if (current_sample_ >= start_sample_)
-        output_sample = (input_sample + additional_sample) / 2;
+    Sample output_sample = (current_sample_ >= start_sample_) ?
+                           (input_samples[0] / 2) + (input_samples[num_additional_file_] / 2)  :
+                           input_samples[0];
 
     ++current_sample_;
     return output_sample;

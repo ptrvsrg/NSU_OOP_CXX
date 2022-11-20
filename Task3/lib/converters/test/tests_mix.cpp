@@ -104,12 +104,12 @@ TEST(test_mix,
 
     input_samples.resize(4);
     srandom(time(nullptr));
-    for (int i = 0; i < 100 * SAMPLING_RATE; ++i)
+    for (int i = 0; i < 100 * 44100; ++i)
     {
         FillSampleVector(input_samples);
         Sample output_sample = mix_converter.Process(input_samples);
         EXPECT_EQ(output_sample,
-                  (i >= 20 * SAMPLING_RATE) ?
+                  (i >= 20 * 44100) ?
                   (input_samples[0] + input_samples[3]) / 2 :
                   input_samples[0]);
     }

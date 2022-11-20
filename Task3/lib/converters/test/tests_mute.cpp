@@ -95,14 +95,14 @@ TEST(test_mute,
     SampleVector input_samples(2);
 
     srandom(time(nullptr));
-    for (int i = 0; i < 100 * SAMPLING_RATE; ++i)
+    for (int i = 0; i < 100 * 44100; ++i)
     {
         FillSampleVector(input_samples);
         Sample output_sample = mute_converter.Process(input_samples);
 
         EXPECT_EQ(output_sample,
-                  (i >= 20 * SAMPLING_RATE &&
-                   i <= 67 * SAMPLING_RATE) ? 0 : input_samples[0]);
+                  (i >= 20 * 44100 &&
+                   i <= 67 * 44100) ? 0 : input_samples[0]);
     }
 }
 
