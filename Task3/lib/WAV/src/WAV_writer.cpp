@@ -2,8 +2,20 @@
 #include "WAV_writer.h"
 
 WAVWriter::WAVWriter(std::string file_path)
-:   WAV(std::move(file_path))
 {
+    Open(std::move(file_path));
+}
+
+WAVWriter::~WAVWriter()
+{
+    FixHeader();
+    stream_.close();
+}
+
+void WAVWriter::Open(std::string file_path)
+{
+    file_path_ = std::move(file_path);
+
     // file opening
     stream_.open(file_path_,
                  std::ios_base::binary | std::ios_base::out);
@@ -18,11 +30,6 @@ void WAVWriter::WriteSample(Sample sample)
                   sizeof(sample));
 
     if (!stream_.good()) throw std::ios_base::failure(file_path_ + " ");
-}
-
-WAVWriter::~WAVWriter()
-{
-    FixHeader();
 }
 
 void WAVWriter::WriteHeader()

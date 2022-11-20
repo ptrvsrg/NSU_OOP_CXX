@@ -2,8 +2,19 @@
 #include "WAV_errors.h"
 
 WAVReader::WAVReader(std::string file_path)
-:   WAV(std::move(file_path))
 {
+    Open(std::move(file_path));
+}
+
+WAVReader::~WAVReader()
+{
+    stream_.close();
+}
+
+void WAVReader::Open(std::string file_path)
+{
+    file_path_ = std::move(file_path);
+
     // check file extension
     if (file_path_.find(".wav") == std::string::npos) throw ExtensionException(file_path_);
 
