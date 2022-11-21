@@ -1,5 +1,5 @@
-#include "../include/mute.h"
-#include "../../converter_errors/include/converter_errors.h"
+#include "mute.h"
+#include "converter_errors.h"
 
 MuteConverter::MuteConverter(ConverterParams params)
 {

@@ -10,9 +10,8 @@ namespace pt = boost::property_tree;
 
 static void PrintConverterDesc()
 {
-    std::string file_path = CONVERTERS_CONFIG_FILE;
     pt::ptree ptree;
-    pt::read_json(file_path,
+    pt::read_json(CONVERTERS_CONFIG_FILE,
                   ptree);
 
     std::cout << "Available converters:" << std::endl;

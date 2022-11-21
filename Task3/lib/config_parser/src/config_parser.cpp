@@ -1,7 +1,7 @@
 #include "config_parser.h"
 #include <sstream>
 
-ConfigParser::ConfigParser(std::string  file_path)
+ConfigParser::ConfigParser(std::string file_path)
     : file_path_(std::move(file_path))
 {
     fin_.open(file_path_,

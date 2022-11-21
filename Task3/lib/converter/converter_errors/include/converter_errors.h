@@ -37,5 +37,4 @@ public:
 bool IsNumber(const std::string & str);
 bool IsLink(const std::string & str);
 
-
 #endif //TASK3_CONVERTER_ERRORS_H
