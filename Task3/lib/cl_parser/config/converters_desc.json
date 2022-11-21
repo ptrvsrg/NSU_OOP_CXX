@@ -1,0 +1,12 @@
+{
+  "Converters": [
+    {
+      "Command" : "mute <start_sec> <end_sec>",
+      "Description": "Mute the interval from the start time to the end time"
+    },
+    {
+      "Command" : "mix <additional_file> <insertion_sec>",
+      "Description": "Mix the main file with the additional one starting from the insertion time"
+    }
+  ]
+}

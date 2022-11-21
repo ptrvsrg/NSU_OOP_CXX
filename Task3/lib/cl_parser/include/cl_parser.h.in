@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#define CONVERTERS_CONFIG_FILE "${CONVERTERS_CONFIG_FILE}"
+
 struct Options
 {
     std::vector<std::string> input_files_;

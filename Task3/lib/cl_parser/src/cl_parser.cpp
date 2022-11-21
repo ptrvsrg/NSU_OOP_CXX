@@ -1,9 +1,29 @@
 #include "cl_parser.h"
 #include "cl_parser_errors.h"
 #include <boost/program_options.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <iomanip>
 #include <iostream>
 
 namespace po = boost::program_options;
+namespace pt = boost::property_tree;
+
+static void PrintConverterDesc()
+{
+    std::string file_path = CONVERTERS_CONFIG_FILE;
+    pt::ptree ptree;
+    pt::read_json(file_path,
+                  ptree);
+
+    std::cout << "Available converters:" << std::endl;
+
+    for (const auto & converter_info : ptree.get_child("Converters"))
+    {
+        std::cout << "  " << std::setw(40) << std::left << converter_info.second.get<std::string>("Command");
+        std::cout << converter_info.second.get<std::string>("Description") << std::endl;
+    }
+}
+
 bool GetOptions(int argc,
                 char ** argv,
                 Options & opts)
@@ -33,12 +53,8 @@ bool GetOptions(int argc,
 
     if (vm.count("help"))
     {
-        char * converter_desc = "Available Converters:\n"
-                                "  mute <start> <end>       Mute the interval from the start time to the end"
-                                "                           time\n"
-                                "  mix <thread> <time>      Mix the main stream with the additional one starting"
-                                "                           from the insertion time\n\n";
-        std::cout << converter_desc << opts_desc << std::endl;
+        PrintConverterDesc();
+        std::cout << std::endl << opts_desc << std::endl;
         return false;
     }
 
