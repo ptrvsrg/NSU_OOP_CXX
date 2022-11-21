@@ -1,15 +1,16 @@
-#include "mute.h"
-#include "converter_errors.h"
+#include "../include/mute.h"
+#include "../../converter_errors/include/converter_errors.h"
 
-MuteConverter::MuteConverter(std::vector<std::string> params)
+MuteConverter::MuteConverter(ConverterParams params)
 {
     if (params.size() != 2) throw IncorrectParamsNum("mute");
+    if (!IsNumber(params[0])) throw IncorrectNumericalParam("mute");
+    if (!IsNumber(params[1])) throw IncorrectNumericalParam("mute");
 
     start_second_ = std::stoi(params[0]);
-    current_second_ = 0;
     end_second_ = std::stoi(params[1]);
 
-    if (start_second_ > end_second_) throw IntervalException();
+    if (start_second_ > end_second_) throw IncorrectInterval("mute");
 }
 
 void MuteConverter::Process(SampleBuffer & working_sample,

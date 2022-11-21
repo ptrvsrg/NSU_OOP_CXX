@@ -11,7 +11,8 @@ struct MuteArgs
     {
         NO_EXCEPTION,
         INCORRECT_PARAMS_NUM_EXCEPTION,
-        INTERVAL_EXCEPTION
+        INCORRECT_NUMERICAL_PARAM_EXCEPTION,
+        INCORRECT_INTERVAL_EXCEPTION
     } exception_type_;
 
     MuteArgs(std::vector<std::string> params,
@@ -33,13 +34,17 @@ INSTANTIATE_TEST_SUITE_P
                  MuteArgs::ExceptionType::INCORRECT_PARAMS_NUM_EXCEPTION),
         MuteArgs({"8"},
                  MuteArgs::ExceptionType::INCORRECT_PARAMS_NUM_EXCEPTION),
+        MuteArgs({"1a", "8"},
+                 MuteArgs::ExceptionType::INCORRECT_NUMERICAL_PARAM_EXCEPTION),
+        MuteArgs({"8", "3i"},
+                 MuteArgs::ExceptionType::INCORRECT_NUMERICAL_PARAM_EXCEPTION),
         MuteArgs({"12", "8"},
-                 MuteArgs::ExceptionType::INTERVAL_EXCEPTION)
+                 MuteArgs::ExceptionType::INCORRECT_INTERVAL_EXCEPTION)
     )
 );
 
 TEST_P(MuteTest,
-       check_init)
+       check_constructor)
 {
     MuteArgs params = GetParam();
 
@@ -62,13 +67,22 @@ TEST_P(MuteTest,
                 IncorrectParamsNum
             );
             break;
-        case MuteArgs::ExceptionType::INTERVAL_EXCEPTION:
+        case MuteArgs::ExceptionType::INCORRECT_NUMERICAL_PARAM_EXCEPTION:
             EXPECT_THROW
             (
                 {
                     MuteConverter mute_converter(params.params_);
                 },
-                IntervalException
+                IncorrectNumericalParam
+            );
+            break;
+        case MuteArgs::ExceptionType::INCORRECT_INTERVAL_EXCEPTION:
+            EXPECT_THROW
+            (
+                {
+                    MuteConverter mute_converter(params.params_);
+                },
+                IncorrectInterval
             );
             break;
     }

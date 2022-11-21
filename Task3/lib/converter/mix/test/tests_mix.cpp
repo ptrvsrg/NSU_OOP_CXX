@@ -9,7 +9,8 @@ struct MixArgs
     {
         NO_EXCEPTION,
         INCORRECT_PARAMS_NUM_EXCEPTION,
-        INCORRECT_FILE_LINK_EXCEPTION
+        INCORRECT_FILE_LINK_EXCEPTION,
+        INCORRECT_NUMERICAL_PARAM_EXCEPTION
     } exception_type_;
 
     MixArgs(std::vector<std::string> params,
@@ -32,7 +33,9 @@ INSTANTIATE_TEST_SUITE_P
             MixArgs({"8"},
                     MixArgs::ExceptionType::INCORRECT_PARAMS_NUM_EXCEPTION),
             MixArgs({"8", "12"},
-                    MixArgs::ExceptionType::INCORRECT_FILE_LINK_EXCEPTION)
+                    MixArgs::ExceptionType::INCORRECT_FILE_LINK_EXCEPTION),
+            MixArgs({"$1", "8g"},
+                    MixArgs::ExceptionType::INCORRECT_NUMERICAL_PARAM_EXCEPTION)
         )
 );
 
@@ -67,6 +70,15 @@ TEST_P(MixTest,
                     MixConverter mix_converter(params.params_);
                 },
                 IncorrectFileLink
+            );
+            break;
+        case MixArgs::ExceptionType::INCORRECT_NUMERICAL_PARAM_EXCEPTION:
+            EXPECT_THROW
+            (
+                {
+                    MixConverter mix_converter(params.params_);
+                },
+                IncorrectNumericalParam
             );
             break;
     }

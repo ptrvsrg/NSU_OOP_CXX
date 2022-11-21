@@ -6,7 +6,7 @@
 class MuteConverter : public ConverterInterface
 {
 public:
-    explicit MuteConverter(std::vector<std::string> params);
+    explicit MuteConverter(ConverterParams params);
     ~MuteConverter() override = default;
     void Process(SampleBuffer & working_sample,
                  const SampleVector & default_samples) override;

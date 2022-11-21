@@ -6,7 +6,7 @@
 class MixConverter : public ConverterInterface
 {
 public:
-    explicit MixConverter(std::vector<std::string> params);
+    explicit MixConverter(ConverterParams params);
     ~MixConverter() override = default;
     void Process(SampleBuffer & working_sample,
                  const SampleVector & default_samples) override;

@@ -8,6 +8,7 @@
 #include "WAV_types.h"
 
 using SampleVector = std::vector<SampleBuffer>;
+using ConverterParams = std::vector<std::string>;
 
 class ConverterInterface
 {
