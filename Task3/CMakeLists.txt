@@ -4,7 +4,7 @@ set(SUBDIR
         lib/cl_parser
         lib/config_parser
         lib/WAV
-        lib/converters
+        lib/converter
         lib/sound_processor)
 set(LIBRARY
         cl_parser
@@ -13,8 +13,9 @@ set(LIBRARY
 project(Task3 CXX)
 
 add_executable(Task3
-        src/main.cpp)
+        example/main.cpp)
 
+enable_testing()
 foreach(SUBDIR ${SUBDIR})
     add_subdirectory(${SUBDIR})
 endforeach(SUBDIR)
