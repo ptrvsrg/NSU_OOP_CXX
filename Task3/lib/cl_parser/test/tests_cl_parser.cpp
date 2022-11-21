@@ -139,36 +139,6 @@ TEST_P(CommandLineParserTest,
     }
 }
 
-TEST(test_parser, check_help)
-{
-    std::streambuf * buf = std::cout.rdbuf();
-    std::stringstream out_str;
-    std::cout.rdbuf(out_str.rdbuf());
-
-    char * argv[] = {
-        "./main",
-        "--help"
-    };
-    Options opts;
-    GetOptions(sizeof(argv) / sizeof(*argv),
-               argv,
-               opts);
-
-    EXPECT_STREQ(out_str.str().c_str(),
-                 "Available Converters:\n"
-                 "  mute <start> <end>       Mute the interval from the start time to the end"
-                 "                           time\n"
-                 "  mix <thread> <time>      Mix the main stream with the additional one starting"
-                 "                           from the insertion time\n\n"
-                 "General options:\n"
-                 "  -h [ --help ]         Show options description\n"
-                 "  -c [ --config ] arg   Configuration file\n"
-                 "  -O [ --output ] arg   Output file\n"
-                 "  -I [ --input ] arg    Input files\n\n");
-
-    std::cout.rdbuf(buf);
-}
-
 int main(int argc,
          char** argv)
 {
