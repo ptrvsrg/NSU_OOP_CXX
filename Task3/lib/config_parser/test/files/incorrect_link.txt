@@ -1,1 +1,0 @@
-mix $input1.wav 5
