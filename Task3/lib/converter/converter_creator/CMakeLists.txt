@@ -22,8 +22,6 @@ message(STATUS "Creating tests for converter library \"converter_creator\"")
 find_package(GTest REQUIRED)
 add_executable(tests_converter_creator
         test/tests_converter_creator.cpp)
-target_include_directories(tests_converter_creator
-        PUBLIC include)
 target_link_libraries(tests_converter_creator
         PUBLIC converter_creator
         PUBLIC gtest

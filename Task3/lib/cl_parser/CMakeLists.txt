@@ -24,8 +24,6 @@ message(STATUS "Creating tests for library \"cl_parser\"")
 find_package(GTest REQUIRED)
 add_executable(tests_cl_parser
         test/tests_cl_parser.cpp)
-target_include_directories(cl_parser
-        PUBLIC include)
 target_link_libraries(tests_cl_parser
         PUBLIC cl_parser
         PUBLIC gtest

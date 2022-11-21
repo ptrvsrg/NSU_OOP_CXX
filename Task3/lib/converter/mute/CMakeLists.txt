@@ -17,8 +17,6 @@ message(STATUS "Creating tests for converter library \"mute\"")
 find_package(GTest REQUIRED)
 add_executable(tests_mute
         test/tests_mute.cpp)
-target_include_directories(tests_mute
-        PUBLIC include)
 target_link_libraries(tests_mute
         PUBLIC mute
         PUBLIC gtest

@@ -17,8 +17,6 @@ message(STATUS "Creating tests for converter library \"mix\"")
 find_package(GTest REQUIRED)
 add_executable(tests_mix
         test/tests_mix.cpp)
-target_include_directories(tests_mix
-        PUBLIC include)
 target_link_libraries(tests_mix
         PUBLIC mix
         PUBLIC gtest
