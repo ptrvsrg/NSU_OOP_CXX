@@ -1,7 +1,7 @@
 #include "converter_creator.h"
 #include "converter_creator_errors.h"
 
-ConverterPtr ConverterCreator::Create(std::vector<std::string> converter_command)
+ConverterPtr ConverterCreator::Create(ConverterCommand converter_command)
 {
     std::string converter_name = converter_command[0];
     converter_command.erase(converter_command.cbegin());

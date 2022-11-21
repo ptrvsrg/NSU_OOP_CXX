@@ -10,7 +10,6 @@
 #include "WAV_writer.h"
 
 using WAVReaderVector = std::vector<WAVReader>;
-using ConverterCommand = std::vector<std::string>;
 using ConverterVector = std::vector<ConverterPtr>;
 
 class SoundProcessor

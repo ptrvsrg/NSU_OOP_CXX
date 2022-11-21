@@ -5,11 +5,13 @@
 #include <string>
 #include <vector>
 
+using ConverterCommand = std::vector<std::string>;
+
 class ConfigParser
 {
 public:
     explicit ConfigParser(std::string file_path);
-    std::vector<std::string> GetConverterCommand();
+    ConverterCommand GetConverterCommand();
     ~ConfigParser();
 
 private:

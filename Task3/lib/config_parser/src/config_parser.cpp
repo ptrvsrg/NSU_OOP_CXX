@@ -24,9 +24,9 @@ static bool IsLink(const std::string & str)
     return str[0] == '$' && IsNumber(str.substr(1));
 }
 
-std::vector<std::string> ConfigParser::GetConverterCommand()
+ConverterCommand ConfigParser::GetConverterCommand()
 {
-    std::vector<std::string> cvt_cmd;
+    ConverterCommand cvt_cmd;
     std::string buff;
 
     // skip comments

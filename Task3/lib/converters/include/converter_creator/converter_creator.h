@@ -8,10 +8,12 @@
 #include "mute.h"
 #include "mix.h"
 
+using ConverterCommand = std::vector<std::string>;
+
 class ConverterCreator
 {
 public:
-    ConverterPtr Create(std::vector<std::string> converter_command);
+    ConverterPtr Create(ConverterCommand converter_command);
 };
 
 #endif //TASK3_CONVERTER_CREATOR_H
