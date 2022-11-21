@@ -8,12 +8,12 @@ class MixConverter : public ConverterInterface
 public:
     explicit MixConverter(std::vector<std::string> params);
     ~MixConverter() override = default;
-    void Process(Sample & working_sample,
+    void Process(SampleBuffer & working_sample,
                  const SampleVector & default_samples) override;
 
 private:
-    int start_sample_=  0;
-    int current_sample_ = 0;
+    int start_second_=  0;
+    int current_second_ = 0;
     int num_additional_file_ = 0;
 };
 

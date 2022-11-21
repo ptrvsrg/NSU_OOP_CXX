@@ -12,7 +12,7 @@ public:
     explicit WAVWriter(std::string file_path);
     ~WAVWriter() override;
     void Open(std::string file_path);
-    void WriteSample(Sample sample);
+    void WriteSample(SampleBuffer sample_buffer);
 
 private:
     std::string file_path_;

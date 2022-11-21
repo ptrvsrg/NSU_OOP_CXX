@@ -27,7 +27,7 @@ void SoundProcessor::Convert()
                                default_samples))
     {
         // create a working sample and initialize with a sample from the main WAV file
-        Sample working_sample = default_samples[0];
+        SampleBuffer working_sample = default_samples[0];
 
         for (ConverterPtr & converter : pipeline)
         {
@@ -71,7 +71,7 @@ bool SoundProcessor::UpdateSamplesVector(WAVReaderVector & wav_reader_vector,
                                          SampleVector & default_samples)
 {
     // update main sample stream and check end of file
-    if (wav_reader_vector[0].ReadSample(default_samples[0]) == 0) return false;
+    if (!wav_reader_vector[0].ReadSample(default_samples[0])) return false;
 
     // update additional sample streams
     for (int i = 1; i < wav_reader_vector.size(); ++i)

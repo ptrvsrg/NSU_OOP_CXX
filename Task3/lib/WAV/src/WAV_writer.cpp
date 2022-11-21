@@ -23,10 +23,10 @@ void WAVWriter::Open(std::string file_path)
     WriteHeader();
 }
 
-void WAVWriter::WriteSample(Sample sample)
+void WAVWriter::WriteSample(SampleBuffer sample_buffer)
 {
-    write((const char *)&sample,
-          sizeof(sample));
+    write((const char *)&sample_buffer[0],
+          sizeof(sample_buffer[0]) * sample_buffer.size());
 
     if (!good()) throw std::ios_base::failure(file_path_ + " ");
 }

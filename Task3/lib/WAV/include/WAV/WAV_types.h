@@ -2,8 +2,7 @@
 #define TASK3_WAV_TYPES_H
 
 #include <cstdint>
-
-using Sample = int16_t;
+#include <array>
 
 const uint32_t RIFF = 0x46464952;
 const uint32_t WAVE = 0x45564157;
@@ -35,5 +34,8 @@ struct FMTChunkData
     uint16_t    block_align_ = BLOCK_ALIGN;         // Bytes number per sample
     uint16_t    bits_per_sample_ = BITS_PER_SAMPLE; // Bits number in the sample (depth)
 };
+
+using Sample = int16_t;
+using SampleBuffer = std::array<Sample, SAMPLING_RATE>;
 
 #endif //TASK3_WAV_TYPES_H

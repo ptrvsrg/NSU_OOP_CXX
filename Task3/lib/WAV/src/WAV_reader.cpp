@@ -21,12 +21,12 @@ void WAVReader::Open(std::string file_path)
     ReadHeader();
 }
 
-size_t WAVReader::ReadSample(Sample & sample)
+bool WAVReader::ReadSample(SampleBuffer & sample_buffer)
 {
-    read((char *)&sample,
-                 sizeof(sample));
-    if (gcount() == 0) sample = 0;
-    return gcount();
+    read((char *)&sample_buffer[0],
+         sizeof(sample_buffer[0]) * sample_buffer.size());
+    if (gcount() == 0) sample_buffer.fill(0);
+    return (bool)gcount();
 }
 
 void WAVReader::SearchChunk(uint32_t chunk_ID)

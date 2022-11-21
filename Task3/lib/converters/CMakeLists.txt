@@ -6,7 +6,8 @@ add_library(mute STATIC
         src/converter_errors.cpp)
 target_include_directories(mute
         PUBLIC include/converter_interface
-        PUBLIC include/mute)
+        PUBLIC include/mute
+        PUBLIC ../WAV/include/WAV)
 
 message(STATUS "Creating tests for converter library \"mute\"")
 
@@ -32,7 +33,8 @@ add_library(mix STATIC
         src/converter_errors.cpp)
 target_include_directories(mix
         PUBLIC include/converter_interface
-        PUBLIC include/mix)
+        PUBLIC include/mix
+        PUBLIC ../WAV/include/WAV)
 
 message(STATUS "Creating tests for converter library \"mix\"")
 

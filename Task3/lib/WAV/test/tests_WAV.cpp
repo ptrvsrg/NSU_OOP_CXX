@@ -184,7 +184,7 @@ TEST(test_WAV_writer,
 TEST(test_WAV,
      copy)
 {
-    Sample original_sample;
+    SampleBuffer original_sample;
     {
         WAVReader original_reader("files/correct.wav");
         WAVWriter copy_writer("files/correct_copy.wav");
@@ -200,7 +200,7 @@ TEST(test_WAV,
     WAVReader original_reader("files/correct.wav");
     WAVReader copy_reader("files/correct_copy.wav");
 
-    Sample copy_sample;
+    SampleBuffer copy_sample;
 
     while (true)
     {

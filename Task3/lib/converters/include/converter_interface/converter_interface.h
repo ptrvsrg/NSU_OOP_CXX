@@ -5,15 +5,15 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "WAV_types.h"
 
-using Sample = int16_t;
-using SampleVector = std::vector<Sample>;
+using SampleVector = std::vector<SampleBuffer>;
 
 class ConverterInterface
 {
 public:
     virtual ~ConverterInterface() = default;
-    virtual void Process(Sample & working_sample,
+    virtual void Process(SampleBuffer & working_sample,
                          const SampleVector & default_samples) = 0;
 };
 

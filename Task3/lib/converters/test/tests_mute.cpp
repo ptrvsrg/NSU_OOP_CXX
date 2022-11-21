@@ -81,10 +81,11 @@ static Sample GenerateSample()
     return sample;
 }
 
-static void FillSampleVector(std::vector<Sample> & vector)
+static void FillSampleVector(SampleVector & vector)
 {
-    for (Sample sample : vector)
-        sample = GenerateSample();
+    for (SampleBuffer sample_buffer : vector)
+        for (Sample sample : sample_buffer)
+            sample = GenerateSample();
 }
 
 TEST(test_mute,
@@ -93,18 +94,20 @@ TEST(test_mute,
     MuteConverter mute_converter({"20", "67"});
 
     SampleVector default_samples(2);
+    SampleBuffer null;
+    null.fill(0);
 
     srandom(time(nullptr));
-    for (int i = 0; i < 100 * 44100; ++i)
+    for (int i = 0; i < 100; ++i)
     {
         FillSampleVector(default_samples);
-        Sample work_sample = default_samples[0];
+        SampleBuffer work_sample = default_samples[0];
         mute_converter.Process(work_sample,
                                default_samples);
 
         EXPECT_EQ(work_sample,
-                  (i >= 20 * 44100 &&
-                   i <= 67 * 44100) ? 0 : default_samples[0]);
+                  (i >= 20 &&
+                   i <= 67) ? null : default_samples[0]);
     }
 }
 

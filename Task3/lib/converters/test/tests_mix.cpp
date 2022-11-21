@@ -79,10 +79,11 @@ static Sample GenerateSample()
     return sample;
 }
 
-static void FillSampleVector(std::vector<Sample> & vector)
+static void FillSampleVector(SampleVector & vector)
 {
-    for (Sample sample : vector)
-        sample = GenerateSample();
+    for (SampleBuffer sample_buffer : vector)
+        for (Sample sample : sample_buffer)
+            sample = GenerateSample();
 }
 
 TEST(test_mix,
@@ -90,12 +91,12 @@ TEST(test_mix,
 {
     MixConverter mix_converter({"$3", "20"});
 
-    std::vector<Sample> default_samples(2);
+    SampleVector default_samples(2);
 
     EXPECT_THROW
     (
         {
-            Sample working_sample;
+            SampleBuffer working_sample;
             mix_converter.Process(working_sample,
                                   default_samples);
         },
@@ -104,16 +105,18 @@ TEST(test_mix,
 
     default_samples.resize(4);
     srandom(time(nullptr));
-    for (int i = 0; i < 100 * 44100; ++i)
+    for (int i = 0; i < 100; ++i)
     {
         FillSampleVector(default_samples);
-        Sample working_sample = default_samples[0];
+        SampleBuffer working_sample = default_samples[0];
         mix_converter.Process(working_sample,
                               default_samples);
-        EXPECT_EQ(working_sample,
-                  (i >= 20 * 44100) ?
-                  (default_samples[0] + default_samples[3]) / 2 :
-                  default_samples[0]);
+
+        for (int j = 0; j < working_sample.size(); ++j)
+            EXPECT_EQ(working_sample[j],
+                      (i >= 20) ?
+                      (default_samples[0][j] + default_samples[3][j]) / 2 :
+                      default_samples[0][j]);
     }
 }
 

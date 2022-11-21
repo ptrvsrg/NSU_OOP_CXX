@@ -12,7 +12,7 @@ public:
     explicit WAVReader(std::string file_path);
     ~WAVReader() override = default;
     void Open(std::string file_path);
-    size_t ReadSample(Sample & sample);
+    bool ReadSample(SampleBuffer & sample_buffer);
 
 private:
     std::string file_path_;

@@ -5,17 +5,19 @@ MuteConverter::MuteConverter(std::vector<std::string> params)
 {
     if (params.size() != 2) throw IncorrectParamsNum("mute");
 
-    start_sample_num_ = std::stoi(params[0]) * 44100;
-    current_sample_num_ = 0;
-    end_sample_num_ = std::stoi(params[1]) * 44100;
+    start_second_ = std::stoi(params[0]);
+    current_second_ = 0;
+    end_second_ = std::stoi(params[1]);
 
-    if (start_sample_num_ > end_sample_num_) throw IntervalException();
+    if (start_second_ > end_second_) throw IntervalException();
 }
 
-void MuteConverter::Process(Sample & working_sample,
+void MuteConverter::Process(SampleBuffer & working_sample,
                             const SampleVector & default_samples)
 {
-    if (current_sample_num_ >= start_sample_num_ &&
-        current_sample_num_ <= end_sample_num_) working_sample = 0;
-    ++current_sample_num_;
+    if (current_second_ >= start_second_ &&
+        current_second_ <= end_second_)
+        for (int16_t & sample : working_sample)
+            sample = 0;
+    ++current_second_;
 }
