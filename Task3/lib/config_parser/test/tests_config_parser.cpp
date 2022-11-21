@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include "config_parser.h"
-#include "config_parser_errors.h"
 
 TEST(test_config_parser,
      check_constructor)
@@ -17,15 +16,12 @@ TEST(test_config_parser,
 struct ConfigParserArgs
 {
     std::string file_;
-    std::vector<std::string> cvt_cmd_;
-    bool exception_;
+    ConverterCommand cvt_cmd_;
 
     ConfigParserArgs(std::string file,
-                     std::vector<std::string> cvt_cmd,
-                     bool exception)
+                     ConverterCommand cvt_cmd)
     : file_(std::move(file)),
-      cvt_cmd_(std::move(cvt_cmd)),
-      exception_(exception)
+      cvt_cmd_(std::move(cvt_cmd))
     {}
 };
 
@@ -37,20 +33,11 @@ INSTANTIATE_TEST_SUITE_P
     ::testing::Values
         (
             ConfigParserArgs("files/correct.txt",
-                             {"mute", "23", "54" },
-                             false),
+                             {"mute", "23", "54" }),
             ConfigParserArgs("files/correct_with_comment.txt",
-                             {"mute", "23", "84" },
-                             false),
+                             {"mute", "23", "84" }),
             ConfigParserArgs("files/only_comment.txt",
-                             {},
-                             false),
-            ConfigParserArgs("files/incorrect_link.txt",
-                             {},
-                             true),
-            ConfigParserArgs("files/incorrect_params.txt",
-                             {},
-                             true)
+                             {})
         )
 );
 
@@ -59,26 +46,8 @@ TEST_P(ConfigParserTest,
 {
     ConfigParserArgs params = GetParam();
     ConfigParser config_parser(params.file_);
-    std::vector<std::string> cvt_cmd;
+    ConverterCommand cvt_cmd = config_parser.GetConverterCommand();
 
-    if (params.exception_)
-    {
-        EXPECT_THROW
-        (
-            {
-                cvt_cmd = config_parser.GetConverterCommand();
-            },
-            IncorrectParamsException
-        );
-        return;
-    }
-
-    EXPECT_NO_THROW
-    (
-        {
-            cvt_cmd = config_parser.GetConverterCommand();
-        }
-    );
     EXPECT_EQ(params.cvt_cmd_,
               cvt_cmd);
 }

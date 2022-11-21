@@ -12,11 +12,10 @@ class ConfigParser
 public:
     explicit ConfigParser(std::string file_path);
     ConverterCommand GetConverterCommand();
-    ~ConfigParser();
 
 private:
     std::string file_path_;
-    std::ifstream in_stream_;
+    std::ifstream fin_;
 };
 
 #endif //TASK3_CONFIG_PARSER_H
