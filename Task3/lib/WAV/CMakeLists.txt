@@ -5,16 +5,15 @@ add_library(WAV STATIC
         src/WAV_reader.cpp
         src/WAV_writer.cpp)
 target_include_directories(WAV
-        PUBLIC include/WAV)
+        PUBLIC include)
 
 message(STATUS "Creating tests for library \"WAV\"")
 
-enable_testing()
 find_package(GTest REQUIRED)
 add_executable(tests_WAV
         test/tests_WAV.cpp)
 target_include_directories(tests_WAV PUBLIC
-        include/WAV)
+        include)
 target_link_libraries(tests_WAV
         PUBLIC WAV
         PUBLIC gtest
