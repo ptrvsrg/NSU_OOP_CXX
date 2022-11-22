@@ -1,4 +1,5 @@
 #include "sound_processor.h"
+#include "sound_processor_errors.h"
 
 SoundProcessor::SoundProcessor(std::string config_file,
                                std::string output_file,
@@ -12,40 +13,30 @@ void SoundProcessor::Convert()
     // open config file for getting commands
     ConfigParser config(config_file_);
 
-    // open WAV files for reading
-    WAVReaderVector wav_reader_vector = std::move(OpenWAVReaders());
+    // create converters for the pipeline
+    ConverterVector pipeline = std::move(CreatePipeline(config));
+
+    // open only necessary WAV files for reading
+    WAVReaderVector wav_reader_vector = std::move(OpenWAVReaders(GetFileLinks(pipeline)));
 
     // open WAV file for writing
     WAVWriter wav_writer(output_file_);
-
-    // create converters for the pipeline
-    ConverterVector pipeline = std::move(CreatePipeline(config));
 
     // create sample vector to run on the pipeline
     SampleVector default_samples(input_files_.size());
     while (UpdateSamplesVector(wav_reader_vector,
                                default_samples))
     {
-        // create a working sample and initialize with a sample from the main WAV file
+        // create a working sample and
+        // initialize with a sample from the main WAV file
         SampleBuffer working_sample = default_samples[0];
 
         for (ConverterPtr & converter : pipeline)
-        {
             converter->Process(working_sample,
                                default_samples);
-        }
 
         wav_writer.WriteSample(working_sample);
     }
-}
-
-WAVReaderVector SoundProcessor::OpenWAVReaders()
-{
-    WAVReaderVector wav_reader_vector(input_files_.size());
-    for (int i = 0; i < input_files_.size(); ++i)
-        wav_reader_vector[i].Open(input_files_[i]);
-
-    return wav_reader_vector;
 }
 
 ConverterVector SoundProcessor::CreatePipeline(ConfigParser & config)
@@ -54,8 +45,10 @@ ConverterVector SoundProcessor::CreatePipeline(ConfigParser & config)
     ConverterVector pipeline;
     while (true)
     {
+        // get converter command from config file
         ConverterCommand converter_command = config.GetConverterCommand();
-        if (converter_command.empty()) break;
+        if (converter_command.empty())
+            break;
 
         // create converter
         ConverterPtr converter_ptr = converter_creator.Create(converter_command);
@@ -67,11 +60,34 @@ ConverterVector SoundProcessor::CreatePipeline(ConfigParser & config)
     return pipeline;
 }
 
+FileLinks SoundProcessor::GetFileLinks(const ConverterVector & pipeline)
+{
+    FileLinks file_links;
+    for (const ConverterPtr & converter : pipeline)
+        file_links.merge(converter->GetFileLinks());
+
+    return file_links;
+}
+
+WAVReaderVector SoundProcessor::OpenWAVReaders(const FileLinks & file_links)
+{
+    WAVReaderVector wav_reader_vector(input_files_.size());
+    for (int i : file_links)
+    {
+        if (i >= input_files_.size())
+            throw NonExistentLink(i);
+        wav_reader_vector[i].Open(input_files_[i]);
+    }
+
+    return wav_reader_vector;
+}
+
 bool SoundProcessor::UpdateSamplesVector(WAVReaderVector & wav_reader_vector,
                                          SampleVector & default_samples)
 {
     // update main sample stream and check end of file
-    if (!wav_reader_vector[0].ReadSample(default_samples[0])) return false;
+    if (!wav_reader_vector[0].ReadSample(default_samples[0]))
+        return false;
 
     // update additional sample streams
     for (int i = 1; i < wav_reader_vector.size(); ++i)

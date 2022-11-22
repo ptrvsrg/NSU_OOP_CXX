@@ -24,8 +24,9 @@ private:
     std::string output_file_;
     std::vector<std::string> input_files_;
 
-    WAVReaderVector OpenWAVReaders();
     ConverterVector CreatePipeline(ConfigParser & config);
+    FileLinks GetFileLinks(const ConverterVector & pipeline);
+    WAVReaderVector OpenWAVReaders(const FileLinks & file_links);
     bool UpdateSamplesVector(WAVReaderVector & wav_reader_vector,
                              SampleVector & default_samples);
 };
