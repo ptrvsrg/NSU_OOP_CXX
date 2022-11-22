@@ -79,7 +79,7 @@ void WAVWriter::FixHeader()
 
     // get RIFF header size position
     fout_.seekp(sizeof(RIFF),               // RIFF ID size
-                // std::ios_base::beg);
+                std::ios_base::beg);
     file_size -= sizeof(ChunkHeader);       // RIFF header
     fout_.write((const char *)&file_size,
                 sizeof(file_size));
