@@ -21,8 +21,7 @@ struct ConfigParserArgs
     ConfigParserArgs(std::string file,
                      ConverterCommand cvt_cmd)
     : file_(std::move(file)),
-      cvt_cmd_(std::move(cvt_cmd))
-    {}
+      cvt_cmd_(std::move(cvt_cmd)) {}
 };
 
 class ConfigParserTest : public ::testing::TestWithParam<ConfigParserArgs> {};

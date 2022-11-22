@@ -16,7 +16,7 @@ IncorrectNumericalParam::IncorrectNumericalParam(const std::string & converter_n
 
 IncorrectFileLink::IncorrectFileLink(const std::string & converter_name)
     : IncorrectParams(converter_name,
-                      "Incorrect link, file was not found") {}
+                      "Incorrect file link") {}
 
 IncorrectInterval::IncorrectInterval(const std::string & converter_name)
     : IncorrectParams(converter_name,

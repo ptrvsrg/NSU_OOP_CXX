@@ -17,10 +17,9 @@ static void PrintConverterDesc()
     std::cout << "Available converters:" << std::endl;
 
     for (const auto & converter_info : ptree.get_child("Converters"))
-    {
-        std::cout << "  " << std::setw(40) << std::left << converter_info.second.get<std::string>("Command");
-        std::cout << converter_info.second.get<std::string>("Description") << std::endl;
-    }
+        std::cout << "  " << std::setw(40) << std::left
+                  << converter_info.second.get<std::string>("Command")
+                  << converter_info.second.get<std::string>("Description") << std::endl;
 }
 
 bool GetOptions(int argc,
@@ -57,9 +56,12 @@ bool GetOptions(int argc,
         return false;
     }
 
-    if (opts.config_file_.empty()) throw NoConfigFileException();
-    if (opts.output_file_.empty()) throw NoOutputFileException();
-    if (opts.input_files_.empty()) throw NoInputFilesException();
+    if (opts.config_file_.empty())
+        throw NoConfigFileException();
+    if (opts.output_file_.empty())
+        throw NoOutputFileException();
+    if (opts.input_files_.empty())
+        throw NoInputFilesException();
 
     return true;
 }

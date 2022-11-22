@@ -103,19 +103,7 @@ TEST(test_mix,
 {
     MixConverter mix_converter({"$3", "20"});
 
-    SampleVector default_samples(2);
-
-    EXPECT_THROW
-    (
-        {
-            SampleBuffer working_sample;
-            mix_converter.Process(working_sample,
-                                  default_samples);
-        },
-        IncorrectFileLink
-    );
-
-    default_samples.resize(4);
+    SampleVector default_samples(4);
     srandom(time(nullptr));
     for (int i = 0; i < 100; ++i)
     {

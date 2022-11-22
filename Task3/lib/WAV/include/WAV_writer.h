@@ -5,16 +5,17 @@
 #include <string>
 #include "WAV_types.h"
 
-class WAVWriter : std::ofstream
+class WAVWriter
 {
 public:
     WAVWriter() = default;
     explicit WAVWriter(std::string file_path);
-    ~WAVWriter() override;
+    ~WAVWriter();
     void Open(std::string file_path);
     void WriteSample(SampleBuffer sample_buffer);
 
 private:
+    std::ofstream fout_;
     std::string file_path_;
 
     void WriteHeader();

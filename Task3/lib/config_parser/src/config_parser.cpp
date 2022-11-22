@@ -6,12 +6,14 @@ ConfigParser::ConfigParser(std::string file_path)
 {
     fin_.open(file_path_,
               std::ios_base::in);
-    if (!fin_.good()) throw std::ios_base::failure(file_path_ + " ");
+    if (!fin_.good())
+        throw std::ios_base::failure(file_path_ + " ");
 }
 
 static bool IsComment(std::string & str)
 {
-    while (!str.empty() && str[0] == ' ') str.erase(0, 1);  // case: "     #something"
+    while (!str.empty() && str[0] == ' ')
+        str.erase(0, 1);  // case: "     #something"
     return str.empty() || str[0] == '#';
 }
 
@@ -29,7 +31,8 @@ ConverterCommand ConfigParser::GetConverterCommand()
     // skip comments
     do
     {
-        if (fin_.eof()) return cvt_cmd;
+        if (fin_.eof())
+            return cvt_cmd;
         getline(fin_,
                 buff);
     } while (IsComment(buff));
