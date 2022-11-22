@@ -10,6 +10,7 @@ public:
     ~MuteConverter() override = default;
     void Process(SampleBuffer & working_sample,
                  const SampleVector & default_samples) override;
+    FileLinks GetFileLinks() override;
 
 private:
     int start_second_ = 0;

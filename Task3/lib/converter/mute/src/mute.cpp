@@ -26,3 +26,8 @@ void MuteConverter::Process(SampleBuffer & working_sample,
             sample = 0;
     ++current_second_;
 }
+
+FileLinks MuteConverter::GetFileLinks()
+{
+    return { 0 };
+}

@@ -23,3 +23,8 @@ void MixConverter::Process(SampleBuffer & working_sample,
 
     ++current_second_;
 }
+
+FileLinks MixConverter::GetFileLinks()
+{
+    return { 0, additional_file_link_ };
+}
