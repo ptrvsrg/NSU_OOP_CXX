@@ -173,11 +173,13 @@ TEST_P(WAVReaderTest,
 TEST(test_WAV_writer,
      check_constructor)
 {
-    EXPECT_NO_THROW
+    EXPECT_THROW
     (
         {
-            WAVWriter wav_writer("files/without_DATA_data.wav");
-        }
+            // read only
+            WAVWriter wav_writer("files/read_only.wav");
+        },
+        std::ios_base::failure
     );
 }
 
