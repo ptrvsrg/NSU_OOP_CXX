@@ -9,6 +9,7 @@ struct CommandLineParserArgs
     std::string config_file_;
     std::string output_file_;
     std::vector<std::string> input_files_;
+    bool return_value_;
     enum class ExceptionType
     {
         NO_EXCEPTION,
@@ -21,11 +22,13 @@ struct CommandLineParserArgs
                std::string config_file,
                std::string output_file,
                std::vector<std::string> input_files,
+               bool return_value,
                ExceptionType exception_type)
     :   argc_(static_cast<int>(args.size())),
         config_file_(std::move(config_file)),
         output_file_(std::move(output_file)),
         input_files_(std::move(input_files)),
+        return_value_(return_value),
         exception_type_(exception_type)
     {
         argv_ = new char * [argc_];
@@ -45,49 +48,75 @@ INSTANTIATE_TEST_SUITE_P
     CommandLineParserTest,
     ::testing::Values
         (
-            CommandLineParserArgs({"./main", "-c", "/home/", "-O", "/bin/", "-I", "/lib/", "/dev/"}, // 0
+            CommandLineParserArgs({"./main", "-c", "/home/", "-O", "/bin/", "-I", "/lib/", "/dev/"},
                                   "/home/",
                                   "/bin/",
                                   { "/lib/", "/dev/" },
+                                  true,
                                   CommandLineParserArgs::ExceptionType::NO_EXCEPTION),
-            CommandLineParserArgs({"./main", "-c/home/", "-O/bin/", "-I/lib/", "/dev/"}, // 1
+            CommandLineParserArgs({"./main", "-c/home/", "-O/bin/", "-I/lib/", "/dev/"},
                                   "/home/",
                                   "/bin/",
                                   { "/lib/", "/dev/" },
+                                  true,
                                   CommandLineParserArgs::ExceptionType::NO_EXCEPTION),
-            CommandLineParserArgs({"./main", "--config", "/home/", "--output", "/bin/", "--input", "/lib/", "/dev/"}, // 2
+            CommandLineParserArgs({"./main", "--config", "/home/", "--output", "/bin/", "--input", "/lib/", "/dev/"},
                                   "/home/",
                                   "/bin/",
                                   { "/lib/", "/dev/" },
+                                  true,
                                   CommandLineParserArgs::ExceptionType::NO_EXCEPTION),
-            CommandLineParserArgs({"./main", "--config=/home/", "--output=/bin/", "--input=/lib/", "/dev/"}, // 3
+            CommandLineParserArgs({"./main", "--config=/home/", "--output=/bin/", "--input=/lib/", "/dev/"},
                                   "/home/",
                                   "/bin/",
                                   { "/lib/", "/dev/" },
+                                  true,
+                                  CommandLineParserArgs::ExceptionType::NO_EXCEPTION),
+            CommandLineParserArgs({"./main", "-h"},
+                                  "",
+                                  "",
+                                  {},
+                                  false,
+                                  CommandLineParserArgs::ExceptionType::NO_EXCEPTION),
+            CommandLineParserArgs({"./main", "--help"},
+                                  "",
+                                  "",
+                                  {},
+                                  false,
                                   CommandLineParserArgs::ExceptionType::NO_EXCEPTION),
 
-            CommandLineParserArgs({"./main", "-c/home/", "-O/bin/"}, // 4
+            CommandLineParserArgs({"./main", "-c/home/", "-O/bin/"},
                                   "/home/",
                                   "/bin/",
                                   {},
+                                  false,
                                   CommandLineParserArgs::ExceptionType::NO_INPUT_FILES),
 
-            CommandLineParserArgs({"./main", "-c/home/", "-I/bin/"}, // 5
+            CommandLineParserArgs({"./main", "-c/home/", "-I/bin/"},
                                   "/home/",
                                   "",
                                   { "/bin/" },
+                                  false,
                                   CommandLineParserArgs::ExceptionType::NO_OUTPUT_FILE),
 
-            CommandLineParserArgs({"./main", "-O/home/", "-I/bin/"}, // 6
+            CommandLineParserArgs({"./main", "-O/home/", "-I/bin/"},
                                   "",
                                   "/home/",
                                   { "/bin/" },
+                                  false,
+                                  CommandLineParserArgs::ExceptionType::NO_CONFIG_FILE),
+
+            CommandLineParserArgs({"./main", "-O/home/", "-I/bin/"},
+                                  "",
+                                  "/home/",
+                                  { "/bin/" },
+                                  false,
                                   CommandLineParserArgs::ExceptionType::NO_CONFIG_FILE)
         )
 );
 
 TEST_P(CommandLineParserTest,
-       check_options)
+       check_get_options)
 {
     CommandLineParserArgs params = GetParam();
     Options opts;
@@ -95,17 +124,23 @@ TEST_P(CommandLineParserTest,
     switch (params.exception_type_)
     {
         case CommandLineParserArgs::ExceptionType::NO_EXCEPTION:
-            GetOptions(params.argc_,
-                       params.argv_,
-                       opts);
+        {
+            bool return_value = GetOptions(params.argc_,
+                                           params.argv_,
+                                           opts);
+            EXPECT_EQ(return_value,
+                      params.return_value_);
 
-            EXPECT_EQ(opts.config_file_,
-                      params.config_file_);
-            EXPECT_EQ(opts.output_file_,
-                      params.output_file_);
-            EXPECT_EQ(opts.input_files_,
-                      params.input_files_);
+            if (params.return_value_) {
+                EXPECT_EQ(opts.config_file_,
+                          params.config_file_);
+                EXPECT_EQ(opts.output_file_,
+                          params.output_file_);
+                EXPECT_EQ(opts.input_files_,
+                          params.input_files_);
+            }
             break;
+        }
         case CommandLineParserArgs::ExceptionType::NO_CONFIG_FILE:
             EXPECT_THROW(
             {
