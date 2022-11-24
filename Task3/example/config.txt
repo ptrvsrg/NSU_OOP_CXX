@@ -1,4 +1,5 @@
-mute 20 60
+double 10 20
+mute 20 30
 mix $1 20
-mute 40 60
-mix $2 40
+mute 30 40
+mix $2 30
