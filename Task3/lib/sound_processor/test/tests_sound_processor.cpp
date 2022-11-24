@@ -3,6 +3,20 @@
 #include "sound_processor_errors.h"
 
 TEST(tests_sound_processor,
+     no_throw)
+{
+    EXPECT_NO_THROW
+    (
+        {
+            SoundProcessor sound_processor("file/config.txt",
+                                           "file/output.wav",
+                                           {"file/input0.wav", "file/input1.wav"});
+            sound_processor.Convert();
+        }
+    );
+}
+
+TEST(tests_sound_processor,
      check_OpenWAVReaders)
 {
     EXPECT_THROW
