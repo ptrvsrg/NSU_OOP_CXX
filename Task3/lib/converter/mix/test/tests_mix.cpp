@@ -120,6 +120,19 @@ TEST(test_mix,
     }
 }
 
+TEST(test_mix,
+     check_get_file_links)
+{
+    MixConverter mix_converter({"$1", "67"});
+    FileLinks file_links = mix_converter.GetFileLinks();
+    EXPECT_EQ(file_links.size(),
+              2);
+    EXPECT_EQ(*file_links.cbegin(),
+              0);
+    EXPECT_EQ(*std::next(file_links.cbegin(), 1),
+              1);
+}
+
 int main(int argc,
          char** argv)
 {

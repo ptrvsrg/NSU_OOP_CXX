@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <algorithm>
 #include <cstdlib>
 #include <ctime>
 #include "mute.h"
@@ -123,6 +124,17 @@ TEST(test_mute,
                   (i >= 20 &&
                    i <= 67) ? null : default_samples[0]);
     }
+}
+
+TEST(test_mute,
+     check_get_file_links)
+{
+    MuteConverter mute_converter({"20", "67"});
+    FileLinks file_links = mute_converter.GetFileLinks();
+    EXPECT_EQ(file_links.size(),
+              1);
+    EXPECT_EQ(*file_links.cbegin(),
+              0);
 }
 
 int main(int argc,
