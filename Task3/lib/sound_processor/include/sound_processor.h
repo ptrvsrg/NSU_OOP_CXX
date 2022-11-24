@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "config_parser.h"
-#include "converter_creator.h"
+#include "converter_interface.h"
 #include "WAV_reader.h"
 #include "WAV_writer.h"
 

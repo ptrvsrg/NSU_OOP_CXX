@@ -41,7 +41,6 @@ void SoundProcessor::Convert()
 
 ConverterVector SoundProcessor::CreatePipeline(ConfigParser & config)
 {
-    ConverterCreator converter_creator;
     ConverterVector pipeline;
     while (true)
     {
@@ -51,7 +50,7 @@ ConverterVector SoundProcessor::CreatePipeline(ConfigParser & config)
             break;
 
         // create converter
-        ConverterPtr converter_ptr = converter_creator.Create(converter_command);
+        ConverterPtr converter_ptr = ConverterInterface::Create(converter_command);
 
         // add converter to pipeline
         pipeline.push_back(std::move(converter_ptr));
