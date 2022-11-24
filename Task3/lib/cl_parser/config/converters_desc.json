@@ -1,11 +1,15 @@
 {
   "Converters": [
     {
+      "Command" : "double <start_sec> <end_sec>",
+      "Description": "Accelerate the speed by 2 times and duplicate the sound played in 1 second"
+    },
+    {
       "Command" : "mute <start_sec> <end_sec>",
       "Description": "Mute the interval from the start time to the end time"
     },
     {
-      "Command" : "mix <additional_file> <insertion_sec>",
+      "Command" : "mix <additional_file> <insertion_sec>",Configured the launch of the example
       "Description": "Mix the main file with the additional one starting from the insertion time"
     }
   ]
