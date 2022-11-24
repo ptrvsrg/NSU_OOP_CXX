@@ -1,5 +1,5 @@
 #include "config_parser.h"
-Куафсещкштп#include "iostream_errors.h"
+#include "iostream_errors.h"
 #include <sstream>
 
 ConfigParser::ConfigParser(std::string file_path)

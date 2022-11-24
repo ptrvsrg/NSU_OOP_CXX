@@ -2,7 +2,7 @@
 
 IncorrectFileFormat::IncorrectFileFormat(const std::string & file_path,
                                          const std::string & desc)
-    : std::invalid_argument(file_path + ": Wrong file format : " + desc) {}
+    : std::invalid_argument(file_path + ": Incorrect file format : " + desc) {}
 
 IncorrectExtension::IncorrectExtension(const std::string & file_path)
     : IncorrectFileFormat(file_path,
