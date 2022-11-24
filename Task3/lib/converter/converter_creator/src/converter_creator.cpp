@@ -6,6 +6,7 @@
 
 ConverterPtr ConverterInterface::Create(ConverterCommand converter_command)
 {
+    // extract converter name
     std::string converter_name = converter_command[0];
     converter_command.erase(converter_command.cbegin());
 
@@ -16,5 +17,5 @@ ConverterPtr ConverterInterface::Create(ConverterCommand converter_command)
     else if (converter_name == "mix")
         return std::make_unique<MixConverter>(converter_command);
     else
-        throw IncorrectConverterNameException(converter_name);
+        throw IncorrectConverterName(converter_name);
 }

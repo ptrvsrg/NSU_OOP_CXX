@@ -148,7 +148,7 @@ TEST_P(CommandLineParserTest,
                                params.argv_,
                                opts);
                 },
-                NoConfigFileException
+            NoConfigFile
             );
             break;
         case CommandLineParserArgs::ExceptionType::NO_OUTPUT_FILE:
@@ -158,7 +158,7 @@ TEST_P(CommandLineParserTest,
                                params.argv_,
                                opts);
                 },
-                NoOutputFileException
+            NoOutputFile
             );
             break;
         case CommandLineParserArgs::ExceptionType::NO_INPUT_FILES:
@@ -168,7 +168,7 @@ TEST_P(CommandLineParserTest,
                                params.argv_,
                                opts);
                 },
-                NoInputFilesException
+            NoInputFiles
             );
             break;
     }

@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include "iostream_errors.h"
 #include "WAV_errors.h"
 #include "WAV_reader.h"
 #include "WAV_writer.h"
@@ -83,7 +84,7 @@ TEST_P(WAVReaderTest,
                 {
                     WAVReader wav_reader(params.file_);
                 },
-                ExtensionException
+                IncorrectExtension
             );
             break;
         case WAVReaderArgs::ExceptionType::OPENING_EXCEPTION:
@@ -101,7 +102,7 @@ TEST_P(WAVReaderTest,
                 {
                     WAVReader wav_reader(params.file_);
                 },
-                RIFFHeaderException
+                IncorrectRIFFHeader
             );
             break;
         case WAVReaderArgs::ExceptionType::FORMAT_TYPE_EXCEPTION:
@@ -110,7 +111,7 @@ TEST_P(WAVReaderTest,
                 {
                     WAVReader wav_reader(params.file_);
                 },
-                FormatTypeException
+                IncorrectFormatType
             );
             break;
         case WAVReaderArgs::ExceptionType::FORMAT_DATA_EXCEPTION:
@@ -119,7 +120,7 @@ TEST_P(WAVReaderTest,
                 {
                     WAVReader wav_reader(params.file_);
                 },
-                FormatDataException
+                IncorrectFormatData
             );
             break;
         case WAVReaderArgs::ExceptionType::AUDIO_FORMAT_EXCEPTION:
@@ -128,7 +129,7 @@ TEST_P(WAVReaderTest,
                 {
                     WAVReader wav_reader(params.file_);
                 },
-                AudioFormatException
+                IncorrectAudioFormat
             );
             break;
         case WAVReaderArgs::ExceptionType::CHANNELS_NUMBER_EXCEPTION:
@@ -137,16 +138,16 @@ TEST_P(WAVReaderTest,
                 {
                     WAVReader wav_reader(params.file_);
                 },
-                ChannelsNumberException
+                IncorrectChannelsNumber
             );
             break;
         case WAVReaderArgs::ExceptionType::SAMPLE_BITS_EXCEPTION:
             EXPECT_THROW
             (
-                {
+            {
                     WAVReader wav_reader(params.file_);
                 },
-                SampleBitsException
+            IncorrectSampleBits
             );
             break;
         case WAVReaderArgs::ExceptionType::SAMPLE_RATE_EXCEPTION:
@@ -155,7 +156,7 @@ TEST_P(WAVReaderTest,
                 {
                     WAVReader wav_reader(params.file_);
                 },
-                SamplingRateException
+                IncorrectSamplingRate
             );
             break;
         case WAVReaderArgs::ExceptionType::CHUNK_SEARCH_EXCEPTION:
@@ -164,7 +165,7 @@ TEST_P(WAVReaderTest,
                 {
                     WAVReader wav_reader(params.file_);
                 },
-                ChunkSearchException
+                ChunkNotFound
             );
             break;
     }
@@ -190,7 +191,6 @@ TEST(test_WAV,
     {
         WAVReader original_reader("files/correct.wav");
         WAVWriter copy_writer("files/correct_copy.wav");
-
 
         while (true)
         {

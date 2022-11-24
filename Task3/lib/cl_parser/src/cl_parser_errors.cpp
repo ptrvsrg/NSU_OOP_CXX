@@ -1,10 +1,10 @@
 #include "cl_parser_errors.h"
 
-NoConfigFileException::NoConfigFileException()
+NoConfigFile::NoConfigFile()
     : std::invalid_argument("Configuration file is skipped") {}
 
-NoOutputFileException::NoOutputFileException()
+NoOutputFile::NoOutputFile()
     : std::invalid_argument("Output file is skipped") {}
 
-NoInputFilesException::NoInputFilesException()
+NoInputFiles::NoInputFiles()
     : std::invalid_argument("Input files is skipped") {}

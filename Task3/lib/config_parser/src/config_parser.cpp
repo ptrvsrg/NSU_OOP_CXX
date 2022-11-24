@@ -12,13 +12,15 @@ ConfigParser::ConfigParser(std::string file_path)
 
 static bool IsComment(std::string & str)
 {
+    // case: "     #something"
     while (!str.empty() && str[0] == ' ')
-        str.erase(0, 1);  // case: "     #something"
+        str.erase(0, 1);
     return str.empty() || str[0] == '#';
 }
 
 static void RemoveCommentAtEnd(std::string & str)
 {
+    // case: "converter_command #something"
     str = str.substr(0,
                      str.find('#'));
 }

@@ -3,10 +3,10 @@
 
 #include <stdexcept>
 
-class IncorrectConverterNameException : std::invalid_argument
+class IncorrectConverterName : std::invalid_argument
 {
 public:
-    explicit IncorrectConverterNameException(const std::string & converter_name);
+    explicit IncorrectConverterName(const std::string & converter_name);
 };
 
 #endif //TASK3_CONVERTER_CREATOR_ERRORS_H

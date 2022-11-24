@@ -10,12 +10,14 @@ namespace pt = boost::property_tree;
 
 static void PrintConverterDesc()
 {
+    // Create property tree
     pt::ptree ptree;
     pt::read_json(CONVERTERS_CONFIG_FILE,
                   ptree);
 
     std::cout << "Available converters:" << std::endl;
 
+    // print converter descriptions
     for (const auto & converter_info : ptree.get_child("Converters"))
         std::cout << "  " << std::setw(40) << std::left
                   << converter_info.second.get<std::string>("Command")
@@ -26,6 +28,7 @@ bool GetOptions(int argc,
                 char ** argv,
                 Options & opts)
 {
+    // add necessary options
     po::options_description opts_desc("General options");
     opts_desc.add_options()
         ("help,h",
@@ -40,6 +43,7 @@ bool GetOptions(int argc,
          po::value<std::vector<std::string>>(&opts.input_files_)->multitoken(),
          "Input files");
 
+    // parse command line arguments
     po::variables_map vm;
     po::parsed_options pars_opts = po::command_line_parser(argc,
                                                            argv)
@@ -49,6 +53,7 @@ bool GetOptions(int argc,
               vm);
     notify(vm);
 
+    // print help
     if (vm.count("help"))
     {
         PrintConverterDesc();
@@ -57,11 +62,11 @@ bool GetOptions(int argc,
     }
 
     if (opts.config_file_.empty())
-        throw NoConfigFileException();
+        throw NoConfigFile();
     if (opts.output_file_.empty())
-        throw NoOutputFileException();
+        throw NoOutputFile();
     if (opts.input_files_.empty())
-        throw NoInputFilesException();
+        throw NoInputFiles();
 
     return true;
 }

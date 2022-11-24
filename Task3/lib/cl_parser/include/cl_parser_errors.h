@@ -3,22 +3,22 @@
 
 #include <stdexcept>
 
-class NoConfigFileException : public std::invalid_argument
+class NoConfigFile : public std::invalid_argument
 {
 public:
-    NoConfigFileException();
+    NoConfigFile();
 };
 
-class NoOutputFileException : public std::invalid_argument
+class NoOutputFile : public std::invalid_argument
 {
 public:
-    NoOutputFileException();
+    NoOutputFile();
 };
 
-class NoInputFilesException : public std::invalid_argument
+class NoInputFiles : public std::invalid_argument
 {
 public:
-    NoInputFilesException();
+    NoInputFiles();
 };
 
 #endif //TASK3_CL_PARSER_ERRORS_H

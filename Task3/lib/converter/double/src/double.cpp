@@ -1,6 +1,5 @@
 #include "double.h"
 #include "converter_errors.h"
-#include <cmath>
 
 DoubleConverter::DoubleConverter(ConverterParams params)
 {

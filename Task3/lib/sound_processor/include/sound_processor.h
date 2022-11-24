@@ -19,6 +19,7 @@ public:
                    std::string output_file,
                    std::vector<std::string> input_files);
     void Convert();
+
 private:
     std::string config_file_;
     std::string output_file_;

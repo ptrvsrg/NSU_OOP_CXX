@@ -3,67 +3,67 @@
 
 #include <stdexcept>
 
-class FileFormatException : public std::invalid_argument
+class IncorrectFileFormat : public std::invalid_argument
 {
 protected:
-    explicit FileFormatException(const std::string & file_path,
+    explicit IncorrectFileFormat(const std::string & file_path,
                                  const std::string & desc);
 };
 
-class ExtensionException : public FileFormatException
+class IncorrectExtension : public IncorrectFileFormat
 {
 public:
-    explicit ExtensionException(const std::string & file_path);
+    explicit IncorrectExtension(const std::string & file_path);
 };
 
-class RIFFHeaderException : public FileFormatException
+class IncorrectRIFFHeader : public IncorrectFileFormat
 {
 public:
-    explicit RIFFHeaderException(const std::string & file_path);
+    explicit IncorrectRIFFHeader(const std::string & file_path);
 };
 
-class FormatTypeException : public FileFormatException
+class IncorrectFormatType : public IncorrectFileFormat
 {
 public:
-    explicit FormatTypeException(const std::string & file_path);
+    explicit IncorrectFormatType(const std::string & file_path);
 };
 
-class FormatDataException : public FileFormatException
+class IncorrectFormatData : public IncorrectFileFormat
 {
 public:
-    explicit FormatDataException(const std::string & file_path);
+    explicit IncorrectFormatData(const std::string & file_path);
 };
 
 
-class AudioFormatException : public FileFormatException
+class IncorrectAudioFormat : public IncorrectFileFormat
 {
 public:
-    explicit AudioFormatException(const std::string & file_path);
+    explicit IncorrectAudioFormat(const std::string & file_path);
 };
 
-class ChannelsNumberException : public FileFormatException
+class IncorrectChannelsNumber : public IncorrectFileFormat
 {
 public:
-    explicit ChannelsNumberException(const std::string & file_path);
+    explicit IncorrectChannelsNumber(const std::string & file_path);
 };
 
-class SampleBitsException : public FileFormatException
+class IncorrectSampleBits : public IncorrectFileFormat
 {
 public:
-    explicit SampleBitsException(const std::string & file_path);
+    explicit IncorrectSampleBits(const std::string & file_path);
 };
 
-class SamplingRateException : public FileFormatException
+class IncorrectSamplingRate : public IncorrectFileFormat
 {
 public:
-    explicit SamplingRateException(const std::string & file_path);
+    explicit IncorrectSamplingRate(const std::string & file_path);
 };
 
-class ChunkSearchException : public FileFormatException
+class ChunkNotFound : public IncorrectFileFormat
 {
 public:
-    explicit ChunkSearchException(const std::string & file_path,
-                                  uint32_t chunk_ID);
+    explicit ChunkNotFound(const std::string & file_path,
+                           uint32_t chunk_ID);
 };
 
 #endif //TASK3_WAV_ERRORS_H

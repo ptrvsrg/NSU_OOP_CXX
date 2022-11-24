@@ -62,6 +62,8 @@ ConverterVector SoundProcessor::CreatePipeline(ConfigParser & config)
 FileLinks SoundProcessor::GetFileLinks(const ConverterVector & pipeline)
 {
     FileLinks file_links;
+
+    // merge set of necessary links
     for (const ConverterPtr & converter : pipeline)
         file_links.merge(converter->GetFileLinks());
 

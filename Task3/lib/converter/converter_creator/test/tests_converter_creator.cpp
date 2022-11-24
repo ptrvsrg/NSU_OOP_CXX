@@ -42,7 +42,7 @@ TEST_P(CreatorTest,
             {
                 ConverterPtr converter_ptr = ConverterInterface::Create(params.converter_command_);
             },
-            IncorrectConverterNameException
+            IncorrectConverterName
         );
     else
 
