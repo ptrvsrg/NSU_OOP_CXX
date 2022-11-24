@@ -6,16 +6,19 @@ add_library(converter_creator STATIC
 target_include_directories(converter_creator
         PUBLIC include
         PUBLIC ../converter_interface/include
-        PUBLIC ../mute/include
-        PUBLIC ../mix/include)
+        PUBLIC ../double/include
+        PUBLIC ../mix/include
+        PUBLIC ../mute/include)
 target_link_directories(converter_creator
         PUBLIC ${CMAKE_BINARY_DIR}/lib/converter/converter_interface
-        PUBLIC ${CMAKE_BINARY_DIR}/lib/converter/mute
-        PUBLIC ${CMAKE_BINARY_DIR}/lib/converter/mix)
+        PUBLIC ${CMAKE_BINARY_DIR}/lib/converter/double
+        PUBLIC ${CMAKE_BINARY_DIR}/lib/converter/mix
+        PUBLIC ${CMAKE_BINARY_DIR}/lib/converter/mute)
 target_link_libraries(converter_creator
         PUBLIC converter_interface
-        PUBLIC mute
-        PUBLIC mix)
+        PUBLIC double
+        PUBLIC mix
+        PUBLIC mute)
 
 message(STATUS "Creating tests for converter library \"converter_creator\"")
 

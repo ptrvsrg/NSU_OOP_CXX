@@ -1,5 +1,6 @@
 add_subdirectory(converter_interface)
 add_subdirectory(converter_errors)
-add_subdirectory(mute)
+add_subdirectory(double)
 add_subdirectory(mix)
+add_subdirectory(mute)
 add_subdirectory(converter_creator)
