@@ -22,8 +22,7 @@ void MuteConverter::Process(SampleBuffer & working_sample,
 {
     if (current_second_ >= start_second_ &&
         current_second_ <= end_second_)
-        for (int16_t & sample : working_sample)
-            sample = 0;
+        working_sample.fill(0);
     ++current_second_;
 }
 
