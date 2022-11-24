@@ -1,3 +1,4 @@
+#include "iostream_errors.h"
 #include "WAV_errors.h"
 #include "WAV_writer.h"
 
@@ -19,7 +20,7 @@ void WAVWriter::Open(std::string file_path)
     fout_.open(file_path_,
                std::ios_base::binary);
     if (!fout_.good())
-        throw std::ios_base::failure(file_path_ + " ");
+        throw FileNotOpen(file_path_);
 
     WriteHeader();
 }
@@ -30,7 +31,7 @@ void WAVWriter::WriteSample(SampleBuffer sample_buffer)
                 sizeof(sample_buffer[0]) * sample_buffer.size());
 
     if (!fout_.good())
-        throw std::ios_base::failure(file_path_ + " ");
+        throw FileNotWrite(file_path_);
 }
 
 void WAVWriter::WriteHeader()

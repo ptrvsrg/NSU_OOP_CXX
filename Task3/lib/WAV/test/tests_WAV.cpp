@@ -93,7 +93,7 @@ TEST_P(WAVReaderTest,
                 {
                     WAVReader wav_reader(params.file_);
                 },
-                std::ios_base::failure
+                FileNotOpen
             );
             break;
         case WAVReaderArgs::ExceptionType::RIFF_HEADER_EXCEPTION:
@@ -180,7 +180,7 @@ TEST(test_WAV_writer,
             // read only
             WAVWriter wav_writer("files/read_only.wav");
         },
-        std::ios_base::failure
+        FileNotOpen
     );
 }
 

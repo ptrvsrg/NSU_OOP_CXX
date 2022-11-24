@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "config_parser.h"
+#include "iostream_errors.h"
 
 TEST(test_config_parser,
      check_constructor)
@@ -9,7 +10,7 @@ TEST(test_config_parser,
         {
             ConfigParser config_parser("files/non_existent.txt");
         },
-        std::ios_base::failure
+        FileNotOpen
     );
 }
 

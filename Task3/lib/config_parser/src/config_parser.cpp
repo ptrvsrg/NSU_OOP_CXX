@@ -1,4 +1,5 @@
 #include "config_parser.h"
+Куафсещкштп#include "iostream_errors.h"
 #include <sstream>
 
 ConfigParser::ConfigParser(std::string file_path)
@@ -7,7 +8,7 @@ ConfigParser::ConfigParser(std::string file_path)
     fin_.open(file_path_,
               std::ios_base::in);
     if (!fin_.good())
-        throw std::ios_base::failure(file_path_ + " ");
+        throw FileNotOpen(file_path_);
 }
 
 static bool IsComment(std::string & str)

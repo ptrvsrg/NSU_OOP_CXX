@@ -1,3 +1,4 @@
+#include "iostream_errors.h"
 #include "WAV_reader.h"
 #include "WAV_errors.h"
 
@@ -18,7 +19,7 @@ void WAVReader::Open(std::string file_path)
     fin_.open(file_path_,
               std::ios_base::binary);
     if (!fin_.good())
-        throw std::ios_base::failure(file_path_ + " ");
+        throw FileNotOpen(file_path_);
 
     ReadHeader();
 }

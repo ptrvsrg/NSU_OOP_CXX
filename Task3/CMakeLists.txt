@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.23)
 
 set(SUBDIR
         lib/cl_parser
+        lib/iostream_errors
         lib/config_parser
         lib/WAV
         lib/converter

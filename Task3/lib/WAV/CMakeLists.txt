@@ -5,7 +5,12 @@ add_library(WAV STATIC
         src/WAV_reader.cpp
         src/WAV_writer.cpp)
 target_include_directories(WAV
-        PUBLIC include)
+        PUBLIC include
+        PUBLIC ${CMAKE_SOURCE_DIR}/lib/iostream_errors/include)
+target_link_directories(WAV
+        PUBLIC ${CMAKE_BINARY_DIR}/lib/iostream_errors)
+target_link_libraries(WAV
+        PUBLIC iostream_errors)
 
 message(STATUS "Creating tests for library \"WAV\"")
 
