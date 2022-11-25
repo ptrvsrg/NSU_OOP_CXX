@@ -11,7 +11,7 @@ set(LIBRARY
         cl_parser
         sound_processor)
 
-project(Task3 CXX)
+project(Task3)
 
 add_executable(Task3
         example/main.cpp)
