@@ -3,7 +3,7 @@
 
 #include <stdexcept>
 
-class IncorrectConverterName : std::invalid_argument
+class IncorrectConverterName : public std::invalid_argument
 {
 public:
     explicit IncorrectConverterName(const std::string & converter_name);
