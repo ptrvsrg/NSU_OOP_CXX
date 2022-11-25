@@ -1,5 +1,4 @@
 #include "cl_parser.h"
-#include "cl_parser_errors.h"
 #include <boost/program_options.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <iomanip>
@@ -22,6 +21,8 @@ static void PrintConverterDesc()
         std::cout << "  " << std::setw(40) << std::left
                   << converter_info.second.get<std::string>("Command")
                   << converter_info.second.get<std::string>("Description") << std::endl;
+
+    std::cout << std::endl;
 }
 
 bool GetOptions(int argc,
@@ -34,13 +35,13 @@ bool GetOptions(int argc,
         ("help,h",
          "Show options description")
         ("config,c",
-         po::value<std::string>(&opts.config_file_),
+         po::value<std::string>(&opts.config_file_)->required(),
          "Configuration file")
         ("output,O",
-         po::value<std::string>(&opts.output_file_),
+         po::value<std::string>(&opts.output_file_)->required(),
          "Output file")
         ("input,I",
-         po::value<std::vector<std::string>>(&opts.input_files_)->multitoken(),
+         po::value<std::vector<std::string>>(&opts.input_files_)->multitoken()->required(),
          "Input files");
 
     // parse command line arguments
@@ -51,22 +52,16 @@ bool GetOptions(int argc,
         .run();
     store(pars_opts,
               vm);
-    notify(vm);
 
     // print help
     if (vm.count("help"))
     {
         PrintConverterDesc();
-        std::cout << std::endl << opts_desc << std::endl;
+        std::cout << opts_desc << std::endl;
         return false;
     }
 
-    if (opts.config_file_.empty())
-        throw NoConfigFile();
-    if (opts.output_file_.empty())
-        throw NoOutputFile();
-    if (opts.input_files_.empty())
-        throw NoInputFiles();
-
+    //
+    notify(vm);
     return true;
 }

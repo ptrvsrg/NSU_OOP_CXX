@@ -8,8 +8,7 @@ find_package(Boost
         COMPONENTS container program_options
         REQUIRED)
 add_library(cl_parser STATIC
-        src/cl_parser.cpp
-        src/cl_parser_errors.cpp)
+        src/cl_parser.cpp)
 target_include_directories(cl_parser
         PUBLIC include
         PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include
