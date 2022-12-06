@@ -1,0 +1,164 @@
+#ifndef TASK4_CSV_PARSER_H
+#define TASK4_CSV_PARSER_H
+
+#include <fstream>
+#include <iterator>
+#include <tuple>
+#include <vector>
+#include "tuple_utility.h"
+
+template<typename... Types>
+class CSVParser
+{
+public:
+    explicit CSVParser(std::ifstream & ifs,
+                       std::string column_delim = ",",
+                       std::string row_delim = "\n",
+                       size_t skip_count = 0)
+        : m_ifs(ifs),
+          m_column_delim(std::move(column_delim)),
+          m_row_delim(std::move(row_delim)),
+          m_skip_count(skip_count) {}
+
+    CSVParser(const CSVParser<Types...> & src) = delete;
+
+    class InputIterator
+    {
+    public:
+        using iterator_category = std::input_iterator_tag;
+        using value_type = std::tuple<Types...>;
+        using reference = std::tuple<Types...> &;
+        using pointer = std::tuple<Types...> *;
+        enum class Mode
+        {
+            beg,
+            end
+        };
+
+        explicit InputIterator(CSVParser<Types...> & parent,
+                               Mode mode)
+            :  m_parent(parent)
+        {
+            switch (mode)
+            {
+                case Mode::beg:
+                {
+                    for (; m_parent.m_skip_count != 0; --m_parent.m_skip_count)
+                        m_parent.GetRow();
+                    break;
+                }
+                case Mode::end:
+                {
+                    m_parent.m_ifs.clear();
+                    m_parent.m_ifs.seekg(0,
+                                         std::ios_base::end);
+                    break;
+                }
+            }
+
+            SetPtr();
+        }
+
+        reference operator*() const
+        {
+            return *m_ptr;
+        }
+
+        const InputIterator operator++()
+        {
+            SetPtr();
+            return *this;
+        }
+
+        const InputIterator operator++(int)
+        {
+            const InputIterator tmp = *this;
+            SetPtr();
+            return tmp;
+        }
+
+        bool operator==(const InputIterator & a) const
+        {
+            return a.m_ptr == m_ptr;
+        }
+
+        bool operator!=(const InputIterator & a) const
+        {
+            return a.m_ptr != m_ptr;
+        };
+
+    private:
+        pointer m_ptr;
+        CSVParser<Types...> & m_parent;
+
+        void SetPtr()
+        {
+            std::string buff = m_parent.GetRow();
+            if (buff.empty())
+                m_ptr = nullptr;
+            else
+            {
+                value_type value = MakeTuple<Types...>(m_parent.RowToVector(buff));
+                m_ptr = &value;
+            }
+        }
+    };
+
+    InputIterator begin()
+    {
+        m_ifs.clear();
+        m_ifs.seekg(0,
+                    std::ios_base::beg);
+        return InputIterator(*this, InputIterator::Mode::beg);
+    }
+
+    InputIterator end()
+    {
+        return InputIterator(*this, InputIterator::Mode::end);
+    }
+
+private:
+    std::ifstream & m_ifs;
+    std::string m_column_delim;
+    std::string m_row_delim;
+    size_t m_skip_count;
+
+    std::string GetRow()
+    {
+        std::string buffer;
+        char sym;
+        do
+        {
+            m_ifs.read(&sym, 1);
+            if (m_ifs.eof())
+                return buffer;
+            buffer += sym;
+        } while (buffer.find(m_row_delim, 0) == std::string::npos);
+
+        return buffer;
+    }
+
+    std::vector<std::string> RowToVector(const std::string & line)
+    {
+        std::vector<std::string> values;
+        size_t prev = 0;
+        size_t next;
+
+        while ((next = line.find(m_column_delim, prev)) != std::string::npos)
+        {
+            values.push_back(line.substr(prev,
+                                         next - prev));
+            prev = next + m_column_delim.size();
+        }
+
+        values.push_back(line.substr(prev));
+
+        if (values.size() < sizeof...(Types))
+            throw std::invalid_argument("");
+        if (values.size() > sizeof...(Types))
+            throw std::invalid_argument("");
+        return values;
+    }
+};
+
+#endif //TASK4_CSV_PARSER_H
