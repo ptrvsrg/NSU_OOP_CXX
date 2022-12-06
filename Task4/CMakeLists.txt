@@ -5,7 +5,7 @@ project(Task4 CXX)
 set(CMAKE_CXX_STANDARD 14)
 
 set(SUBDIRS
-        lib/print_tuple)
+        lib/tuple_utility)
 
 enable_testing()
 foreach(SUBDIR ${SUBDIRS})
