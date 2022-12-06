@@ -17,21 +17,20 @@ public:
                        size_t skip_count = 0)
         : m_ifs(ifs),
           m_column_delim(std::move(column_delim)),
-          m_row_delim(std::move(row_delim)),
-          m_skip_count(skip_count) {}
+          m_line_delim(std::move(row_delim)),
+          m_offset(skip_count) {}
 
     CSVParser(const CSVParser<Types...> & src) = delete;
 
     class InputIterator
     {
     public:
-        using iterator_category = std::input_iterator_tag;
         using value_type = std::tuple<Types...>;
         using reference = std::tuple<Types...> &;
         using pointer = std::tuple<Types...> *;
         enum class Mode
         {
-            beg,
+            begin,
             end
         };
 
@@ -66,14 +65,14 @@ public:
 
         const InputIterator operator++()
         {
-            SetPtr();
+            UpdatePtr();
             return *this;
         }
 
         const InputIterator operator++(int)
         {
             const InputIterator tmp = *this;
-            SetPtr();
+            UpdatePtr();
             return tmp;
         }
 
@@ -91,9 +90,9 @@ public:
         pointer m_ptr;
         CSVParser<Types...> & m_parent;
 
-        void SetPtr()
+        void UpdatePtr()
         {
-            std::string buff = m_parent.GetRow();
+            std::string buff = m_parent.GetLine();
             if (buff.empty())
                 m_ptr = nullptr;
             else
@@ -120,20 +119,22 @@ public:
 private:
     std::ifstream & m_ifs;
     std::string m_column_delim;
-    std::string m_row_delim;
-    size_t m_skip_count;
+    std::string m_line_delim;
+    size_t m_offset;
 
-    std::string GetRow()
+    std::string GetLine()
     {
         std::string buffer;
         char sym;
         do
         {
             m_ifs.read(&sym, 1);
+
             if (m_ifs.eof())
-                return buffer;
+                break;
+
             buffer += sym;
-        } while (buffer.find(m_row_delim, 0) == std::string::npos);
+        } while (buffer.find(m_line_delim, 0) == std::string::npos);
 
         return buffer;
     }
@@ -157,6 +158,7 @@ private:
             throw std::invalid_argument("");
         if (values.size() > sizeof...(Types))
             throw std::invalid_argument("");
+
         return values;
     }
 };
