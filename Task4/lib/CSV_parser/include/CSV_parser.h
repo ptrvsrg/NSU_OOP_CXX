@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <iterator>
+#include <memory>
 #include <tuple>
 #include <vector>
 #include "tuple_utility.h"
@@ -27,7 +28,7 @@ public:
     public:
         using value_type = std::tuple<Types...>;
         using reference = std::tuple<Types...> &;
-        using pointer = std::tuple<Types...> *;
+        using pointer = std::shared_ptr<std::tuple<Types...>>;
         enum class Mode
         {
             begin,
@@ -47,10 +48,7 @@ public:
                     break;
                 }
                 case Mode::end:
-                {
-                    m_parent.m_ifs.clear();
-                    m_parent.m_ifs.seekg(0,
-                                         std::ios_base::end);
+                    m_ptr = nullptr;
                     break;
                 }
             }
@@ -96,10 +94,7 @@ public:
             if (buff.empty())
                 m_ptr = nullptr;
             else
-            {
-                value_type value = MakeTuple<Types...>(m_parent.RowToVector(buff));
-                m_ptr = &value;
-            }
+                m_ptr = std::make_shared<value_type>(MakeTuple<Types...>(m_parent.RowToVector(buff)));
         }
     };
 
