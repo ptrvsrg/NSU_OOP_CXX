@@ -35,25 +35,19 @@ public:
             end
         };
 
-        explicit InputIterator(CSVParser<Types...> & parent,
-                               Mode mode)
+        InputIterator(CSVParser<Types...> & parent,
+                      Mode mode)
             :  m_parent(parent)
         {
             switch (mode)
             {
-                case Mode::beg:
-                {
-                    for (; m_parent.m_skip_count != 0; --m_parent.m_skip_count)
-                        m_parent.GetRow();
+                case Mode::begin:
+                    UpdatePtr();
                     break;
-                }
                 case Mode::end:
                     m_ptr = nullptr;
                     break;
-                }
             }
-
-            SetPtr();
         }
 
         reference operator*() const
@@ -103,12 +97,18 @@ public:
         m_ifs.clear();
         m_ifs.seekg(0,
                     std::ios_base::beg);
-        return InputIterator(*this, InputIterator::Mode::beg);
+
+        for (int i = 0; i < m_offset; ++i)
+            GetLine();
+
+        return InputIterator(*this,
+                             InputIterator::Mode::begin);
     }
 
     InputIterator end()
     {
-        return InputIterator(*this, InputIterator::Mode::end);
+        return InputIterator(*this,
+                             InputIterator::Mode::end);
     }
 
 private:
