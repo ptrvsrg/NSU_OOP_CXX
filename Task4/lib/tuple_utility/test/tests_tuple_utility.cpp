@@ -27,6 +27,14 @@ TEST(tests_tuple,
     auto check = std::tuple<>();
     EXPECT_EQ(tuple, check);
 
+    try
+    {
+        auto tuple_3 = MakeTuple<int, std::string, double>({"1", "dog", "3.14a"});
+    }
+    catch (size_t idx)
+    {
+        EXPECT_EQ(idx, 2);
+    }
 }
 
 int main(int argc,
