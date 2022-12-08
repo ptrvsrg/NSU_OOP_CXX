@@ -6,21 +6,22 @@
 #include <sstream>
 #include <tuple>
 
+template<typename ...Types>
+using TuplePtr = std::unique_ptr<std::tuple<Types...>>;
+
 namespace
 {
-    template <size_t First, size_t Last, size_t Size, typename Callback, typename... Types>
+    template <size_t First, size_t Last, size_t Size, typename Callback, typename ...Types>
     class Iteration
     {
     public:
-        // for printing
         static void Next(Callback callback, std::tuple<Types...> tuple)
         {
             callback(std::get<First>(tuple), false);
             Iteration<First + 1, Last, Size, Callback, Types...>::Next(callback, tuple);
         }
 
-        // for making
-        static void Next(Callback callback, std::unique_ptr<std::tuple<Types...>> & tuple_ptr)
+        static void Next(Callback callback, TuplePtr<Types...> & tuple_ptr)
         {
             callback(std::get<First>(*tuple_ptr), false);
             Iteration<First + 1, Last, Size, Callback, Types...>::Next(callback, tuple_ptr);
@@ -28,45 +29,38 @@ namespace
     };
 
     // Last iteration
-    template <size_t Last, size_t Size, typename Callback, typename... Types>
+    template <size_t Last, size_t Size, typename Callback, typename ...Types>
     class Iteration<Last, Last, Size, Callback, Types...>
     {
     public:
-        // for printing
         static void Next(Callback callback, std::tuple<Types...> tuple)
         {
             callback(std::get<Last>(tuple), true);
         }
 
-        // for making
-        static void Next(Callback callback, std::unique_ptr<std::tuple<Types...>> & tuple_ptr)
+        static void Next(Callback callback, TuplePtr<Types...> & tuple_ptr)
         {
             callback(std::get<Last>(*tuple_ptr), true);
         }
     };
 
     // empty tuple
-    template <size_t First, size_t Last, typename Callback, typename... Types>
+    template <size_t First, size_t Last, typename Callback, typename ...Types>
     class Iteration<First, Last, 0, Callback, Types...>
     {
     public:
-        // for printing
         static void Next(Callback callback, std::tuple<Types...> tuple) {}
-
-        // for making
-        static void Next(Callback callback, std::unique_ptr<std::tuple<Types...>> & tuple_ptr) {}
+        static void Next(Callback callback, TuplePtr<Types...> & tuple_ptr) {}
     };
 
-    // for printing
-    template <typename Callback, typename... Types>
+    template <typename Callback, typename ...Types>
     void ForEach(Callback callback, std::tuple<Types...> tuple)
     {
         Iteration<0, sizeof...(Types) - 1, sizeof...(Types), Callback, Types...>::Next(callback, tuple);
     }
 
-    // for making
-    template <typename Callback, typename... Types>
-    void ForEach(Callback callback, std::unique_ptr<std::tuple<Types...>> & tuple_ptr)
+    template <typename Callback, typename ...Types>
+    void ForEach(Callback callback, TuplePtr<Types...> & tuple_ptr)
     {
         Iteration<0, sizeof...(Types) - 1, sizeof...(Types), Callback, Types...>::Next(callback, tuple_ptr);
     }
@@ -85,6 +79,7 @@ namespace
             if (!is_last)
                 m_os << ", ";
         }
+
     private:
         std::basic_ostream<CharT, Traits> & m_os;
     };
@@ -92,8 +87,9 @@ namespace
     class MakeCallback
     {
     public:
-        explicit MakeCallback(std::vector<std::string> params)
-            :   m_params(std::move(params)) {}
+        explicit MakeCallback(std::vector<std::string> & params)
+            :   m_params(params),
+                m_cur_idx(0) {}
 
         template<typename Type>
         void operator()(Type & value, bool is_last)
@@ -123,7 +119,7 @@ namespace
     };
 }
 
-template<typename CharT, typename Traits, typename... Types>
+template<typename CharT, typename Traits, typename ...Types>
 auto & operator<<(std::basic_ostream<CharT, Traits> & os, const std::tuple<Types...> & tuple)
 {
     PrintCallback<CharT, Traits> print_callback(os);
@@ -131,8 +127,8 @@ auto & operator<<(std::basic_ostream<CharT, Traits> & os, const std::tuple<Types
     return os;
 }
 
-template<typename... Types>
-std::tuple<Types...> MakeTuple(const std::vector<std::string> & params)
+template<typename ...Types>
+std::tuple<Types...> MakeTuple(std::vector<std::string> params)
 {
     auto tuple_ptr = std::make_unique<std::tuple<Types...>>();
     MakeCallback make_callback(params);
