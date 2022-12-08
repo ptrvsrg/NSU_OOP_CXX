@@ -15,3 +15,5 @@ endforeach(SUBDIR)
 
 add_executable(example
         example/main.cpp)
+target_link_libraries(example
+        PUBLIC CSV_parser)
