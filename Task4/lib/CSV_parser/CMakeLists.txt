@@ -1,7 +1,9 @@
 message(STATUS "Creating library \"CSV_parser\"")
-add_library(CSV_parser INTERFACE)
+
+add_library(CSV_parser STATIC
+        src/CSV_parser_errors.cpp)
 target_include_directories(CSV_parser
-        INTERFACE include
+        PUBLIC include
         INTERFACE ${CMAKE_SOURCE_DIR}/lib/tuple_utility/include)
 
 message(STATUS "Creating tests for library \"CSV_parser\"")
