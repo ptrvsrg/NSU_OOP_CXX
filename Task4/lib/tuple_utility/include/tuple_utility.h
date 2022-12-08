@@ -98,9 +98,16 @@ namespace
         template<typename Type>
         void operator()(Type & value, bool is_last)
         {
-            std::istringstream iss(m_params[0]);
+            std::istringstream iss(m_params[m_cur_idx]);
             iss >> value;
-            m_params.erase(m_params.cbegin());
+
+            std::ostringstream oss;
+            oss << value;
+
+            if (oss.str() != m_params[m_cur_idx])
+                throw m_cur_idx;
+
+            ++m_cur_idx;
         }
     private:
         std::vector<std::string> m_params;
