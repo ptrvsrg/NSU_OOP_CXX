@@ -109,8 +109,17 @@ namespace
 
             ++m_cur_idx;
         }
+
+        // Partial template specialization for std::string
+        void operator()(std::string & value, bool is_last)
+        {
+            value = m_params[m_cur_idx];
+            ++m_cur_idx;
+        }
+
     private:
         std::vector<std::string> m_params;
+        size_t m_cur_idx;
     };
 }
 
