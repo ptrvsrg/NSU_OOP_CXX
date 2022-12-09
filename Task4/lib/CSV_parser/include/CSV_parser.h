@@ -115,14 +115,11 @@ private:
                                                                    escape_sym_regex, -1),
                                         std::sregex_token_iterator());
 
-        // Escape character at the beginning of line is checked
-        bool begin_escape_sym = line[0] == m_escape_sym;
-
         // Merge processed substrings
         line.clear();
         for (size_t i = 0; i < values.size(); ++i)
         {
-            if (begin_escape_sym ^ (i % 2 == 1))
+            if (i % 2 == 1)
             {
                 values[i] = std::regex_replace(values[i], std::regex("\a"), "\\a");
                 values[i] = std::regex_replace(values[i], std::regex("\n"), "\\n");
