@@ -44,7 +44,7 @@ namespace
         }
     };
 
-    // empty tuple
+    // Empty tuple
     template <size_t First, size_t Last, typename Callback, typename ...Types>
     class Iteration<First, Last, 0, Callback, Types...>
     {
