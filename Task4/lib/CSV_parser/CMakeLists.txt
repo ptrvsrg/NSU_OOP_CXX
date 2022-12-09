@@ -7,7 +7,18 @@ target_include_directories(CSV_parser
         INTERFACE ${CMAKE_SOURCE_DIR}/lib/tuple_utility/include)
 
 message(STATUS "Creating tests for library \"CSV_parser\"")
-find_package(GTest REQUIRED)
+find_package(GTest)
+if (NOT GTest_FOUND)
+    include(FetchContent)
+
+    FetchContent_Declare(
+            googletest
+            GIT_REPOSITORY https://github.com/google/googletest.git
+            GIT_TAG        release-1.11.0
+    )
+    FetchContent_MakeAvailable(googletest)
+endif (GTest_FOUND)
+
 add_executable(tests_CSV_parser
         test/tests_CSV_parser.cpp)
 target_link_libraries(tests_CSV_parser
