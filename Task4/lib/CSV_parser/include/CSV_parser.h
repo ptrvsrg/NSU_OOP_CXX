@@ -25,7 +25,7 @@ public:
         : m_ifs(ifs),
           m_line_offset(line_offset),
           m_column_delim(column_delim),
-          m_line_delim(row_delim),
+          m_row_delim(row_delim),
           m_escape_sym(escape_sym),
           m_current_line(0)
     {
@@ -60,63 +60,63 @@ public:
 
 private:
     std::ifstream & m_ifs;
-    char m_column_delim;
-    char m_line_delim;
-    char m_escape_sym;
     size_t m_line_offset;
+    char m_column_delim;
+    char m_row_delim;
+    char m_escape_sym;
     size_t m_current_line;
 
     std::string GetLine()
     {
-        std::string buffer;
+        std::string row;
         char sym;
 
         // If end of file or line delim symbol is found, finish reading
-        while (m_ifs.get(sym) && !std::regex_search(buffer + sym, std::regex({m_line_delim})))
-            buffer += sym;
+        while (m_ifs.get(sym) && !std::regex_search(row + sym, std::regex({m_row_delim})))
+            row += sym;
 
         ++m_current_line;
-        return buffer;
+        return row;
     }
 
-    std::vector<std::string> RowToVector(const std::string & line)
+    std::vector<std::string> RowToVector(const std::string & row)
     {
         // Split string into columns with column delim symbol
         std::regex column_delim_regex({m_column_delim});
-        std::vector<std::string> values(std::sregex_token_iterator(line.begin(), line.end(),
-                                                                   column_delim_regex, -1),
-                                        std::sregex_token_iterator());
+        std::vector<std::string> cells(std::sregex_token_iterator(row.begin(), row.end(),
+                                                                  column_delim_regex, -1),
+                                       std::sregex_token_iterator());
 
-        for (size_t i = 0; i < values.size(); ++i)
-            EscapeCharacters(values[i], i);
+        for (size_t i = 0; i < cells.size(); ++i)
+            EscapeSymbols(cells[i], i);
 
-        if (values.size() < sizeof...(Types))
-            throw FewColumnsException(m_current_line, values.size() + 1);
-        if (values.size() > sizeof...(Types))
+        if (cells.size() < sizeof...(Types))
+            throw FewColumnsException(m_current_line, cells.size() + 1);
+        if (cells.size() > sizeof...(Types))
             throw ManyColumnsException(m_current_line, sizeof...(Types) + 1);
 
-        return values;
+        return cells;
     }
 
-    void EscapeCharacters(std::string & line, size_t idx)
+    void EscapeSymbols(std::string & cell, size_t idx)
     {
         // Count number of escaping characters
         std::regex escape_sym_regex({m_escape_sym});
         size_t escape_sym_count = 0;
-        for (std::sregex_iterator begin(line.begin(), line.end(), escape_sym_regex), end;
+        for (std::sregex_iterator begin(cell.begin(), cell.end(), escape_sym_regex), end;
              begin != end; ++begin)
             ++escape_sym_count;
 
         if (escape_sym_count & 1)
-            throw EscapeCharactersException(m_current_line, idx + 1);
+            throw EscapeSymbolsException(m_current_line, idx + 1);
 
         // Split string into substrings with escape symbol
-        std::vector<std::string> values(std::sregex_token_iterator(line.begin(), line.end(),
+        std::vector<std::string> values(std::sregex_token_iterator(cell.begin(), cell.end(),
                                                                    escape_sym_regex, -1),
                                         std::sregex_token_iterator());
 
         // Merge processed substrings
-        line.clear();
+        cell.clear();
         for (size_t i = 0; i < values.size(); ++i)
         {
             if (i % 2 == 1)
@@ -128,7 +128,7 @@ private:
                 values[i] = std::regex_replace(values[i], std::regex("\v"), "\\v");
             }
 
-            line += values[i];
+            cell += values[i];
         }
     }
 };
@@ -195,14 +195,15 @@ private:
 
     void UpdatePtr()
     {
-        std::string buff = m_parent.GetLine();
-        if (buff.empty())
+        std::string new_row = m_parent.GetLine();
+
+        if (new_row.empty())
             m_ptr = nullptr;
         else
         {
             try
             {
-                m_ptr = std::make_shared<value_type>(MakeTuple<Types...>(m_parent.RowToVector(buff)));
+                m_ptr = std::make_shared<value_type>(MakeTuple<Types...>(m_parent.RowToVector(new_row)));
             }
             catch (size_t idx)
             {

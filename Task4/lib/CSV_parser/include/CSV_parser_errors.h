@@ -27,10 +27,10 @@ public:
     TypeMismatchException(size_t row, size_t column);
 };
 
-class EscapeCharactersException : public CSVException
+class EscapeSymbolsException : public CSVException
 {
 public:
-    EscapeCharactersException(size_t row, size_t column);
+    EscapeSymbolsException(size_t row, size_t column);
 };
 
 #endif //TASK4_CSV_PARSER_ERRORS_H

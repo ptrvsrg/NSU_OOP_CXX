@@ -14,5 +14,5 @@ ManyColumnsException::ManyColumnsException(size_t row, size_t column)
 TypeMismatchException::TypeMismatchException(size_t row, size_t column)
     : CSVException(row, column, "Data type mismatch") {}
 
-EscapeCharactersException::EscapeCharactersException(size_t row, size_t column)
+EscapeSymbolsException::EscapeSymbolsException(size_t row, size_t column)
     : CSVException(row, column, "Escape symbols is incorrectly placed") {}
