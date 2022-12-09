@@ -1,17 +1,16 @@
 #include <fstream>
 #include <iostream>
-#include <tuple>
 #include "CSV_parser.h"
 
 int main()
 {
-    std::ifstream file("test.csv");
+    std::ifstream file("default.csv");
 
     try
     {
-        CSVParser<std::string, int> parser(file, ",", "\n", 1);
-        for (const auto & rs: parser)
-            std::cout << rs << std::endl;
+        CSVParser<std::string, int> parser(file, 1);
+        for (const auto & line: parser)
+            std::cout << line << std::endl;
     }
     catch (const std::exception & ex)
     {
