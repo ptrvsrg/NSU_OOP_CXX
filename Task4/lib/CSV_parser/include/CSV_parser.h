@@ -19,14 +19,17 @@ public:
 
     explicit CSVParser(std::ifstream & ifs,
                        size_t line_offset = 0,
-                       const std::string & column_delim = ",",
-                       const std::string & row_delim = "\n")
+                       char column_delim = ',',
+                       char row_delim = '\n',
+                       char escape_sym = '\"')
         : m_ifs(ifs),
           m_line_offset(line_offset),
           m_column_delim(column_delim),
           m_line_delim(row_delim),
+          m_escape_sym(escape_sym),
           m_current_line(0)
     {
+        // Check file opening
         if (!m_ifs.is_open())
             throw std::ifstream::failure("File is not open");
 
@@ -44,7 +47,7 @@ public:
         m_ifs.seekg(0, std::ifstream::beg);
 
         // Skip first lines
-        for (int i = 0; i < m_line_offset; ++i)
+        for (size_t i = 0; i < m_line_offset; ++i)
             GetLine();
 
         return InputIterator(*this, InputIterator::Mode::begin);
@@ -57,8 +60,9 @@ public:
 
 private:
     std::ifstream & m_ifs;
-    std::regex m_column_delim;
-    std::regex m_line_delim;
+    char m_column_delim;
+    char m_line_delim;
+    char m_escape_sym;
     size_t m_line_offset;
     size_t m_current_line;
 
@@ -67,7 +71,8 @@ private:
         std::string buffer;
         char sym;
 
-        while (m_ifs.get(sym) && !std::regex_search(buffer + sym, m_line_delim))
+        // If end of file or line delim symbol is found, finish reading
+        while (m_ifs.get(sym) && !std::regex_search(buffer + sym, std::regex({m_line_delim})))
             buffer += sym;
 
         ++m_current_line;
@@ -76,10 +81,14 @@ private:
 
     std::vector<std::string> RowToVector(const std::string & line)
     {
-        std::sregex_token_iterator first(line.begin(), line.end(),
-                                         m_column_delim, -1);
-        std::sregex_token_iterator last;
-        std::vector<std::string> values(first, last);
+        // Split string into columns with column delim symbol
+        std::regex column_delim_regex({m_column_delim});
+        std::vector<std::string> values(std::sregex_token_iterator(line.begin(), line.end(),
+                                                                   column_delim_regex, -1),
+                                        std::sregex_token_iterator());
+
+        for (size_t i = 0; i < values.size(); ++i)
+            EscapeCharacters(values[i], i);
 
         if (values.size() < sizeof...(Types))
             throw FewColumnsException(m_current_line, values.size() + 1);
@@ -89,10 +98,41 @@ private:
         return values;
     }
 
-    void EscapeCharacters(std::string & line)
+    void EscapeCharacters(std::string & line, size_t idx)
     {
-//        std::regex pattern("\0\a\r\n\t\v\'\"\?\\");
-//        line = std::regex_replace(line, pattern, "\\t");
+        // Count number of escaping characters
+        std::regex escape_sym_regex({m_escape_sym});
+        size_t escape_sym_count = 0;
+        for (std::sregex_iterator begin(line.begin(), line.end(), escape_sym_regex), end;
+             begin != end; ++begin)
+            ++escape_sym_count;
+
+        if (escape_sym_count & 1)
+            throw EscapeCharactersException(m_current_line, idx + 1);
+
+        // Split string into substrings with escape symbol
+        std::vector<std::string> values(std::sregex_token_iterator(line.begin(), line.end(),
+                                                                   escape_sym_regex, -1),
+                                        std::sregex_token_iterator());
+
+        // Escape character at the beginning of line is checked
+        bool begin_escape_sym = line[0] == m_escape_sym;
+
+        // Merge processed substrings
+        line.clear();
+        for (size_t i = 0; i < values.size(); ++i)
+        {
+            if (begin_escape_sym ^ (i % 2 == 1))
+            {
+                values[i] = std::regex_replace(values[i], std::regex("\a"), "\\a");
+                values[i] = std::regex_replace(values[i], std::regex("\n"), "\\n");
+                values[i] = std::regex_replace(values[i], std::regex("\r"), "\\r");
+                values[i] = std::regex_replace(values[i], std::regex("\t"), "\\t");
+                values[i] = std::regex_replace(values[i], std::regex("\v"), "\\v");
+            }
+
+            line += values[i];
+        }
     }
 };
 
