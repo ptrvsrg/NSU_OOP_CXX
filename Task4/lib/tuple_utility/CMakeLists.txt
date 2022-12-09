@@ -14,7 +14,7 @@ if (NOT GTest_FOUND)
             GIT_TAG        release-1.11.0
     )
     FetchContent_MakeAvailable(googletest)
-endif (GTest_FOUND)
+endif ()
 
 add_executable(tests_tuple_utility
         test/tests_tuple_utility.cpp)
