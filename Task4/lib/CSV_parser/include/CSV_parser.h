@@ -82,9 +82,9 @@ private:
         std::vector<std::string> values(first, last);
 
         if (values.size() < sizeof...(Types))
-            throw CSVException(m_current_line, values.size() + 1, "Few columns");
+            throw FewColumnsException(m_current_line, values.size() + 1);
         if (values.size() > sizeof...(Types))
-            throw CSVException(m_current_line, sizeof...(Types) + 1, "Many columns");
+            throw ManyColumnsException(m_current_line, sizeof...(Types) + 1);
 
         return values;
     }
@@ -169,7 +169,7 @@ private:
             }
             catch (size_t idx)
             {
-                throw CSVException(m_parent.m_current_line, idx + 1, "Data type mismatch");
+                throw TypeMismatchException(m_parent.m_current_line, idx + 1);
             }
         }
     }
