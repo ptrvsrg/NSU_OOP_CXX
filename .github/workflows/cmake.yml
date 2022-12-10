@@ -12,25 +12,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        tasks:
-          [
-            Task0,
-            Task1,
-            Task2,
-            Task3,
-            Task4,
-          ]
+        tasks: [ Task0, Task1, Task2, Task3, Task4 ]
 
     steps:
     - uses: actions/checkout@v3
 
     - name: Configure
-      run: cmake -B ${{github.workspace}}/${{ matrix.test-group }}/build -S ${{github.workspace}}/${{ matrix.test-group }}
+      run: cmake -B ./${{ matrix.test-group }}/build -S ./${{ matrix.test-group }}
 
     - name: Build
-      run: cmake --build ${{github.workspace}}/${{ matrix.test-group }}/build
+      run: cmake --build ./${{ matrix.test-group }}/build
 
     - name: Test
-      working-directory: ${{github.workspace}}/${{ matrix.test-group }}/build
+      working-directory: ./${{ matrix.test-group }}/build
       run: ctest --extra-verbose
 
