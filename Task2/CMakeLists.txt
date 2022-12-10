@@ -17,6 +17,7 @@ project(Task2 CXX)
 add_executable(Task2
         src/main.cpp)
 
+enable_testing()
 foreach(SUBDIR ${SUBDIR})
     add_subdirectory(${SUBDIR})
 endforeach(SUBDIR)

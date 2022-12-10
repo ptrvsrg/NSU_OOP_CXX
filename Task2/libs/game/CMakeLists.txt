@@ -15,11 +15,22 @@ target_link_libraries(game PUBLIC
 
 message(STATUS "Creating tests for library \"game\"")
 
-enable_testing()
-find_package(GTest REQUIRED)
+find_package(GTest)
+if (NOT GTest_FOUND)
+    include(FetchContent)
+
+    FetchContent_Declare(
+            googletest
+            GIT_REPOSITORY https://github.com/google/googletest.git
+            GIT_TAG        release-1.11.0
+    )
+    FetchContent_MakeAvailable(googletest)
+endif ()
 add_executable(tests_game
         test/tests_game.cpp)
 target_link_libraries(tests_game PUBLIC
         game
         gtest
         gtest_main)
+add_test(NAME tests_game
+        COMMAND tests_game)
