@@ -22,12 +22,12 @@ public:
                        char column_delim = ',',
                        char row_delim = '\n',
                        char escape_sym = '\"')
-        : m_ifs(ifs),
-          m_line_offset(line_offset),
-          m_column_delim(column_delim),
-          m_row_delim(row_delim),
-          m_escape_sym(escape_sym),
-          m_current_line(0)
+        :   m_ifs(ifs),
+            m_line_offset(line_offset),
+            m_column_delim(column_delim),
+            m_row_delim(row_delim),
+            m_escape_sym(escape_sym),
+            m_current_line(0)
     {
         // Check file opening
         if (!m_ifs.is_open())
@@ -48,7 +48,7 @@ public:
 
         // Skip first lines
         for (size_t i = 0; i < m_line_offset; ++i)
-            GetLine();
+            GetRow();
 
         return InputIterator(*this, InputIterator::Mode::begin);
     }
@@ -66,7 +66,7 @@ private:
     char m_escape_sym;
     size_t m_current_line;
 
-    std::string GetLine()
+    std::string GetRow()
     {
         std::string row;
         char sym;
@@ -79,7 +79,7 @@ private:
         return row;
     }
 
-    std::vector<std::string> RowToVector(const std::string & row)
+    std::vector<std::string> RowToCells(const std::string & row)
     {
         // Split string into columns with column delim symbol
         std::regex column_delim_regex({m_column_delim});
@@ -153,7 +153,7 @@ public:
         switch (mode)
         {
             case Mode::begin:
-                UpdatePtr();
+                UpdatePointer();
                 break;
             case Mode::end:
                 m_ptr = nullptr;
@@ -168,14 +168,14 @@ public:
 
     const InputIterator operator++()
     {
-        UpdatePtr();
+        UpdatePointer();
         return *this;
     }
 
     const InputIterator operator++(int)
     {
         const InputIterator tmp = *this;
-        UpdatePtr();
+        UpdatePointer();
         return tmp;
     }
 
@@ -193,23 +193,21 @@ private:
     pointer m_ptr;
     CSVParser<Types...> & m_parent;
 
-    void UpdatePtr()
+    void UpdatePointer()
     {
-        std::string new_row = m_parent.GetLine();
+        std::string new_row = m_parent.GetRow();
 
         if (new_row.empty())
             m_ptr = nullptr;
         else
-        {
             try
             {
-                m_ptr = std::make_shared<value_type>(MakeTuple<Types...>(m_parent.RowToVector(new_row)));
+                m_ptr = std::make_shared<value_type>(MakeTuple<Types...>(m_parent.RowToCells(new_row)));
             }
             catch (size_t idx)
             {
                 throw TypeMismatchException(m_parent.m_current_line, idx + 1);
             }
-        }
     }
 };
 
