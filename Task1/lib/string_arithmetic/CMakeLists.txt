@@ -1,19 +1,25 @@
-set(LIBRARY_NAME string_arithmetic)
-set(LIBRARY_HEADERS_DIR include)
-set(LIBRARY_HEADERS include/string_arithmetic.h)
-set(LIBRARY_SOURCE src/string_arithmetic.cpp)
-set(TEST_LIBRARY_NAME tests_string_arithmetic)
-set(TEST_SOURCE test/tests_string_arithmetic.cpp)
+add_library(string_arithmetic STATIC
+        src/string_arithmetic.cpp)
+target_include_directories(string_arithmetic PUBLIC
+        include)
 
-add_library(${LIBRARY_NAME} STATIC ${LIBRARY_HEADERS} ${LIBRARY_SOURCE})
-target_include_directories(${LIBRARY_NAME} PUBLIC ${LIBRARY_HEADERS_DIR})
+find_package(GTest)
+if (NOT GTest_FOUND)
+    include(FetchContent)
 
-include(FetchContent)
-FetchContent_Declare(
-        googletest
-        URL https://github.com/google/googletest/archive/58d77fa8070e8cec2dc1ed015d66b454c8d78850.zip
-)
-FetchContent_MakeAvailable(googletest)
+    FetchContent_Declare(
+            googletest
+            GIT_REPOSITORY https://github.com/google/googletest.git
+            GIT_TAG        release-1.11.0
+    )
+    FetchContent_MakeAvailable(googletest)
+endif ()
 
-add_executable(${TEST_LIBRARY_NAME} ${TEST_SOURCE})
-target_link_libraries(${TEST_LIBRARY_NAME} gtest_main ${LIBRARY_NAME})
+add_executable(tests_string_arithmetic
+        test/tests_string_arithmetic.cpp)
+target_link_libraries(tests_string_arithmetic
+        gtest_main
+        string_arithmetic)
+add_test(NAME tests_string_arithmetic
+        COMMAND tests_string_arithmetic
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/test)

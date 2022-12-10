@@ -1,19 +1,20 @@
 cmake_minimum_required(VERSION 3.22.1)
 
-set(CMAKE_C_COMPILER "/usr/bin/gcc")
-set(CMAKE_CXX_COMPILER "/usr/bin/g++")
-set(PROJECT_NAME Task1)
-set(SOURCE src/main.cpp)
 set(LIBRARY_DIR lib)
-set(LIBRARY big_int string_arithmetic)
+set(LIBRARY
+        big_int
+        string_arithmetic)
 
-project(${PROJECT_NAME} CXX)
+project(Task1} CXX)
 
-add_executable(${PROJECT_NAME} ${SOURCE})
+add_executable(Task1
+        src/main.cpp)
 
+enable_testing()
 foreach(LIBRARY ${LIBRARY})
     add_subdirectory("${LIBRARY_DIR}/${LIBRARY}")
     message(STATUS "Add subdirectory ${LIBRARY_DIR}/${LIBRARY}")
 endforeach(LIBRARY)
 
-target_link_libraries(${PROJECT_NAME} ${LIBRARY})
+target_link_libraries(Task1
+        ${LIBRARY})
