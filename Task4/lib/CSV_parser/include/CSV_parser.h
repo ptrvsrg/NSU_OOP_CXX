@@ -108,7 +108,7 @@ private:
             ++escape_sym_count;
 
         if (escape_sym_count & 1)
-            throw EscapeSymbolsException(m_current_line, idx + 1);
+            throw EscapeSymbolsCountException(m_current_line, idx + 1);
 
         // Split string into substrings with escape symbol
         std::vector<std::string> values(std::sregex_token_iterator(cell.begin(), cell.end(),

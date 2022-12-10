@@ -32,7 +32,7 @@ TEST(test_CSV_parser, escape_characters_exception)
             for (const auto & tuple : csv_parser)
                 std::cout << tuple << std::endl;
         },
-    EscapeSymbolsException
+    EscapeSymbolsCountException
     );
 }
 

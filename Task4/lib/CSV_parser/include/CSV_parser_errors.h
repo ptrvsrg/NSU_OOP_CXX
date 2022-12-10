@@ -3,7 +3,7 @@
 
 #include <stdexcept>
 
-class CSVException : public std::invalid_argument
+class CSVException : public std::runtime_error
 {
 public:
     CSVException(size_t row, size_t column, const std::string & message);
@@ -27,10 +27,10 @@ public:
     TypeMismatchException(size_t row, size_t column);
 };
 
-class EscapeSymbolsException : public CSVException
+class EscapeSymbolsCountException : public CSVException
 {
 public:
-    EscapeSymbolsException(size_t row, size_t column);
+    EscapeSymbolsCountException(size_t row, size_t column);
 };
 
 #endif //TASK4_CSV_PARSER_ERRORS_H
