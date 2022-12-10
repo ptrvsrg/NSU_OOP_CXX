@@ -18,12 +18,12 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Configure
-      run: cmake -B ./${{ matrix.test-group }}/build -S ./${{ matrix.test-group }}
+      run: cmake -B ./${{ matrix.tasks }}/build -S ./${{ matrix.tasks }}
 
     - name: Build
-      run: cmake --build ./${{ matrix.test-group }}/build
+      run: cmake --build ./${{ matrix.tasks }}/build
 
     - name: Test
-      working-directory: ./${{ matrix.test-group }}/build
+      working-directory: ./${{ matrix.tasks }}/build
       run: ctest --extra-verbose
 
