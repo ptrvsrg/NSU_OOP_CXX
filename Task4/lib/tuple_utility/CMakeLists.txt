@@ -4,7 +4,7 @@ target_include_directories(tuple_utility
         INTERFACE include)
 
 message(STATUS "Creating tests for library \"tuple_utility\"")
-find_package(GTest REQUIRED)
+find_package(GTest)
 if (NOT GTest_FOUND)
     include(FetchContent)
 
