@@ -81,9 +81,31 @@ TEST(test_CSV_parser, type_mismatch)
 TEST(test_CSV_parser, correct_print)
 {
     std::ifstream ifs("files/correct.csv");
+    using Type = CSVParser<int, std::string, double, char>;
+    EXPECT_NO_THROW
+    (
+        {
+            Type csv_parser(ifs, 1);
+            for (const auto &tuple: csv_parser)
+                std::cout << tuple << std::endl;
+        }
+    );
+}
+
+TEST(test_CSV_parser, print_again)
+{
+    std::ifstream ifs("files/correct.csv");
     CSVParser<int, std::string, double, char> csv_parser(ifs, 1);
-    for (const auto & tuple : csv_parser)
-        std::cout << tuple << std::endl;
+
+    std::ostringstream print;
+    for (const auto &tuple: csv_parser)
+        print << tuple << std::endl;
+
+    std::ostringstream print_again;
+    for (const auto &tuple: csv_parser)
+        print_again << tuple << std::endl;
+
+    EXPECT_EQ(print.str(), print_again.str());
 }
 
 int main(int argc, char ** argv)
