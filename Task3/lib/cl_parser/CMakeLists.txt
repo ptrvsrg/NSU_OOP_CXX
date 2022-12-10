@@ -12,21 +12,13 @@ target_include_directories(cl_parser
 find_package(Boost
         COMPONENTS container program_options)
 if (NOT Boost_FOUND)
-    include(${CMAKE_SOURCE_DIR}/cmake/FetchBoostContent.cmake)
-
-    FetchBoostContent_Declare(
-            boost_container
-            GIT_REPOSITORY https://github.com/boostorg/container
-            GIT_TAG        master
+    include(FetchContent)
+    FetchContent_Declare(
+            Boost
+            GIT_REPOSITORY https://github.com/boostorg/boost.git
+            GIT_TAG boost-1.80.0
     )
-    FetchBoostContent_MakeAvailable(boost_container)
-
-    FetchBoostContent_Declare(
-            boost_program_options
-            GIT_REPOSITORY https://github.com/boostorg/program_options
-            GIT_TAG        master
-    )
-    FetchBoostContent_MakeAvailable(boost_program_options)
+    FetchContent_MakeAvailable(Boost)
 endif()
 target_include_directories(cl_parser
         PUBLIC ${Boost_INCLUDE_DIRS})
