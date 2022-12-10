@@ -16,7 +16,17 @@ target_link_libraries(sound_processor
 
 message(STATUS "Creating tests for library \"sound_processor\"")
 
-find_package(GTest REQUIRED)
+find_package(GTest)
+if (NOT GTest_FOUND)
+    include(FetchContent)
+
+    FetchContent_Declare(
+            googletest
+            GIT_REPOSITORY https://github.com/google/googletest.git
+            GIT_TAG        release-1.11.0
+    )
+    FetchContent_MakeAvailable(googletest)
+endif ()
 add_executable(tests_sound_processor
         test/tests_sound_processor.cpp)
 target_link_libraries(tests_sound_processor

@@ -4,23 +4,47 @@ set(CONVERTERS_CONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/config/converters_desc.j
 configure_file(include/cl_parser.h.in
         ${CMAKE_CURRENT_BINARY_DIR}/include/cl_parser.h)
 
-find_package(Boost
-        COMPONENTS container program_options
-        REQUIRED)
 add_library(cl_parser STATIC
         src/cl_parser.cpp)
 target_include_directories(cl_parser
         PUBLIC include
-        PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include
-        PUBLIC ${Boost_INCLUDE_DIR})
+        PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include)
+find_package(Boost
+        COMPONENTS container program_options)
+if (NOT Boost_FOUND)
+    include(${CMAKE_SOURCE_DIR}/cmake/FetchBoostContent.cmake)
+
+    FetchBoostContent_Declare(
+            boost_container
+            GIT_REPOSITORY https://github.com/boostorg/container
+            GIT_TAG        master
+    )
+    FetchBoostContent_MakeAvailable(boost_container)
+
+    FetchBoostContent_Declare(
+            boost_program_options
+            GIT_REPOSITORY https://github.com/boostorg/program_options
+            GIT_TAG        master
+    )
+    FetchBoostContent_MakeAvailable(boost_program_options)
+endif()
 target_link_libraries(cl_parser
         PUBLIC ${Boost_LIBRARIES})
 target_compile_definitions(cl_parser
         PUBLIC -DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 
 message(STATUS "Creating tests for library \"cl_parser\"")
+find_package(GTest)
+if (NOT GTest_FOUND)
+    include(FetchContent)
 
-find_package(GTest REQUIRED)
+    FetchContent_Declare(
+            googletest
+            GIT_REPOSITORY https://github.com/google/googletest.git
+            GIT_TAG        release-1.11.0
+    )
+    FetchContent_MakeAvailable(googletest)
+endif ()
 add_executable(tests_cl_parser
         test/tests_cl_parser.cpp)
 target_link_libraries(tests_cl_parser
