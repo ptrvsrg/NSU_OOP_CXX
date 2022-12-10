@@ -52,13 +52,13 @@ INSTANTIATE_TEST_SUITE_P
     MatrixUpdateTest,
     ::testing::Values
         (
-            OptionArgs("/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/matrix.txt",
+            OptionArgs("file/matrix.txt",
                        OptionArgs::NO),
-            OptionArgs("/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix0.txt",
+            OptionArgs("file/wrong_matrix0.txt",
                        OptionArgs::STREAM_EXCEPTION_TYPE),
-            OptionArgs("/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix1.txt",
+            OptionArgs("file/wrong_matrix1.txt",
                        OptionArgs::LITTLE_MATRIX_EXCEPTION_TYPE),
-            OptionArgs("/home/acer/NSU_OOP_CXX/Task2/libs/matrix/test/wrong_matrix2.txt",
+            OptionArgs("file/wrong_matrix2.txt",
                        OptionArgs::BIG_MATRIX_EXCEPTION_TYPE)
         )
 );

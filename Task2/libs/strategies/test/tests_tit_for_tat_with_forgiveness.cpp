@@ -20,16 +20,14 @@ TEST(test_tit_for_tat_with_forgiveness,
 {
     EXPECT_THROW(
         {
-            TitForTatWithForgivenessStrategy strategy(
-                "/home/acer/NSU_OOP_CXX/Task2/libs/strategies/test");
+            TitForTatWithForgivenessStrategy strategy("./");
         },
         boost::property_tree::json_parser_error
     );
 
     try
     {
-        TitForTatWithForgivenessStrategy strategy(
-            "/home/acer/NSU_OOP_CXX/Task2/libs/strategies/test/config1/");
+        TitForTatWithForgivenessStrategy strategy("incorrect_config1/");
     }
     catch(const std::invalid_argument & ex)
     {
@@ -39,8 +37,7 @@ TEST(test_tit_for_tat_with_forgiveness,
 
     try
     {
-        TitForTatWithForgivenessStrategy strategy(
-            "/home/acer/NSU_OOP_CXX/Task2/libs/strategies/test/config2/");
+        TitForTatWithForgivenessStrategy strategy("incorrect_config2/");
     }
     catch(const std::invalid_argument & ex)
     {
@@ -75,7 +72,7 @@ INSTANTIATE_TEST_SUITE_P
 TEST_P(TitForTatWithForgivenessStrategyTest,
        test_vote_update)
 {
-    TitForTatWithForgivenessStrategy strategy("/home/acer/NSU_OOP_CXX/Task2/config/");
+    TitForTatWithForgivenessStrategy strategy("correct_config/");
     std::vector<ChoiceArgs> params_vector = GetParam();
 
     for (ChoiceArgs params : params_vector)

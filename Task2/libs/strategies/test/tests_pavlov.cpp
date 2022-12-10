@@ -21,8 +21,7 @@ TEST(test_pavlov,
     EXPECT_THROW
     (
         {
-            PavlovStrategy strategy(
-                "/home/acer/NSU_OOP_CXX/Task2/libs/strategies/tit_for_tat_with_forgiveness/test/");
+            PavlovStrategy strategy("./");
         },
         boost::property_tree::json_parser_error
     );
@@ -107,7 +106,7 @@ INSTANTIATE_TEST_SUITE_P
 
 TEST_P(PavlovStrategyTest, test_vote_update)
 {
-    PavlovStrategy strategy("/home/acer/NSU_OOP_CXX/Task2/config/");
+    PavlovStrategy strategy("correct_config/");
     std::vector<ChoiceArgs> params_vector = GetParam();
 
     for (ChoiceArgs params : params_vector)
