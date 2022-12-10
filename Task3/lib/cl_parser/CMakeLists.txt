@@ -28,6 +28,8 @@ if (NOT Boost_FOUND)
     )
     FetchBoostContent_MakeAvailable(boost_program_options)
 endif()
+target_include_directories(cl_parser
+        PUBLIC ${Boost_INCLUDE_DIRS})
 target_link_libraries(cl_parser
         PUBLIC ${Boost_LIBRARIES})
 target_compile_definitions(cl_parser
