@@ -171,19 +171,6 @@ TEST_P(WAVReaderTest,
     }
 }
 
-TEST(test_WAV_writer,
-     check_constructor)
-{
-    EXPECT_THROW
-    (
-        {
-            // read only
-            WAVWriter wav_writer("files/read_only.wav");
-        },
-        FileNotOpen
-    );
-}
-
 TEST(test_WAV,
      copy)
 {
