@@ -21,9 +21,7 @@ if (NOT Boost_FOUND)
     FetchContent_MakeAvailable(Boost)
 endif()
 target_link_libraries(cl_parser
-        PUBLIC Boost::container)
-target_link_libraries(cl_parser
-        PUBLIC Boost::program_options)
+        PUBLIC ${Boost_LIBRARIES})
 target_compile_definitions(cl_parser
         PUBLIC -DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 
