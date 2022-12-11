@@ -20,6 +20,7 @@ if (NOT Boost_FOUND)
     )
     FetchContent_MakeAvailable(Boost)
 endif()
+message(${Boost_LIBRARIES})
 target_link_libraries(cl_parser
         PUBLIC ${Boost_LIBRARIES})
 target_compile_definitions(cl_parser
