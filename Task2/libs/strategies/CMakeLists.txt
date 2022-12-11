@@ -38,18 +38,28 @@ target_link_libraries(strategy_creator
         PUBLIC ${STRATEGIES}
         INTERFACE strategy_interface)
 
-find_package(Boost COMPONENTS container REQUIRED)
+find_package(Boost
+        COMPONENTS container)
+if (NOT Boost_FOUND)
+    include(FetchContent)
+    FetchContent_Declare(
+            Boost
+            GIT_REPOSITORY https://github.com/boostorg/boost.git
+            GIT_TAG boost-1.80.0
+    )
+    FetchContent_MakeAvailable(Boost)
+endif()
 target_compile_definitions(pavlov PUBLIC
         -DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 target_compile_definitions(tit_for_tat_with_forgiveness PUBLIC
         -DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 
 target_link_libraries(pavlov PUBLIC
-        ${Boost_LIBRARIES})
+        Boost::container)
 target_link_libraries(pavlov PUBLIC
         strategy_creator)
 target_link_libraries(tit_for_tat_with_forgiveness PUBLIC
-        ${Boost_LIBRARIES})
+        Boost::container)
 
 find_package(GTest)
 if (NOT GTest_FOUND)
