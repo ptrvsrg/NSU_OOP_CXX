@@ -10,7 +10,7 @@ target_include_directories(cl_parser
         PUBLIC include
         PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include)
 find_package(Boost
-        COMPONENTS container program_options)
+        COMPONENTS property_tree program_options)
 if (NOT Boost_FOUND)
     include(FetchContent)
     FetchContent_Declare(
@@ -21,8 +21,7 @@ if (NOT Boost_FOUND)
     FetchContent_MakeAvailable(Boost)
 endif()
 target_link_libraries(cl_parser
-        INTERFACE Boost::headers
-        PUBLIC Boost::container
+        PUBLIC Boost::property_tree
         PUBLIC Boost::program_options)
 target_compile_definitions(cl_parser
         PUBLIC -DBOOST_BIND_GLOBAL_PLACEHOLDERS)
