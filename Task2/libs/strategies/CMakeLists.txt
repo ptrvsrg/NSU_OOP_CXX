@@ -39,7 +39,7 @@ target_link_libraries(strategy_creator
         INTERFACE strategy_interface)
 
 find_package(Boost
-        COMPONENTS container)
+        COMPONENTS property_tree)
 if (NOT Boost_FOUND)
     include(FetchContent)
     FetchContent_Declare(
@@ -55,11 +55,10 @@ target_compile_definitions(tit_for_tat_with_forgiveness PUBLIC
         -DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 
 target_link_libraries(pavlov PUBLIC
-        Boost::container)
-target_link_libraries(pavlov PUBLIC
+        Boost::property_tree
         strategy_creator)
 target_link_libraries(tit_for_tat_with_forgiveness PUBLIC
-        Boost::container)
+        Boost::property_tree)
 
 find_package(GTest)
 if (NOT GTest_FOUND)
