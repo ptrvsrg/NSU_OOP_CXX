@@ -69,11 +69,7 @@ private:
     std::string GetRow()
     {
         std::string row;
-        char sym;
-
-        // If end of file or line delim symbol is found, finish reading
-        while (m_ifs.get(sym) && !std::regex_search(row + sym, std::regex({m_row_delim})))
-            row += sym;
+        std::getline(m_ifs, row, m_row_delim);
 
         ++m_current_line;
         return row;
