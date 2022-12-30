@@ -18,10 +18,16 @@ if (NOT Boost_FOUND)
             GIT_TAG boost-1.80.0
     )
     FetchContent_MakeAvailable(Boost)
+
+    target_link_libraries(cl_parser
+            PUBLIC Boost::program_options
+            PUBLIC Boost::property_tree)
+else()
+    target_include_directories(cl_parser
+            PUBLIC ${Boost_INCLUDE_DIRS})
+    target_link_libraries(cl_parser
+            PUBLIC Boost::program_options)
 endif()
-message("${Boost_LIBRARIES}")
-target_link_libraries(cl_parser
-        PUBLIC Boost::program_options)
 target_compile_definitions(cl_parser
         PUBLIC -DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 
