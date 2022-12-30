@@ -1,0 +1,4 @@
+{
+  "Command" : "mute <start_sec> <end_sec>",
+  "Description": "Mute the interval from the start time to the end time"
+}

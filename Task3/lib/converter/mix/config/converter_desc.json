@@ -1,0 +1,4 @@
+{
+  "Command" : "mix <additional_file> <insertion_sec>",
+  "Description": "Mix the main file with the additional one starting from the insertion time"
+}

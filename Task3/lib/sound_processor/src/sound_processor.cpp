@@ -13,7 +13,7 @@ void SoundProcessor::Convert()
     // open config file for getting commands
     ConfigParser config(config_file_);
 
-    // create converters for the pipeline
+    // create converter for the pipeline
     ConverterVector pipeline = std::move(CreatePipeline(config));
 
     // open only necessary WAV files for reading

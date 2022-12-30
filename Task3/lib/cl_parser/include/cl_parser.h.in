@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#define CONVERTERS_CONFIG_FILE "${CONVERTERS_CONFIG_FILE}"
+#define CONVERTER_SOURCE_DIRS "${CONVERTER_SOURCE_DIRS}"
 
 struct Options
 {

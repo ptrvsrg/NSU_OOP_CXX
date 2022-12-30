@@ -1,6 +1,0 @@
-double 10 20
-mute 20 30
-mix $1 20
-mute 30 40
-mix $2 30
-compress

@@ -1,6 +1,5 @@
 message(STATUS "Creating library \"cl_parser\"")
 
-set(CONVERTERS_CONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/config/converters_desc.json")
 configure_file(include/cl_parser.h.in
         ${CMAKE_CURRENT_BINARY_DIR}/include/cl_parser.h)
 
@@ -10,7 +9,7 @@ target_include_directories(cl_parser
         PUBLIC include
         PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/include)
 find_package(Boost
-        COMPONENTS property_tree program_options)
+        COMPONENTS program_options)
 if (NOT Boost_FOUND)
     include(FetchContent)
     FetchContent_Declare(
@@ -20,9 +19,9 @@ if (NOT Boost_FOUND)
     )
     FetchContent_MakeAvailable(Boost)
 endif()
+message("${Boost_LIBRARIES}")
 target_link_libraries(cl_parser
-        PUBLIC Boost::property_tree
-        PUBLIC Boost::program_options)
+        PUBLIC ${Boost_LIBRARIES})
 target_compile_definitions(cl_parser
         PUBLIC -DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 

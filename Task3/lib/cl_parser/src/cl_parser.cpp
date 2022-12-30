@@ -3,24 +3,37 @@
 #include <boost/property_tree/json_parser.hpp>
 #include <iomanip>
 #include <iostream>
+#include <regex>
 
 namespace po = boost::program_options;
 namespace pt = boost::property_tree;
 
 static void PrintConverterDesc()
 {
-    // Create property tree
-    pt::ptree ptree;
-    pt::read_json(CONVERTERS_CONFIG_FILE,
-                  ptree);
+    // Get converter source dirs
+    std::string converter_source_dirs(CONVERTER_SOURCE_DIRS);
+    std::regex delim(";");
+    std::vector<std::string> converter_source_dir_vector
+        (std::sregex_token_iterator(converter_source_dirs.begin(),
+                                    converter_source_dirs.end(),
+                                    delim,
+                                    -1),
+         std::sregex_token_iterator());
 
-    std::cout << "Available converters:" << std::endl;
+    std::cout << "Available converter:" << std::endl;
 
-    // print converter descriptions
-    for (const auto & converter_info : ptree.get_child("Converters"))
+    for (const std::string & converter_source_dir : converter_source_dir_vector)
+    {
+        // Create property tree
+        pt::ptree ptree;
+        pt::read_json(converter_source_dir + "/config/converter_desc.json",
+                      ptree);
+
+        // print converter descriptions
         std::cout << "  " << std::setw(40) << std::left
-                  << converter_info.second.get<std::string>("Command")
-                  << converter_info.second.get<std::string>("Description") << std::endl;
+                  << ptree.get_child("Command").data()
+                  << ptree.get_child("Description").data() << std::endl;
+    }
 
     std::cout << std::endl;
 }
