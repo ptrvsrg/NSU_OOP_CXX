@@ -21,7 +21,7 @@ if (NOT Boost_FOUND)
 endif()
 message("${Boost_LIBRARIES}")
 target_link_libraries(cl_parser
-        PUBLIC ${Boost_LIBRARIES})
+        PUBLIC Boost::program_options)
 target_compile_definitions(cl_parser
         PUBLIC -DBOOST_BIND_GLOBAL_PLACEHOLDERS)
 
