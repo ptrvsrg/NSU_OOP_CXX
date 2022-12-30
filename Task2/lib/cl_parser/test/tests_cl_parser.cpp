@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "cl_parser.h"
+#include "../include/cl_parser.h"
 
 struct ParserArgs
 {
@@ -58,7 +58,7 @@ INSTANTIATE_TEST_SUITE_P
                        std::string(""),
                        std::string(""),
                        false),
-            ParserArgs({"./main", "--modes=fast"},
+            ParserArgs({"./main", "--mode=fast"},
                        std::vector<std::string>(),
                        std::string("fast"),
                        -1,

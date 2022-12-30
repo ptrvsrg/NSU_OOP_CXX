@@ -14,7 +14,8 @@ if (NOT Boost_FOUND)
     FetchContent_MakeAvailable(Boost)
 endif()
 target_include_directories(cl_parser PUBLIC
-        include/cl_parser)
+        include
+        ${Boost_INCLUDE_DIRS})
 target_link_libraries(cl_parser PUBLIC
         Boost::program_options)
 

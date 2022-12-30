@@ -25,25 +25,19 @@ TEST(test_tit_for_tat_with_forgiveness,
         boost::property_tree::json_parser_error
     );
 
-    try
-    {
-        TitForTatWithForgivenessStrategy strategy("incorrect_config1/");
-    }
-    catch(const std::invalid_argument & ex)
-    {
-        EXPECT_STREQ(ex.what(),
-                     "Wrong forgiveness percentage");
-    }
+    EXPECT_THROW(
+        {
+            TitForTatWithForgivenessStrategy strategy("incorrect_config1/");
+        },
+        WrongForgivenessPercentage
+    );
 
-    try
-    {
-        TitForTatWithForgivenessStrategy strategy("incorrect_config2/");
-    }
-    catch(const std::invalid_argument & ex)
-    {
-        EXPECT_STREQ(ex.what(),
-                     "Wrong forgiveness percentage");
-    }
+    EXPECT_THROW(
+        {
+            TitForTatWithForgivenessStrategy strategy("incorrect_config2/");
+        },
+        WrongForgivenessPercentage
+    );
 }
 
 class TitForTatWithForgivenessStrategyTest : public ::testing::TestWithParam<std::vector<ChoiceArgs>> {};

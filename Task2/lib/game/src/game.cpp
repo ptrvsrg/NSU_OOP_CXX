@@ -1,4 +1,4 @@
-#include "game.h"
+#include "../include/game.h"
 
 StrategyCountException::StrategyCountException()
 :   std::invalid_argument("Not enough strategy") {}

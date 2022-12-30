@@ -1,6 +1,6 @@
 #include <iostream>
-#include "cl_parser.h"
-#include "game.h"
+#include "../lib/cl_parser/include/cl_parser.h"
+#include "../lib/game/include/game.h"
 
 int main(int argc, char ** argv)
 {

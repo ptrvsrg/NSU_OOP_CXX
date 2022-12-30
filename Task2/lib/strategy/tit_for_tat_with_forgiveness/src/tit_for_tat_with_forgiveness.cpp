@@ -1,5 +1,9 @@
 #include "tit_for_tat_with_forgiveness.h"
 
+
+WrongForgivenessPercentage::WrongForgivenessPercentage()
+    :   std::invalid_argument("Wrong forgiveness percentage") {}
+
 TitForTatWithForgivenessStrategy::TitForTatWithForgivenessStrategy(const std::string & config_dir)
 {
     pt::ptree config_tree;
@@ -7,7 +11,8 @@ TitForTatWithForgivenessStrategy::TitForTatWithForgivenessStrategy(const std::st
                   config_tree);
 
     int forgiveness_percentage_ = config_tree.get<int>("Forgiveness percentage");
-    if (forgiveness_percentage_ < 0 || forgiveness_percentage_ > 100) throw std::invalid_argument("Wrong forgiveness percentage");
+    if (forgiveness_percentage_ < 0 || forgiveness_percentage_ > 100)
+        throw WrongForgivenessPercentage();
 
     max_count_D_ = 100 / forgiveness_percentage_;
 }

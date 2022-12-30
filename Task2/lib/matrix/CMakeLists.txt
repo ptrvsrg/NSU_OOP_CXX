@@ -3,7 +3,7 @@ message(STATUS "Creating library \"matrix\"")
 add_library(matrix STATIC
         src/matrix.cpp)
 target_include_directories(matrix PUBLIC
-        include/matrix
+        include
         ${CMAKE_SOURCE_DIR}/lib/strategy/strategy_interface/include)
 target_link_directories(matrix
         PUBLIC ${CMAKE_BINARY_DIR}/lib/strategy/strategy_interface)

@@ -1,4 +1,4 @@
-#include "cl_parser.h"
+#include "../include/cl_parser.h"
 
 bool GetOptions(int argc,
                 char ** argv,
@@ -8,7 +8,7 @@ bool GetOptions(int argc,
     desc.add_options()
         ("help,h", "Show options description")
         ("names,n", po::value<std::vector<std::string>>(&opts.strategy_name_)->multitoken(), "Strategy names")
-        ("modes,m", po::value<std::string>(&opts.mode_), "Game modes")
+        ("mode,m", po::value<std::string>(&opts.mode_), "Game mode")
         ("steps,s", po::value<int>(&opts.steps_), "Number of game steps")
         ("configs,c", po::value<std::string>(&opts.config_dir_), "Path to the directory with strategy configuration files")
         ("matrix,M", po::value<std::string>(&opts.matrix_file_), "Path to the file with game matrix");

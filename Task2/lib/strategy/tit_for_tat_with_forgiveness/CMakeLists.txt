@@ -19,10 +19,10 @@ if (NOT Boost_FOUND)
     )
     FetchContent_MakeAvailable(Boost)
 endif()
-target_compile_definitions(tit_for_tat_with_forgiveness PUBLIC
-        -DBOOST_BIND_GLOBAL_PLACEHOLDERS)
-target_link_libraries(tit_for_tat_with_forgiveness PUBLIC
-        Boost::boost)
+target_compile_definitions(tit_for_tat_with_forgiveness
+        PUBLIC -DBOOST_BIND_GLOBAL_PLACEHOLDERS)
+target_include_directories(tit_for_tat_with_forgiveness
+        PUBLIC ${Boost_INCLUDE_DIRS})
 
 message(STATUS "Creating tests for library of strategy \"tit_for_tat_with_forgiveness\"")
 

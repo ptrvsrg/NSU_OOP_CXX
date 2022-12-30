@@ -1,4 +1,4 @@
-#include "matrix.h"
+#include "../include/matrix.h"
 
 LittleMatrixException::LittleMatrixException(const std::string & matrix_file)
     :   std::invalid_argument(matrix_file + " : Little matrix") {}

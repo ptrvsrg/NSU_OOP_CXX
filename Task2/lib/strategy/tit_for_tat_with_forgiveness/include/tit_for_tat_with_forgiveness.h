@@ -7,6 +7,12 @@
 
 namespace pt = boost::property_tree;
 
+class WrongForgivenessPercentage : public std::invalid_argument
+{
+public:
+    WrongForgivenessPercentage();
+};
+
 class TitForTatWithForgivenessStrategy : public Strategy
 {
 public:

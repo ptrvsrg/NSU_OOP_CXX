@@ -23,8 +23,8 @@ if (NOT Boost_FOUND)
 endif()
 target_compile_definitions(pavlov PUBLIC
         -DBOOST_BIND_GLOBAL_PLACEHOLDERS)
-target_link_libraries(pavlov PUBLIC
-        Boost::boost)
+target_include_directories(pavlov
+        PUBLIC ${Boost_INCLUDE_DIRS})
 
 message(STATUS "Creating tests for library of strategy \"pavlov\"")
 

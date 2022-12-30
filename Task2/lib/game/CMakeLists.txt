@@ -3,9 +3,9 @@ message(STATUS "Creating library \"game\"")
 add_library(game STATIC
         src/game.cpp)
 target_include_directories(game PUBLIC
-        include/game
-        ${CMAKE_SOURCE_DIR}/libs/matrix/include/matrix
-        ${CMAKE_SOURCE_DIR}/libs/modes/include/mode_creator)
+        include
+        ${CMAKE_SOURCE_DIR}/libs/matrix/include
+        ${CMAKE_SOURCE_DIR}/libs/modes/include)
 target_link_directories(game PUBLIC
         ${CMAKE_BINARY_DIR}/libs/matrix
         ${CMAKE_BINARY_DIR}/libs/modes)

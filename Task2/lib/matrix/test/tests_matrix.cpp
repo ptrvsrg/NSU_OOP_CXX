@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "matrix.h"
+#include "../include/matrix.h"
 
 std::array<Trio<int>, 8> matrix_data_ =
     {{

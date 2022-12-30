@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "game.h"
+#include "../include/game.h"
 
 struct OptionArgs
 {
