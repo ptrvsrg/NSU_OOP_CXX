@@ -18,11 +18,15 @@ if (NOT Boost_FOUND)
             GIT_TAG boost-1.80.0
     )
     FetchContent_MakeAvailable(Boost)
+
+    target_link_directories(tit_for_tat_with_forgiveness
+            PUBLIC Boost::property_tree)
+else()
+    target_include_directories(tit_for_tat_with_forgiveness
+            PUBLIC ${Boost_INCLUDE_DIRS})
 endif()
 target_compile_definitions(tit_for_tat_with_forgiveness
         PUBLIC -DBOOST_BIND_GLOBAL_PLACEHOLDERS)
-target_include_directories(tit_for_tat_with_forgiveness
-        PUBLIC ${Boost_INCLUDE_DIRS})
 
 message(STATUS "Creating tests for library of strategy \"tit_for_tat_with_forgiveness\"")
 

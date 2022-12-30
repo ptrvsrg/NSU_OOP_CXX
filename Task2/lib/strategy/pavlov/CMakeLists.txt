@@ -20,11 +20,15 @@ if (NOT Boost_FOUND)
             GIT_TAG boost-1.80.0
     )
     FetchContent_MakeAvailable(Boost)
+
+    target_link_directories(pavlov
+            PUBLIC Boost::property_tree)
+else()
+    target_include_directories(pavlov
+            PUBLIC ${Boost_INCLUDE_DIRS})
 endif()
 target_compile_definitions(pavlov PUBLIC
         -DBOOST_BIND_GLOBAL_PLACEHOLDERS)
-target_include_directories(pavlov
-        PUBLIC ${Boost_INCLUDE_DIRS})
 
 message(STATUS "Creating tests for library of strategy \"pavlov\"")
 
