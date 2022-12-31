@@ -1,25 +1,42 @@
-cmake_minimum_required(VERSION 3.22.1)
+cmake_minimum_required(VERSION 3.23)
 
-set(CMAKE_C_COMPILER "/usr/bin/gcc")
-set(CMAKE_CXX_COMPILER "/usr/bin/g++")
 set(SUBDIR
-        libs/cl_parser
-        libs/matrix
-        libs/modes
-        libs/strategies
-        libs/game)
+        lib/cl_parser
+        lib/matrix
+        lib/mode
+        lib/strategy
+        lib/game)
 set(LIBRARY
         cl_parser
         game)
 
 project(Task2 CXX)
 
-add_executable(Task2
-        src/main.cpp)
-
 enable_testing()
 foreach(SUBDIR ${SUBDIR})
     add_subdirectory(${SUBDIR})
 endforeach(SUBDIR)
 
+# Example
+
+add_executable(Task2
+        example/main.cpp)
 target_link_libraries(Task2 ${LIBRARY})
+add_test(NAME launch_example
+        COMMAND Task2   --name
+                            always_cooperate
+                            always_defect
+                            random
+                            pavlov
+                            grim_trigger
+                            tit_for_tat
+                            tit_for_tat_with_forgiveness
+                        --mode
+                            tournament
+                        --steps
+                            1000
+                        --configs
+                            config/
+                        --matrix
+                            matrix.txt
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/example)

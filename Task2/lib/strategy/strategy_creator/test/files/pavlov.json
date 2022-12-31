@@ -1,0 +1,7 @@
+{
+  "Start": "tit_for_tat",
+  "Tit For Tat": "tit_for_tat",
+  "Suspicious Tit For Tat": "tit_for_tat",
+  "Always Defect": "always_defect",
+  "Random": "always_defect"
+}
