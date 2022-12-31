@@ -2,7 +2,7 @@
 #include <climits>
 #include <sstream>
 #include <utility>
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "big_int.h"
 
 struct IntArgs

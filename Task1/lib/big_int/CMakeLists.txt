@@ -20,6 +20,7 @@ endif ()
 add_executable(tests_big_int
         test/tests_big_int.cpp)
 target_link_libraries(tests_big_int
+        gtest
         gtest_main
         big_int)
 add_test(NAME tests_big_int

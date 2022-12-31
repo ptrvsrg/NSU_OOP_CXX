@@ -18,6 +18,7 @@ endif ()
 add_executable(tests_string_arithmetic
         test/tests_string_arithmetic.cpp)
 target_link_libraries(tests_string_arithmetic
+        gtest
         gtest_main
         string_arithmetic)
 add_test(NAME tests_string_arithmetic

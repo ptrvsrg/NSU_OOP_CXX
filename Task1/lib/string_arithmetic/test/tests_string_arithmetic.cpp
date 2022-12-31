@@ -1,5 +1,5 @@
 #include <iostream>
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include "string_arithmetic.h"
 
 struct StringArgs
