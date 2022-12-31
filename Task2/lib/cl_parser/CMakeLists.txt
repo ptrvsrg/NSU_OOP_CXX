@@ -2,6 +2,9 @@ message(STATUS "Creating library \"cl_parser\"")
 
 add_library(cl_parser STATIC
         src/cl_parser.cpp)
+target_include_directories(cl_parser PUBLIC
+        include)
+
 find_package(Boost
         COMPONENTS program_options)
 if (NOT Boost_FOUND)
@@ -13,8 +16,7 @@ if (NOT Boost_FOUND)
     )
     FetchContent_MakeAvailable(Boost)
 endif()
-target_include_directories(cl_parser PUBLIC
-        include)
+
 target_link_libraries(cl_parser PUBLIC
         Boost::program_options)
 
