@@ -22,10 +22,10 @@ if (NOT Boost_FOUND)
     FetchContent_MakeAvailable(Boost)
 endif()
 
-target_link_directories(pavlov
-        PUBLIC Boost::property_tree)
 target_compile_definitions(pavlov PUBLIC
         -DBOOST_BIND_GLOBAL_PLACEHOLDERS)
+target_link_directories(pavlov
+        PUBLIC Boost::property_tree)
 
 message(STATUS "Creating tests for library of strategy \"pavlov\"")
 
