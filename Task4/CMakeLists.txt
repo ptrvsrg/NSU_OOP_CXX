@@ -11,7 +11,13 @@ foreach(SUBDIR ${SUBDIRS})
     add_subdirectory(${SUBDIR})
 endforeach(SUBDIR)
 
-add_executable(example
+# Example
+
+add_executable(Task4
         example/main.cpp)
-target_link_libraries(example
+target_link_libraries(Task4
         PUBLIC CSV_parser)
+
+add_test(NAME launch_example
+        COMMAND Task4
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/example)
